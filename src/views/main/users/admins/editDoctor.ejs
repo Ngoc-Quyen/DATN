@@ -1,0 +1,90 @@
+<% extend("master.ejs") %>
+    <!-- Page Heading -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Cập nhật thông tin bác sĩ</h1>
+    </div>
+
+    <!-- Content Row -->
+    <div class="row">
+        <div class="col-10 mx-auto">
+            <form id="formUpdateDoctor" method="POST" action="/users/doctor/edit/<%= doctor.id %>" enctype="multipart/form-data">
+                <input type="text" class="form-control" id="idDoctor" name="idDoctor" placeholder="ID" value="<%= doctor.id %>" style="display: none;">
+                
+                <div class="form-row">
+                    <div class="col-md-7">
+                        <div class="form-group col-12">
+                            <label for="nameDoctor">Tên</label>
+                            <input type="text" class="form-control" id="nameDoctor" name="nameDoctor" placeholder="Tên" value="<%= doctor.name %>">
+                        </div>
+                        <div class="form-group col-12">
+                            <label for="phoneDoctor">Số điện thoại</label>
+                            <input type="text" class="form-control" id="phoneDoctor" name="phoneDoctor" placeholder="Số điện thoại" value="<%= doctor.phone %>">
+                        </div>
+                        <div class="form-group col-12">
+                            <label for="specializationDoctor">Chuyên khoa</label>
+                            <select id="specializationDoctor" class="form-control" name="specializationDoctor">
+                                <% if(doctor.Doctor_User){ %>
+                                    <% specializations.forEach(function(x) { %>
+                                        <option value="<%= x.id %>" <%= x.id === doctor.Doctor_User.specializationId ? 'selected' : '' %>> <%= x.name %> </option>
+                                    <% }) %>
+                                <% } else { %>
+                                    <option selected value="-1">Chọn chuyên khoa</option>
+                                    <% specializations.forEach(function(x) { %>
+                                        <option value="<%= x.id %>"> <%= x.name %> </option>
+                                    <% }) %>
+                                <% } %>
+                            </select>
+                        </div>
+                        <div class="form-group col-12">
+                            <label for="gender">Tình trạng</label>
+                            <div class="form-control">
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="isActive" id="true" value="1" <%= doctor.isActive === 1 ? 'checked' : '' %>>
+                                    <label class="form-check-label" for="true">Hoạt động</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="isActive" id="false" value="0" <%= doctor.isActive === 0 ? 'checked' : '' %>>
+                                    <label class="form-check-label" for="false">Cấm</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group col-12">
+                            <label for="addressDoctor">Địa chỉ</label>
+                            <input type="text" class="form-control" id="addressDoctor" name="addressDoctor" placeholder="Địa chỉ" value="<%= doctor.address %>">
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-5">
+                        <div class="form-group">
+                            <label for="image-clinic">Cập nhật hình ảnh</label>
+                            <input type="file" id="image-clinic" accept="image/*" onchange="loadFile(event)" name="imageInput">
+                        </div>
+                        <div class="form-group">
+                            <% if(doctor.avatar) { %>
+                                <img class="img-preview-clinic-create" id="image-preview" src="<%= doctor.avatar %>">
+                            <% } else { %>
+                                <img class="img-preview-clinic-create d-none" id="image-preview">
+                            <% } %>
+                        </div>
+                    </div>
+                </div>
+                
+                
+                <div class="form-group">
+                    <label for="introEditDoctor">Mô tả</label>
+                    <textarea id="introEditDoctor" name="introEditDoctor" class="form-control"><%= doctor.description %></textarea>
+                </div>
+                
+                <button type="submit" class="btn btn-primary" id="btnUpdateDoctor" data-doctor-id="<%= doctor.id %>">Cập nhật</button>
+            </form>
+        </div>
+    </div>
+    
+    
+
+    <script>
+        $(document).ready(function () {
+            $("div #featureManage").addClass('show');
+            $("div #featureManage").find($("#aManageDoctor")).addClass("active");
+        })
+    </script>

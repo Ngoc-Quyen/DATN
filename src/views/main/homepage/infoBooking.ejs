@@ -1,0 +1,161 @@
+<% extend("../app.ejs") %>
+    <section class="mt-0" style="background-color: #ABF3FD; height: 60px; display: flex; align-items: center;">
+        <div class="container-fluid">
+            <div class="row align-items-center">
+
+                <div class="col-md-2">
+                    <div class="homepage-logo mt-2">
+                        <img class="menu-nav" src="/images/background/DC.png" alt="img logo">
+                    </div>
+                </div>
+
+                <div class="col-md-7 d-none d-md-flex justify-content-between">
+                    <div class="d-flex flex-column">
+                        <button class="btn btn-design" onclick="redirectToHome()">Trang chủ</button>
+                    </div>
+                    <div class="d-flex flex-column">
+                        <button class="btn btn-design" onclick="redirectToSpecializations()">Chuyên khoa</button>
+                    </div>
+                    <div class="d-flex flex-column">
+                        <button class="btn btn-design" onclick="redirectToDoctors()">Bác sĩ</button>
+                    </div>
+                    <div class="header-search align-self-center justify-content-center">
+                        <i class="fa fa-search"></i>
+                        <label for="input-search"></label>
+                        <input id="input-search" placeholder="Tìm kiếm...">
+                        <div id="show-info-search" class="show-info-search"></div>
+                    </div>
+                    <script>
+                        function redirectToHome() {
+                            window.location.href = "/";
+                        }
+
+                        function redirectToSpecializations() {
+                            window.location.href = "/all-specializations";
+                        }
+
+                        function redirectToDoctors() {
+                            window.location.href = "/all-doctors %>";
+                        }
+                    </script>
+                </div>
+
+                <% if (user) { %>
+                    <div class="col-md-3 d-none d-md-flex justify-content-around align-self-center" id="loggedIn">
+                        <a href="/InfoUser">
+                            <img src="../images/background/User.png" alt="User logo" class="logo">
+                        </a>
+                        <!-- <a href="/InfoBooked" >
+                            <img src="../images/background/Lichhen.png" alt="Lichhen logo" class="logo">
+                        </a> -->
+
+                        <a href="https://www.facebook.com/profile.php?id=100011010698678" target="_blank">
+                            <img src="../images/background/Vector.png" alt="Contact logo" class="logo">
+                        </a>
+                        <a href="/logout">
+                            <img src="../images/background/logout.png" alt="Contact logo" class="logo">
+                        </a>
+                    </div>
+                    <% } else { %>
+                        <div class="col-md-3 mt-3 d-none d-md-flex justify-content-around align-self-center" id="notLoggedIn">
+                            <div class="d-flex flex-column">
+                                <a href="/login" class="btn btn-design1 ">Đăng nhập</a>
+                            </div>
+                            <div class="d-flex flex-column">
+                                <a href="/register" class="btn btn-design2 ">Đăng ký</a>
+                            </div>
+                            <a href="https://www.facebook.com/profile.php?id=100011010698678" target="_blank">
+                                <img src="../images/background/Vector.png" alt="Contact logo" class="logo">
+                            </a>
+                        </div>
+                        <% } %>
+
+            </div>
+        </div>
+    </section>
+    <section class="detail-info-specialization">
+        <div class="container">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12 mt-3">
+                        <a class="text-decoration-none" href="/"><i class="fa fa-home" aria-hidden="true"></i></a><span aria-hidden="true">&raquo;</span>
+                        <span style="text-transform: uppercase">
+                            Thông tin đặt khám
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="detail-info-booking mt-3">
+        <div class="container">
+            <div class="container">
+                <div class="row">
+                    <div class="col-8 mx-auto">
+                        <h2>Đặt lịch hẹn thành công!</h2>
+                        <hr>
+                        <div class="booking-success row">
+                            <div class="right-booking col-3 d-flex flex-column ">
+                                <img src="<%= patient.getDataValue('doctorAvatar')%>">
+
+                                <div style=" font-weight: bold; font-size: 15px; color: #3e81e6;">
+                                    <%= patient.getDataValue('doctorName') %>
+                                </div>
+
+                                <div style="text-align: center; font-weight: bold;">
+                                    <%= patient.timeBooking %>
+                                </div>
+                                <div style="text-align: center; font-weight: bold;">
+                                    <%= patient.dateBooking %>
+                                </div>
+                            </div>
+                            <div class="left-booking col-9 mt-3">
+                                <div> Cảm ơn bạn đã đặt chuyến thăm khám từ DoctorCare. Hệ thống đã ghi lại cuộc hẹn. Nhân viên hỗ trợ sẽ gọi điện xác nhận trong vòng 24h sau khi đặt vé.</div>
+                                <div class="mt-2">Cần hỗ trợ vui lòng liên hệ hotline: 0123 456 789 </div>
+                                <div class="col-md-12 d-none d-md-flex justify-content-between">
+
+                                    <div style="text-align: center; color: #970756;">
+                                        <button class="btn btn-design" onclick="redirectToHome()" style="margin-left: auto; font-size: 16px; ">Quay lại trang chủ</button>
+                                    </div>
+
+
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <script>
+        $(document).ready(function() {
+            $('#input-search').on('input', function() {
+                let query = $(this).val();
+                if (query.length > 0) {
+                    $.ajax({
+                        method: 'POST',
+                        url: `${window.location.origin}/api/search`,
+                        data: {
+                            query: query
+                        },
+                        success: function(data) {
+                            let results = data.results;
+                            let htmlContent = '';
+                            results.forEach(result => {
+                                htmlContent += `<div class="search-result-item">${result.name}</div>`;
+                            });
+                            $('#show-info-search').html(htmlContent);
+                        },
+                        error: function(err) {
+                            console.log(err);
+                            $('#show-info-search').html('<div class="search-result-item">Không tìm thấy kết quả</div>');
+                        }
+                    });
+                } else {
+                    $('#show-info-search').html('');
+                }
+            });
+            $(".user-list-patients").addClass("active");
+        })
+    </script>

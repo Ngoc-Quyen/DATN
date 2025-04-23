@@ -1,0 +1,723 @@
+<% extend("../app.ejs") %>
+    <script src="/js/user.js"></script>
+    <section class="mt-0" style="background-color: #ABF3FD; height: 60px; display: flex; align-items: center;">
+        <div class="container-fluid">
+            <div class="row align-items-center">
+                <div class="col-md-2">
+                    <div class="homepage-logo mt-2">
+                        <img class="menu-nav" src="../images/background/DC.png" alt="img logo">
+                    </div>
+                </div>
+
+                <div class="col-md-7 d-none d-md-flex justify-content-between">
+                    <div class="d-flex flex-column">
+                        <button class="btn btn-warning text-black" onclick="redirectToHome()">Trang chủ</button>
+                    </div>
+                    <div class="d-flex flex-column">
+                        <button class="btn btn-design" onclick="redirectToSpecializations()">Chuyên khoa</button>
+                    </div>
+                    <div class="d-flex flex-column">
+                        <button class="btn btn-design" onclick="redirectToDoctors()">Bác sĩ</button>
+                    </div>
+                    <div class="header-search align-self-center justify-content-center">
+                        <i class="fa fa-search"></i>
+                        <label for="input-search"></label>
+                        <input id="input-search" placeholder="Tìm kiếm...">
+                        <div id="show-info-search" class="show-info-search"></div>
+                    </div>
+                    <script>
+                        function redirectToHome() {
+                            window.location.href = "/";
+                        }
+
+                        function redirectToSpecializations() {
+                            window.location.href = "/all-specializations";
+                        }
+
+                        function redirectToDoctors() {
+                            window.location.href = "/all-doctors";
+                        }
+                    </script>
+                </div>
+
+                <% if (user) { %>
+                    <div class="col-md-3 d-none d-md-flex justify-content-around align-self-center" id="loggedIn">
+                        <a href="/InfoUser">
+                            <img src="../images/background/User.png" alt="User logo" class="logo">
+                        </a>
+                        <!-- <a href="/InfoBooked">
+                            <img src="../images/background/Lichhen.png" alt="Lichhen logo" class="logo">
+                        </a> -->
+
+                        <a href="https://www.facebook.com/profile.php?id=100011010698678" target="_blank">
+                            <img src="../images/background/Vector.png" alt="Contact logo" class="logo">
+                        </a>
+                        <a href="/logout">
+                            <img src="../images/background/logout.png" alt="Contact logo" class="logo">
+                        </a>
+                    </div>
+                    <% } else { %>
+                        <div class="col-md-3 mt-3 d-none d-md-flex justify-content-around align-self-center"
+                            id="notLoggedIn">
+                            <div class="d-flex flex-column">
+                                <a href="/login" class="btn btn-design1 ">Đăng nhập</a>
+                            </div>
+                            <div class="d-flex flex-column">
+                                <a href="/register" class="btn btn-design2 ">Đăng ký</a>
+                            </div>
+                            <a href="https://www.facebook.com/profile.php?id=100011010698678" target="_blank">
+                                <img src="../images/background/Vector.png" alt="Contact logo" class="logo">
+                            </a>
+                        </div>
+                        <% } %>
+            </div>
+        </div>
+    </section>
+
+    <section class="detail-info-specialization">
+        <div class="container">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12 mt-3">
+                        <a class="text-decoration-none" href="/"><i class="fa fa-home" aria-hidden="true"></i></a><span
+                            aria-hidden="true">&raquo;</span>
+                        <span style="text-transform: uppercase">Thông tin người dùng</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="mt-1" style="background-color: #ffffff; min-height: 700px;">
+        <div class="container" id="container-user">
+            <div class="form-container infor-user-container1">
+                <div style="background-color: #ABF3FD; height: 50px; font-size: 20px;">
+                    <i class="fa fa-user-circle-o" aria-hidden="true" style="color: #007bff;"></i> Thông tin người dùng
+                </div>
+
+                <div class="form-group1">
+                    <img src="<%= user.avatar %>" alt="avatar-user"><br>
+                </div>
+                <div style="text-align: center;">
+                    <label for="full-name" style="background-color: #ABF3FD; padding: 5px 15px; display: inline-block;">
+                        <%= user.name %>
+                            <input type="hidden" id="full-name" name="full-name" value="<%= user.name %>">
+                    </label>
+                </div>
+
+                <div class="form-group-infor1">
+                    <div>
+                        <div><i class="fa fa-info-circle" aria-hidden="true" style="color: #007bff;"></i> <a href="#"
+                                onclick="showDetail('personalInfo')">Thông tin cá nhân</a></div>
+                    </div>
+                    <div>
+                        <div><i class="fa fa-history" aria-hidden="true" style="color: #007bff;"></i> <a href="#"
+                                onclick="showDetail('medicalHistory')">Lịch sử khám bệnh</a></div>
+                    </div>
+                    <div>
+                        <div><i class="fa fa-unlock-alt" aria-hidden="true" style="color: #007bff;"></i> <a href="#"
+                                onclick="showDetail('changePassword')">Đổi mật khẩu</a></div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="form-container infor-user-detail" id="detail-content" style="overflow: auto;">
+                <div style="background-color: #ABF3FD; height: 50px; font-size: 20px; text-align: center;"
+                    id="detail-header">
+                    Thông tin chi tiết
+                </div>
+                <div id="personalInfo" class="detail-section">
+                    <form id="formUpdateUser" method="POST" action="/users/edit/<%= user.id %>"
+                        data-user-id="<%= user.id %>">
+                        <div class="form-group1">
+                            <label for="full-name">Họ và tên :</label>
+                            <input type="text" id="name" name="name" placeholder="<%= user.name %>"
+                                value="<%= user.name %>">
+                            <span class="error" id="full-name-error"></span>
+                        </div>
+                        <div class="form-group1">
+                            <label for="email">Email :</label>
+                            <input type="email" id="email" name="email" placeholder="<%= user.email %>"
+                                value="<%= user.email %>" readonly>
+                            <span class="error" id="email-error"></span>
+                        </div>
+                        <div class="form-group1">
+                            <label for="phone-number">Số điện thoại :</label>
+                            <input type="text" id="phone" name="phone" placeholder="<%= user.phone %>"
+                                value="<%= user.phone %>">
+                            <span class="error" id="phone-number-error"></span>
+                        </div>
+                        <div class="form-group1">
+                            <label for="address">Địa chỉ:</label>
+                            <input type="text" id="address" name="address" placeholder="<%= user.address %>"
+                                value="<%= user.address %>">
+                        </div>
+                        <div class="form-group1 gender">
+                            <label for="gender">Giới tính:</label>
+                            <input type="radio" id="male" name="gender" value="M" <% if(user.gender==='M' ) { %> checked
+                            <% } %> >
+                                <label for="male">Nam</label>
+                                <input type="radio" id="female" name="gender" value="F" <% if(user.gender==='F' ) { %>
+                                checked
+                                <% } %> >
+                                    <label for="female">Nữ</label>
+                                    <span class="error" id="gender-error"></span>
+                        </div>
+                        <div class="form-group1">
+                            <label for="birthday">Ngày sinh:</label>
+                            <input type="date" id="birthday" name="birthday" value="<%= user.birthday %>">
+
+                        </div>
+                        <div class="form-group1">
+                            <button type="submit" class="btn-submit" style="margin-top: 30px;"> <a href="#"
+                                    onclick=""></a>Cập nhật</button>
+                            <!-- <button type="submit" class="btn btn-primary" style="margin-left: 300px; margin-top: 50px;" id="btnUpdateDoctor" data-doctor-id="<%= user.id %>">Cập
+                            nhật</button> -->
+                            <!-- <button type="submit" class="btn btn-primary" style="margin-left: 300px; margin-top: 50px;" id="btnUpdateUser" data-doctor-id="<%= user.id %>">Cập
+                                nhật</button> -->
+
+                        </div>
+                    </form>
+                </div>
+
+
+                <div id="medicalHistory" class="detail-section" style="display:none;">
+
+                    <div class="card-header py-3">
+                        <ul class="nav nav-tabs" id="myTab" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link active" id="patient-new-tab" data-toggle="tab" href="#newPatients"
+                                    role="tab" aria-controls="home" aria-selected="true">Lịch hẹn mới (<span
+                                        id="count-new"></span>) </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link " id="patient-need-confirm-tab" data-toggle="tab"
+                                    href="#patientsNeedConfirm" role="tab" aria-controls="profile"
+                                    aria-selected="false">Đã chấp nhận(<span id="count-need"></span>) </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="patient-confirmed-tab" data-toggle="tab"
+                                    href="#patientConfirmed" role="tab" aria-controls="contact" aria-selected="false">Đã
+                                    khám(<span id="count-confirmed"></span>)
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="patient-cancel-tab" data-toggle="tab" href="#patientCanceled"
+                                    role="tab" aria-controls="contact" aria-selected="false">Đã hủy(<span
+                                        id="count-canceled"></span>) </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <div class="tab-content" id="myTabContent">
+                                <div class="tab-pane fade show active" id="newPatients" role="tabpanel"
+                                    aria-labelledby="patient-new-tab">
+                                    <table class="table table-bordered" id="tableNewPatients" width="100%"
+                                        cellspacing="0">
+                                        <thead>
+
+                                            <tr>
+                                                <th>Mã khám</th>
+                                                <th>Tên</th>
+                                                <th>Ngày khám</th>
+                                                <th>Giờ khám</th>
+                                                <th class="w-25">Hành động</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="tab-pane fade" id="patientsNeedConfirm" role="tabpanel"
+                                    aria-labelledby="patient-need-confirm-tab">
+                                    <table class="table table-bordered" id="tableNeedConfirmPatients" width="100%"
+                                        cellspacing="0">
+                                        <thead>
+                                            <tr>
+                                                <th>Tên</th>
+                                                <th>Ngày khám</th>
+                                                <th>Giờ khám</th>
+                                                <th class="w-25">Hành động</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+
+                                        </tbody>
+                                    </table>
+
+                                </div>
+                                <div class="tab-pane fade" id="patientConfirmed" role="tabpanel"
+                                    aria-labelledby="patient-confirmed-tab">
+                                    <table class="table table-bordered" id="tableConfirmedPatients" width="100%"
+                                        cellspacing="0">
+                                        <thead>
+                                            <tr>
+                                                <th>Tên</th>
+                                                <th>Ngày khám</th>
+                                                <th>Giờ khám</th>
+                                                <th class="w-30">Hành động</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+
+                                        </tbody>
+                                    </table>
+
+                                </div>
+                                <div class="tab-pane fade" id="patientCanceled" role="tabpanel"
+                                    aria-labelledby="patient-cancel-tab">
+                                    <table class="table table-bordered" id="tableCancelPatients" width="100%"
+                                        cellspacing="0">
+                                        <thead>
+                                            <tr>
+                                                <th>Tên</th>
+                                                <th>Ngày khám</th>
+                                                <th>Giờ khám</th>
+                                                <th class="w-25">Hành động</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+
+                                        </tbody>
+                                    </table>
+
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div id="detail-medical" class="detail-section"
+                    style="display:none; text-align: center; background-color: #dbdbdd;border: 2px solid #000;">
+                    <h2>Hồ sơ bệnh án</h2>
+                    <div class="form-group1">
+                        <label for="full-name">Bác sĩ phụ trách: </label>
+                        <input type="text" id="full-name" name="full-name" placeholder="" value="">
+                        <span class="error" id="full-name-error"></span>
+                    </div>
+                    <div class="form-group1">
+                        <label for="specializationDoctor">Chuyên khoa: </label>
+                        <input type="text" id="specializationDoctor" value="" placeholder="">
+                    </div>
+                    <div class="form-group1">
+                        <label for="days">Ngày khám: </label>
+                        <input type="date" id="days" name="days" placeholder="" value="" readonly>
+                        <label for="time">Giờ khám:</label>
+                        <input type="time" name="tỉme" id="" value="" readonly>
+                    </div>
+                    <div class="form-group1">
+                        <label for="TC">Triệu chứng: </label>
+                        <input type="text" id="TC" name="TC" placeholder="" value="">
+                    </div>
+                    <div class="form-group1">
+                        <label for="CD">Chẩn đoán: </label>
+                        <input type="text" id="CD" name="CD" placeholder="" value="">
+                    </div>
+                    <div class="form-group1">
+                        <label for="type-k">Loại khám/xét nghiệm: </label>
+                        <input type="text" id="type-k" name="type-k" placeholder="" value="" readonly>
+                    </div>
+                    <div class="form-group1">
+                        <label for="kq">Kết quả: </label>
+                        <input type="text" id="kq" name="kq" placeholder="" value="" readonly>
+                    </div>
+
+                </div>
+
+
+                <!-- <div id="changePassword" class="detail-section" style="display:none;">
+                    <div class="form-group1">
+                        <label for="current-password">Mật khẩu hiện tại:</label>
+                        <input type="password" id="current-password" name="current-password"
+                            placeholder="Nhập mật khẩu hiện tại">
+                    </div>
+                    <div class="form-group1">
+                        <label for="new-password">Mật khẩu mới:</label>
+                        <input type="password" id="new-password" name="new-password" placeholder="Nhập mật khẩu mới">
+                    </div>
+                    <div class="form-group1">
+                        <label for="confirm-password">Xác nhận mật khẩu mới:</label>
+                        <input type="password" id="confirm-password" name="confirm-password"
+                            placeholder="Xác nhận mật khẩu mới">
+                    </div>
+                    <div class="form-group1">
+                        <button type="submit" class="btn-submit">Đổi mật khẩu</button>
+                    </div>
+                </div> -->
+
+                <div id="changePassword" class="detail-section" style="display:none;">
+                    <form method="POST" action="/users/change-password" id="form-change-pass">
+                        <div class="form-group col-6 mx-auto">
+                            <h2 style="font-family:Arial, Helvetica, sans-serif">Đặt lại mật khẩu mới</h2>
+                            <div class="input-group mb-3 mt-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text fa fa-eye"></span>
+                                </div>
+                                <input type="password" class="form-control" id="form-current-password"
+                                    placeholder="Mật khẩu hiện tại" name="currentPass" required>
+                            </div>
+                            <div class="input-group mb-2">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text fa fa-lock"></span>
+                                </div>
+                                <input type="password" class="form-control" id="form-password"
+                                    placeholder="Mật khẩu mới" name="newPass" required>
+                            </div>
+                            <div class="input-group mb-2">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text fa fa-lock"></span>
+                                </div>
+                                <input type="password" class="form-control" id="form-confirm-password"
+                                    placeholder="Xác nhận lại mật khẩu" name="confirmPass" required>
+                            </div>
+                            <button type="submit" id="btn-change-password" class="mt-2 btn btn-primary"
+                                style="width: 100px;height: 50px;">Xác nhận</button>
+                        </div>
+                    </form>
+                    <script>
+                        document.getElementById("form-change-pass").addEventListener("submit", async function (event) {
+
+                            const currentPass = document.getElementById("form-current-password").value;
+                            const newPass = document.getElementById("form-password").value;
+                            const confirmPass = document.getElementById("form-confirm-password").value;
+
+                            // Kiểm tra mật khẩu hiện tại
+                            if (!currentPass) {
+                                event.preventDefault();
+                                alert('Vui lòng nhập mật khẩu hiện tại.');
+                                return;
+                            }
+
+                            // Kiểm tra xem mật khẩu mới và xác nhận mật khẩu có khớp không
+                            if (newPass !== confirmPass) {
+                                event.preventDefault();
+                                alert('Mật khẩu không khớp. Vui lòng thử lại.');
+                                return;
+                            }
+
+                            // Kiểm tra độ mạnh của mật khẩu
+                            const minLength = 8;
+                            const hasUpperCase = /[A-Z]/.test(newPass);
+                            const hasLowerCase = /[a-z]/.test(newPass);
+                            const hasNumbers = /[0-9]/.test(newPass);
+                            const hasSpecialChars = /[!@#$%^&*(),.?":{}|<>]/.test(newPass);
+
+                            if (newPass.length < minLength || !hasUpperCase || !hasLowerCase || !hasNumbers || !hasSpecialChars) {
+                                event.preventDefault();
+                                alert('Mật khẩu phải có ít nhất ' + minLength + ' ký tự, bao gồm chữ hoa, chữ thường, số và ký tự đặc biệt.');
+                                return;
+                            }
+
+                            // Xác thực mật khẩu hiện tại trước khi gửi form
+                            let response = await fetch("/check-current-password", {
+                                method: "POST",
+                                headers: {
+                                    "Content-Type": "application/json"
+                                },
+                                body: JSON.stringify({
+                                    currentPassword: currentPass
+                                })
+                            });
+
+                            let result = await response.json();
+
+                            if (result.correct) {
+                                // Nếu mật khẩu hiện tại đúng, tiến hành gửi form để cập nhật mật khẩu mới
+                                document.getElementById("error-message").innerHTML = ""; // Xóa thông báo lỗi nếu có
+                                document.getElementById("form-change-pass").submit(); // Gửi form
+                            } else {
+                                // Nếu mật khẩu hiện tại không đúng, hiển thị thông báo lỗi
+                                document.getElementById("error-message").innerHTML = "Current password is incorrect.";
+                            }
+                        });
+                    </script>
+
+
+                </div>
+
+
+            </div>
+        </div>
+        </div>
+    </section>
+
+    <footer class="sec-foot">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h4>Liên kết</h4>
+                    <ul class="footer-links">
+                        <li><a href="/">Trang chủ</a></li>
+                        <li><a href="/all-specializations">Chuyên khoa</a></li>
+                        <li><a href="/all-doctors">Bác sĩ</a></li>
+                        <li><a href="/all-posts">Bài đăng</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-6">
+                    <h4>Thông tin liên hệ</h4>
+                    <p>Địa chỉ: 64 Nguyễn Lương Bằng, Hòa Khánh, Liên Chiểu, Đà Nẵng</p>
+                    <p>Website: <a href="http://DoctorCare.com">http://DoctorCare.com</a></p>
+                    <p>Email: <a href="mailto:Doctorcare@gmail.com">Doctorcare@gmail.com</a></p>
+                    <p>Số điện thoại: 0123 456 789</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function showDetail(section) {
+            document.querySelectorAll('.detail-section').forEach(el => el.style.display = 'none');
+            document.getElementById(section).style.display = 'block';
+        }
+    </script>
+
+    <!-- Modal detail info patient-->
+    <div class="modal fade " tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true"
+        id="modalDetailPatient1">
+        <div class="modal-dialog mw-100 w-75" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Chi tiết lịch hẹn</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="form-group col-4">
+                            <label class="col-form-label text-label" for="patientName">Tên:</label>
+                            <input type="text" class="form-control" id="patientName" name="patientName" readonly>
+                        </div>
+                        <div class="form-group col-4">
+                            <label class="col-form-label text-label" for="patientPhone">Số điện thoại:</label>
+                            <input type="text" class="form-control" id="patientPhone" name="patientPhone" readonly>
+                        </div>
+                        <div class="form-group col-4">
+                            <label class="col-form-label text-label" for="patientEmail">Email:</label>
+                            <input type="email" class="form-control" id="patientEmail" name="patientEmail" readonly>
+                        </div>
+                        <div class="form-group col-2">
+                            <label class="col-form-label text-label" for="patientDate">Ngày:</label>
+                            <input type="text" class="form-control" id="patientDate" name="patientDate" readonly>
+                        </div>
+                        <div class="form-group col-2">
+                            <label class="col-form-label text-label" for="patientTime">Giờ:</label>
+                            <input type="text" class="form-control" id="patientTime" name="patientTime" readonly>
+                        </div>
+                        <div class="form-group col-4">
+                            <label class="col-form-label text-label" for="patientDoctor">Bác sĩ:</label>
+                            <input type="text" class="form-control" id="patientDoctor" name="patientDoctor" readonly>
+                        </div>
+                        <div class="form-group col-4">
+                            <label class="col-form-label text-label" for="patientReason">Lý do khám:</label>
+                            <input type="text" class="form-control" id="patientReason" name="patientReason" readonly>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="ml-3 btn btn-secondary" id="btn-cancel-patient"
+                        data-dismiss="modal">Đóng</button>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <!-- Modal cancel booking for user-->
+    <div class="modal fade" id="modalCancelBooking" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Xác nhận hủy lịch hẹn</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="formCancelBooking">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="reasonCancel" id="inputDefaultReason"
+                                value="reason1" checked>
+                            <label class="form-check-label" for="exampleRadios1">
+                                Lịch hẹn không đúng
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="reasonCancel" id="exampleRadios2"
+                                value="reason2">
+                            <label class="form-check-label" for="exampleRadios2">
+                                Bệnh nhân hủy lịch
+                            </label>
+                        </div>
+                        <div class="form-check disabled">
+                            <input class="form-check-input" type="radio" name="reasonCancel" id="exampleRadios3"
+                                value="reason3">
+                            <label class="form-check-label" for="exampleRadios3">
+                                Lý do khác <input type="text" id="otherReason">
+                            </label>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+                    <button type="button" id="btnCancelBookingPatient" class="btn btn-primary">Xác nhận</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <!-- Modal  info result patient-->
+    <div class="modal fade " tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true"
+        id="modalResultlPatient">
+        <div class="modal-dialog mw-100 w-75" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Chi tiết lịch hẹn</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="form-group col-4">
+                            <label class="col-form-label text-label" for="patientName">Tên:</label>
+                            <input type="text" class="form-control" id="patientName1" name="patientName" readonly>
+                        </div>
+                        <div class="form-group col-4">
+                            <label class="col-form-label text-label" for="patientPhone">Số điện thoại:</label>
+                            <input type="text" class="form-control" id="patientPhone1" name="patientPhone" readonly>
+                        </div>
+                        <div class="form-group col-4">
+                            <label class="col-form-label text-label" for="patientEmail">Email:</label>
+                            <input type="email" class="form-control" id="patientEmail1" name="patientEmail" readonly>
+                        </div>
+                        <div class="form-group col-2">
+                            <label class="col-form-label text-label" for="patientDate">Ngày:</label>
+                            <input type="text" class="form-control" id="patientDate1" name="patientDate" readonly>
+                        </div>
+                        <div class="form-group col-2">
+                            <label class="col-form-label text-label" for="patientTime">Giờ:</label>
+                            <input type="text" class="form-control" id="patientTime1" name="patientTime" readonly>
+                        </div>
+                        <div class="form-group col-4">
+                            <label class="col-form-label text-label" for="patientDoctor">Bác sĩ:</label>
+                            <input type="text" class="form-control" id="patientDoctor1" name="patientDoctor" readonly>
+                        </div>
+                        <div class="form-group col-4">
+                            <label class="col-form-label text-label" for="patientReason">Lý do khám:</label>
+                            <input type="text" class="form-control" id="patientReason1" name="patientReason" readonly>
+                        </div>
+                        <div class="col-12">
+                            <label for="patientAddress">Kết quả khám:</label>
+                        </div>
+
+                        <div class="form-group col-6">
+                            <label class="col-form-label text-label" for="patientHistoryBreath">Kết quả chuẩn
+                                đoán:</label>
+                            <textarea class="form-control" name="patientHistoryBreath" id="patientHistoryBreath"
+                                readonly></textarea>
+
+                        </div>
+
+                        <div class="form-group col-6">
+                            <label class="col-form-label text-label" for="patientMoreInfo">Thông tin thêm:</label>
+                            <textarea class="form-control" name="patientMoreInfo" id="patientMoreInfo"
+                                readonly></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="ml-3 btn btn-secondary" id="btn-cancel-patient"
+                        data-dismiss="modal">Đóng</button>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal history cancel booking -->
+    <div class="modal fade" id="modalHistoryBooking1" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog  mw-100 w-75" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Lịch sử lịch hẹn đã hủy</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <fieldset disabled>
+                        <div class="modal-body">
+                            <div class="row">
+
+                                <div class="form-group col-4">
+                                    <label class="col-form-label text-label" for="patientDoctor">Người hủy:</label>
+                                    <input type="text" class="form-control" id="patientDoctor2" name="patientDoctor"
+                                        readonly>
+                                </div>
+                                <div class="form-group col-5">
+                                    <label class="col-form-label text-label" for="patientReason">Lý do hủy:</label>
+                                    <input type="text" class="form-control" id="patientReason2" name="patientReason"
+                                        readonly>
+                                </div>
+                                <div class="form-group col-4">
+                                    <label class="col-form-label text-label" for="patientTimeCancel">Đã hủy lúc:</label>
+                                    <input type="text" class="form-control" id="patientTimeCancel"
+                                        name="patientTimeCancel" readonly>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div id="contentHistory">
+
+                        </div>
+                    </fieldset>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="btn-view-history"
+                        data-dismiss="modal">Đóng</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            $('#input-search').on('input', function () {
+                let query = $(this).val();
+                if (query.length > 0) {
+                    $.ajax({
+                        method: 'POST',
+                        url: `${window.location.origin}/api/search`,
+                        data: {
+                            query: query
+                        },
+                        success: function (data) {
+                            let results = data.results;
+                            let htmlContent = '';
+                            results.forEach(result => {
+                                htmlContent += `<div class="search-result-item">${result.name}</div>`;
+                            });
+                            $('#show-info-search').html(htmlContent);
+                        },
+                        error: function (err) {
+                            console.log(err);
+                            $('#show-info-search').html('<div class="search-result-item">Không tìm thấy kết quả</div>');
+                        }
+                    });
+                } else {
+                    $('#show-info-search').html('');
+                }
+            });
+            $(".user-list-patients").addClass("active");
+        })
+    </script>
+    >>>>>>> userLast

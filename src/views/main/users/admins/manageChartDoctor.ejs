@@ -1,0 +1,93 @@
+<% extend("master.ejs") %>
+    <!-- Page Heading -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Thống kê</h1>
+    </div>
+
+    <!-- Content Row -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary" id="statisticTitle"></h6>
+        </div>
+        <div class="card-body">
+            <div class="">
+                <div id="chartContainer" style="height: 300px; width: 100%;"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            $("#listChart").addClass('active');
+            let m = new Date().getMonth() + 1;
+            $.ajax({
+                method: 'POST',
+                data: { month: m },
+                url: `${window.location.origin}/doctor/manage/create-chart`,
+                success: function (data) {
+                    let countNotSendForms = 0;
+                    let countSuccess = 0;
+                    let countFail = 0;
+                    let countWaitingConfirm = 0;
+                    let countWaitingExamine = 0;
+
+                    if (data.patients.count > 0) {
+                        data.patients.rows.forEach((patient) => {
+                            if (patient.isSentForms === false) {
+                                countNotSendForms++;
+                            }
+                            if (patient.statusId === 1) {
+                                countSuccess++;
+                            }
+                            if (patient.statusId === 2) {
+                                countFail++;
+                            }
+                            if (patient.statusId === 4) {
+                                countWaitingConfirm++;
+                            }
+                            if (patient.statusId === 3) {
+                                countWaitingExamine++;
+                            }
+                        });
+                    }
+
+                    let chart = new CanvasJS.Chart("chartContainer", {
+                        animationEnabled: true,
+                        theme: "light2",
+                        title: {
+                            text: "Thống kê"
+                        },
+                        axisY: {
+                            title: "Tổng số lịch hẹn",
+                            includeZero: false
+                        },
+                        data: [{
+                            type: "column",
+                            dataPoints: [
+                                { label: "Tổng lịch hẹn", y: data.patients.count || 0, color: "#4e73df " },
+                                { label: "Tổng lịch hẹn mới", y: countWaitingConfirm, color: "#f6b93b" },
+                                { label: "Tổng lịch hẹn đang chờ khám", y: countWaitingExamine, color: "#36b9cc " },
+                                { label: "Tổng lịch hẹn đã hoàn thành", y: countSuccess, color: "#1cc88a " },
+                                { label: "Tổng lịch đã hủy", y: countFail, color: "#e55039 " },
+
+                            ]
+                        }]
+                    });
+                    chart.render();
+                },
+                error: function (error) {
+                    alertify.error('Đã xảy ra lỗi khi lấy thông tin thống kê, vui lòng thử lại sau');
+                    console.log(error);
+                }
+            });
+        });
+    </script>
+
+    <script>
+        $(function () {
+            const now = new Date();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const year = now.getFullYear();
+            $('#statisticTitle').text(`Thống kê lịch hẹn khám trong tháng ${month}/${year}`);
+        });
+    </script>

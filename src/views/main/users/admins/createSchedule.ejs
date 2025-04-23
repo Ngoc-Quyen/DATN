@@ -1,0 +1,79 @@
+<% extend("master.ejs") %>
+    <!-- Page Heading -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Thêm lịch trình mới</h1>
+    </div>
+
+    <!-- Content Row -->
+    <div class="row">
+        <div class="col-10 mx-auto">
+            <form method="GET" action="/users/manage/schedule-doctor/create/<%= doctor_id  %>">
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="datepicker">Chọn ngày:</label>
+                        <input class="form-control" data-date-format="dd/mm/yyyy" id="datepicker" name="Datechon"
+                            value="<%= selectedDate %>">
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="doctor">Bác sĩ</label>
+                        <input type="text" id="doctor" class="form-control" disabled value="<%= doctor_name %>">
+                    </div>
+                </div>
+                <div class="mb-4">
+                    <span>Chọn khung thời gian:</span>
+                    <div id="lsBtnSchedule">
+
+                        <% for(let i=0; i < listTime.length; i++) { %>
+                            <% let isConflict=false; %>
+                                <% schedules.forEach(function(schedule) { %>
+                                    <% if (schedule.date===selectedDate && schedule.time===listTime[i].valueVi) { %>
+                                        <% isConflict=true; %>
+                                            <% } %>
+                                                <% }); %>
+                                                    <button id="<%= listTime[i].key %>" type="button"
+                                                        class="btn btn-light mr-3 my-3 btn-schedule <%= isConflict ? 'btn-danger' : '' %>"
+                                                        value="<%= listTime[i].valueVi %>" <%=isConflict ? 'disabled'
+                                                        : '' %>>
+                                                        <%= listTime[i].valueVi %>
+                                                    </button>
+                                                    <% } %>
+                    </div>
+                </div>
+                <button type="button" class="btn btn-primary mb-3" id="createNewScheduleDoctor"
+                    value="<%=doctor_id  %>">Lưu</button>
+                <button type="button" class="btn btn-success mb-3" id="selectAllScheduleDoctor">Tất cả</button>
+                <button type="button" class="btn btn-warning mb-3" id="cancelAllScheduleDoctor">Xóa</button>
+            </form>
+
+            <div>
+                <span>Đã chọn: (Không lưu)</span>
+                <div>
+                    <table class="table table-bordered" id="tableCreateSchedule" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th>Phạm vi</th>
+                                <th>Ngày</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Selected slots will be appended here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            $("#liSchedule").addClass('active');
+            $('#datepicker').datepicker({
+                format: 'dd/mm/yyyy',
+                autoclose: true
+            }).datepicker('update', '<%= selectedDate %>');
+
+            $('#datepicker').on('changeDate', function () {
+                $(this).closest('form').submit();
+            });
+        });
+    </script>

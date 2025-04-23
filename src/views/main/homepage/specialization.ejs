@@ -1,0 +1,364 @@
+<% extend("../app.ejs") %>
+    <section class="mt-0" style="background-color: #ABF3FD; height: 60px; display: flex; align-items: center;">
+        <div class="container-fluid">
+            <div class="row align-items-center">
+
+                <div class="col-md-2">
+                    <div class="homepage-logo mt-2">
+                        <img class="menu-nav" src="/images/background/DC.png" alt="img logo">
+                    </div>
+                </div>
+
+                <div class="col-md-7 d-none d-md-flex justify-content-between">
+                    <div class="d-flex flex-column">
+                        <button class="btn btn-design" onclick="redirectToHome()">Trang chủ</button>
+                    </div>
+                    <div class="d-flex flex-column">
+                        <button class="btn btn-warning text-black" onclick="redirectToSpecializations()">Chuyên
+                            khoa</button>
+                    </div>
+                    <div class="d-flex flex-column">
+                        <button class="btn btn-design" onclick="redirectToDoctors()">Bác sĩ</button>
+                    </div>
+                    <div class="header-search align-self-center justify-content-center">
+                        <i class="fa fa-search"></i>
+                        <label for="input-search"></label>
+                        <input id="input-search" placeholder="Tìm kiếm...">
+                        <div id="show-info-search" class="show-info-search"></div>
+                    </div>
+                    <script>
+                        function redirectToHome() {
+                            window.location.href = "/";
+                        }
+
+                        function redirectToSpecializations() {
+                            window.location.href = "/all-specializations";
+                        }
+
+                        function redirectToDoctors() {
+                            window.location.href = "/all-doctors %>";
+                        }
+                    </script>
+                </div>
+
+                <% if (user) { %>
+                    <div class="col-md-3 d-none d-md-flex justify-content-around align-self-center" id="loggedIn">
+                        <a href="/InfoUser">
+                            <img src="/images/background/User.png" alt="User logo" class="logo">
+                        </a>
+                        <!-- <a href="/InfoBooked" >
+                            <img src="/images/background/Lichhen.png" alt="Lichhen logo" class="logo">
+                        </a> -->
+                        <a href="https://www.facebook.com/profile.php?id=100011010698678" target="_blank">
+                            <img src="/images/background/Vector.png" alt="Contact logo" class="logo">
+                        </a>
+                        <a href="/logout">
+                            <img src="/images/background/logout.png" alt="Contact logo" class="logo">
+                        </a>
+                    </div>
+                    <% } else { %>
+                        <div class="col-md-3 mt-3 d-none d-md-flex justify-content-around align-self-center" id="notLoggedIn">
+
+                            <div class="d-flex flex-column">
+                                <a href="/login" class="btn btn-design1 ">Đăng nhập</a>
+                            </div>
+                            <div class="d-flex flex-column">
+                                <a href="/register" class="btn btn-design2 ">Đăng ký</a>
+                            </div>
+                            <a href="https://www.facebook.com/profile.php?id=100011010698678" target="_blank">
+                                <img src="/images/background/Vector.png" alt="Contact logo" class="logo">
+                            </a>
+                        </div>
+                        <% } %>
+            </div>
+        </div>
+    </section>
+    <section class="detail-info-specialization">
+        <div class="container">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12 mt-3">
+                        <a class="text-decoration-none" href="/">Trang chủ </a><span aria-hidden="true">&raquo;</span>
+                        <span style="text-transform: uppercase">
+                            <%= specialization.name %>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="content-specialization">
+        <div class="container">
+            <div class="container">
+                <div class="row">
+                    <div class="col-8 mt-4" id="specializationDoctor">
+                        <% doctors.forEach(function(doctor) { %>
+                            <div class="d-flex flex-row each-doctor-spe">
+                                <div class="left-content col-5 d-flex">
+                                    <div class="avatar-doctor-spe">
+                                        <img src="<%= doctor.User.avatar %>">
+                                    </div>
+                                    <div class="intro-doctor-spe">
+                                        <div class="doctor-name">
+                                            <%= doctor.User.name %>
+                                        </div>
+                                        <div class="doctor-address">
+                                            <%= doctor.User.address %>
+                                        </div>
+                                        <div><a href="/detail/doctor/<%= doctor.User.id %>">Xem thêm...</a></div>
+                                    </div>
+                                </div>
+                                <div class="right-content col-7" style="overflow:auto;">
+                                    <div>
+                                        <div class="row header-booking">
+                                            <label for="day-book-spe" class="label-booking">LỊCH HẸN</label>
+                                        </div>
+                                        <select id="day-book-spe" class="form-control doctor-schedule-spe" data-doctor="<%= doctor.User.id %>">
+                                            <% sevenDaySchedule.forEach(function(day) { %>
+                                                <option value="<%= day %>">
+                                                    <%= day %>
+                                                </option>
+                                                <% }) %>
+                                        </select>
+                                    </div>
+                                    <div id="div-schedule-<%= doctor.User.id %>" data-doctor-id="<%= doctor.User.id %>" class=" d-flex flex-row  flex-wrap text-decoration-none">
+                                        <% if(doctor.getDataValue('schedule').length===0){ %>
+                                            <div class="no-schedule">
+                                                Bác sĩ "
+                                                <%= doctor.User.name %>" không có cuộc hẹn vào ngày
+                                                    <b>
+                                                        <%= sevenDaySchedule[0] %>
+                                                    </b>. Vui lòng chọn ngày khác.
+                                            </div>
+                                            <% } %>
+
+                                                <% doctor.getDataValue('schedule').forEach( function(x, index) { %>
+                                                    <% if(x.getDataValue("isDisable")===false) { %>
+                                                        <div id="spe-btn-modal-<%= x.id %>" data-doctor-id="<%= doctor.User.id %>" data-date="<%= x.date %>" data-time="<%= x.time %>" class="text-decoration-none show-modal-at-clinic-page">
+                                                            <div class="doctor-time">
+                                                                <%= x.time %>
+                                                            </div>
+                                                        </div>
+                                                        <% } %>
+
+                                                            <% if( index===doctor.getDataValue('schedule').length - 1 &&
+                                                                x.getDataValue("isDisable")===true){ %>
+                                                                <div>
+                                                                    Không có lịch khám theo lịch trình trong khung thời gian hiện tại. Vui lòng chọn các lịch khám đã lên lịch tiếp theo.
+
+                                                                </div>
+                                                                <% } %>
+                                                                    <% }) %>
+
+                                    </div>
+                                    <div id="div-more-info-<%= doctor.User.id %>">
+                                        <% if(doctor.getDataValue('schedule').length> 0){ %>
+                                            <div class="d-flex flex-column">
+                                                <div>
+                                                    <span class="d-block mt-2"> Chọn <i class="fa fa-hand-o-up"
+                                                            aria-hidden="true"></i> và đăng ký tư vấn miễn phí</span>
+                                                </div>
+                                            </div>
+                                            <% } %>
+                                    </div>
+                                </div>
+                            </div>
+                            <% }) %>
+                    </div>
+                    <div class="col-4 mt-3">
+                        THÔNG TIN:
+                        <hr>
+                        <div> CHUYÊN KHOA :
+                            <%= specialization.name %>
+                        </div>
+                        <% if(specialization) { %>
+                            <div class="content-description-spe pt-2">
+                                <%- specialization.description %>
+                            </div>
+                            <% } %>
+                                <hr>
+                                <div class="spe-category">
+                                    CÁC CHUYÊN KHOA KHÁC:
+                                    <ul>
+                                        <% listSpecializations.forEach(function(spe) { %>
+                                            <% if(spe.id !==specialization.id ){ %>
+                                                <li class="text-decoration-none mt-2">
+                                                    <a class="text-decoration-none" href="/detail/specialization/<%= spe.id %>">
+                                                        <%= spe.name %>
+                                                    </a>
+                                                </li>
+                                                <% } %>
+                                                    <% }) %>
+                                    </ul>
+                                </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="modal fade " tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" id="modalBookingSpe">
+        <div class="modal-dialog mw-100 w-75" role="document">
+            <div class="modal-content">
+                <% if (user) { %>
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Đặt lịch hẹn khám bệnh</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-5" style="border-right: 1px solid #ccc;" id="infoDoctorSpe">
+                                <label class="text-label" style="padding-top: 7px">Thông tin bác sĩ:</label>
+                                <div class="d-flex flex-row">
+                                    <img class="avatar-doctor-modal" id="modal-avatar-doctor-spe">
+                                    <div class="ml-3">
+                                        <span class="d-block" id="doctor-name-spe"></span>
+                                        <div class="time-booking" id="time-patient-booking"></div>
+                                        <div class="time-booking" id="date-patient-booking"></div>
+                                    </div>
+                                </div>
+
+                                <div class="mt-4" id="doctor-address-spe">
+                                </div>
+                                <div class="mt-3">Hẹn lịch miễn phí</div>
+                            </div>
+                            <div class="col-7">
+                                <form id="form-patient-info-spe">
+                                    <div class="form-group">
+                                        <label for="patient-name" class="col-form-label text-label">Thông tin bệnh
+                                            nhân</label>
+                                        <br>
+                                        <label for="name" class="col-form-label">Họ và tên :</label>
+                                        <input type="text" class="form-control" id="name" name="name" placeholder="Tên">
+                                        <div class="invalid-feedback">
+                                            Tên bệnh nhân không được để trống
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="gender" id="selectMale" value="male" checked>
+                                            <label class="form-check-label" for="selectMale">Nam</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="gender" id="selectFemale" value="female">
+                                            <label class="form-check-label" for="selectFemale">Nữ</label>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="phone" class="col-form-label">Số điện thoại :</label>
+                                        <input type="text" class="form-control" id="phone" name="phone" placeholder="Số điện thoại">
+                                        <div class="invalid-feedback"> Số điện thoại không hợp lệ</div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="email" class="col-form-label">Email :</label>
+                                        <input type="text" class="form-control" id="email" name="email" placeholder="Email">
+                                        <div class="invalid-feedback">Email không hợp lệ</div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="year" class="col-form-label">Năm sinh:</label>
+                                        <input type="text" class="form-control" id="year" name="year" placeholder="Năm">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="address" class="col-form-label">Địa chỉ :</label>
+                                        <input type="text" class="form-control" id="address" name="address" placeholder="Địa chỉ">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="description" class="col-form-label">Lý do khám:</label>
+                                        <textarea class="form-control" id="description" name="description"></textarea>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="extraInfo" class="col-form-label">Thông tin bổ sung (tùy chọn)
+                                            <span id="viewExtraInfo" class="view viewExtraInfo">(Xem): </span> </label>
+                                        <div class="extraInfo d-none" id="divExtraInfo">
+                                            <textarea class="form-control" id="breath" placeholder="Ghi chú lịch sử bệnh án (nếu có)" name="breath"></textarea>
+                                            <div class="form-group">
+                                                <label class="mt-2 col-form-label w-100">Đã từng đặt khám tại (kể từ 15
+                                                    ngày
+                                                    qua):</label>
+
+                                                <% places.forEach(function(place) { %>
+                                                    <div class="form-check form-check-inline">
+                                                        <input class="form-check-input" type="radio" name="places" id="selectPlace<%= place.id %>" value="<%= place.id %>">
+                                                        <label class="form-check-label" for="selectPlace<%= place.id %>">
+                                                            <%= place.name %>
+                                                        </label>
+                                                    </div>
+                                                    <% }) %>
+                                                        <div class="form-check form-check-inline">
+                                                            <input class="form-check-input" type="radio" name="places" id="selectNone" value="none" checked>
+                                                            <label class="form-check-label" for="selectNone">Chưa từng
+                                                                đặt
+                                                                khám</label>
+                                                        </div>
+
+                                                        <div class="mt-3">
+                                                            <label>Các lần khám trước:</label>
+                                                            <div class="d-flex ">
+                                                                <label class="mr-2" for="oldForms">Đăng tải hình ảnh:
+                                                                </label>
+                                                                <input name="oldForms" id="oldForms" type="file" accept="image/*" multiple>
+                                                            </div>
+                                                            <textarea class="form-control mt-2" id="extraOldForms" placeholder="Thông tin bổ sung, nếu có " name="extraOldForms"></textarea>
+                                                        </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <div id="processLoading" class="process-loading d-none"> <span class="d-block mx-2">
+                                <strong>Đang xử
+                                    lý</strong></span>
+                            <div class="loader"></div>
+                        </div>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+                        <button type="button" class="btn btn-primary" id="btn-confirm-booking-spe">Xác nhận cuộc hẹn khám bệnh</button>
+                    </div>
+                    <% } else { %>
+                        <div class="modal-header text-center align-items-center">
+
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body text-center align-items-center">
+                            <h5 class="modal-title mx-auto" id="exampleModalLabel">Bạn chưa đăng nhập. Vui lòng đăng nhập..
+                            </h5>
+
+                        </div>
+                        <div class="modal-footer justify-content-center">
+                            <a href="/login" class="btn btn-primary">Đến trang đăng nhập</a>
+                        </div>
+
+                        <% } %>
+            </div>
+        </div>
+    </div>
+    <footer class="sec-foot">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h4>Liên kết</h6>
+                        <ul class="footer-links">
+                            <li><a href="/">Trang chủ</a></li>
+                            <li><a href="/all-specializations">Chuyên khoa</a></li>
+                            <li><a href="/all-doctors %>">Bác sĩ</a></li>
+                            <li><a href="/all-posts">Bài đăng</a></li>
+                        </ul>
+                </div>
+                <div class="col-md-6">
+                    <h4>Thông tin liên hệ</h6>
+                        <p>Địa chỉ: 64 Nguyễn Lương Bằng, Hòa Khánh, Liên Chiểu, Đà Nẵng</p>
+                        <p>Website: <a href="http://DoctorCare.com">http://DoctorCare.com</a></p>
+                        <p>Email: <a href="mailto:Doctorcare@gmail.com">Doctorcare@gmail.com</a></p>
+                        <p>Số điện thoại: 0123 456 789</p>
+                </div>
+            </div>
+        </div>
+    </footer>
