@@ -1,0 +1,76 @@
+<% extend("master.ejs") %>
+
+    <!-- Phần HTML/EJS -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Quản lý kế hoạch</h1>
+        <!-- <a href="/doctor/manage/schedule/create" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+        <i class="fas fa-plus-circle fa-sm text-white-50"></i> Thêm mới
+    </a> -->
+    </div>
+
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Kế hoạch</h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>Ngày</th>
+                            <th>Kế hoạch</th>
+                            <th>Hành động</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% sevenDaySchedule.forEach(function(day, index) { %>
+                            <tr>
+                                <td name="dayTime">
+                                    <%= day %>
+                                        <input type="text" name="dayTime" value="<%= day %>" style="display: none;">
+                                </td>
+                                <td>
+                                    <% const allTimeSlots=[ "8:00 - 8:15" , "8:20 - 8:35" , "8:40 - 8:55"
+                                        , "9:00 - 9:15" , "9:20 - 9:35" , "9:40 - 9:55" , "10:00 - 10:15"
+                                        , "10:20 - 10:35" , "10:40 - 10:55" , "13:00 - 13:15" , "13:20 - 13:35"
+                                        , "13:40 - 13:55" , "14:00 - 14:15" , "14:20 - 14:35" , "14:40 - 14:55"
+                                        , "15:00 - 15:15" , "15:20 - 15:35" , "15:40 - 15:55" , "16:00 - 16:15"
+                                        , "16:20 - 16:35" , "16:40 - 16:55" ]; %>
+                                        <% allTimeSlots.forEach(function(timeSlot) { %>
+                                            <% let booked=false; %>
+                                                <% schedules.forEach(function(schedule) { %>
+                                                    <% if (schedule.date===day && schedule.time===timeSlot) { %>
+                                                        <% booked=true; %>
+                                                            <% if(schedule.sumBooking !=="0" ) { %>
+                                                                <button class="btn btn-primary mr-3 mt-1 mb-3">
+                                                                    <%= timeSlot %>
+                                                                </button>
+                                                                <% } else { %>
+                                                                    <button
+                                                                        class="btn btn-outline-warning mr-3 mt-1 mb-3">
+                                                                        <%= timeSlot %>
+                                                                    </button>
+                                                                    <% } %>
+                                                                        <% } %>
+                                                                            <% }); %>
+                                                                                <% if (!booked) { %>
+                                                                                    <button
+                                                                                        class="btn btn-light mr-3 mt-1 mb-3">
+                                                                                        <%= timeSlot %>
+                                                                                    </button>
+                                                                                    <% } %>
+                                                                                        <% }) %>
+                                </td>
+                                <td class="">
+                                    <a class="delete-schedule-info" href="#" title="Delete" id="deleteSchedule"
+                                        data-schedule-day="<%= day %>">
+                                        <i class="fas fa-trash"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            <% }); %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>

@@ -1,0 +1,53 @@
+<% extend("master.ejs") %>
+    <!-- Page Heading -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Cập nhật chuyên khoa</h1>
+    </div>
+
+    <!-- Content Row -->
+    <div class="row">
+        <div class="col-10 mx-auto">
+            <form id="formUpdateDoctor" method="POST" action="/users/specialization/edit/<%= specialty.id %>">
+                <input type="text" class="form-control" id="id" name="id" placeholder="ID" value="<%= specialty.id %>"
+                    style="display: none;">
+                <div class="form-row">
+                    <div class="form-group col-6">
+                        <label for="nameDoctor">Tên</label>
+                        <input type="text" class="form-control" id="name" name="name" placeholder="Tên"
+                            value="<%= specialty.name %>">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="description">Mô tả</label>
+                    <textarea id="description" name="description" class="form-control"
+                        style="width: 100%; height: 200px;"> <%= specialty.description %>  </textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="image-clinic">Cập nhật hình ảnh</label>
+                    <input type="file" id="image-clinic" accept="image/*" onchange="loadFile(event)">
+                </div>
+
+                <div class="form-group">
+                    <% if(specialty.image) { %>
+                        <img class="img-preview-clinic-create" id="image-preview" src="<%= specialty.image %>">
+                        <% } else { %>
+                            <img class="img-preview-clinic-create d-none" id="image-preview">
+                            <% } %>
+                </div>
+
+                <button type="submit" class="btn btn-primary" id="btnUpdateDoctor"
+                    data-doctor-id="<%= specialty.id %>">Cập
+                    nhật</button>
+            </form>
+        </div>
+
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            $("div #collapseUtilities").addClass('show');
+            $("div #collapseUtilities").find($("#aManageSpecialization")).addClass("active");
+            $(".admin-list-posts").removeClass("active");
+        })
+    </script>

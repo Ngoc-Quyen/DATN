@@ -1,0 +1,148 @@
+<% extend("../app.ejs") %>
+    <script src="/js/user.js"></script>
+    <section class="mt-0" style="background-color: #ABF3FD; height: 60px; display: flex; align-items: center;">
+        <div class="container-fluid">
+            <div class="row align-items-center">
+
+                <div class="col-md-2">
+                    <div class="homepage-logo mt-2">
+                        <img class="menu-nav" src="/images/background/DC.png" alt="img logo">
+                    </div>
+                </div>
+
+                <div class="col-md-7 d-none d-md-flex justify-content-between">
+                    <div class="d-flex flex-column">
+                        <button class="btn btn-design" onclick="redirectToHome()">Trang chủ</button>
+                    </div>
+                    <div class="d-flex flex-column">
+                        <button class="btn btn-design" onclick="redirectToSpecializations()">Chuyên khoa</button>
+                    </div>
+                    <div class="d-flex flex-column">
+                        <button class="btn btn-design" onclick="redirectToDoctors()">Bác sĩ</button>
+                    </div>
+                    <div class="header-search align-self-center justify-content-center">
+                        <i class="fa fa-search"></i>
+                        <label for="input-search"></label>
+                        <input id="input-search" placeholder="Tìm kiếm...">
+                        <div id="show-info-search" class="show-info-search"></div>
+                    </div>
+                    <script>
+                        function redirectToHome() {
+                            window.location.href = "/";
+                        }
+
+                        function redirectToSpecializations() {
+                            window.location.href = "/all-specializations";
+                        }
+
+                        function redirectToDoctors() {
+                            window.location.href = "/all-doctors %>";
+                        }
+                    </script>
+                </div>
+
+                <% if (user) { %>
+                    <div class="col-md-3 d-none d-md-flex justify-content-around align-self-center" id="loggedIn">
+                        <a href="/InfoUser">
+                            <img src="../images/background/User.png" alt="User logo" class="logo">
+                        </a>
+                        <a href="https://www.facebook.com/profile.php?id=100011010698678" target="_blank">
+                            <img src="/images/background/Vector.png" alt="Contact logo" class="logo">
+                        </a>
+                        <a href="/logout">
+                            <img src="/images/background/logout.png" alt="Contact logo" class="logo">
+                        </a>
+                    </div>
+                    <% } else { %>
+                        <div class="col-md-3 mt-3 d-none d-md-flex justify-content-around align-self-center" id="notLoggedIn">
+                            <div class="d-flex flex-column">
+                                <a href="/login" class="btn btn-design1 ">Đăng nhập</a>
+                            </div>
+                            <div class="d-flex flex-column">
+                                <a href="/register" class="btn btn-design2 ">Đăng ký</a>
+                            </div>
+                            <a href="https://www.facebook.com/profile.php?id=100011010698678" target="_blank">
+                                <img src="/images/background/Vector.png" alt="Contact logo" class="logo">
+                            </a>
+                        </div>
+                        <% } %>
+
+            </div>
+        </div>
+    </section>
+    <section class="detail-info-specialization">
+        <div class="container">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12 mt-3">
+                        <a class="text-decoration-none" href="/">Trang chủ </a><span aria-hidden="true">&raquo;</span>
+                        <span style="text-transform: uppercase">
+                 Gửi phản hồi
+                    </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="detail-info-clinic mt-3">
+        <div class="container">
+            <div class="container">
+                <div class="row">
+                    <div class="col-8 mx-auto">
+                        <h2>Gửi phản hồi sau khi đi khám bác sĩ</h2>
+                        <hr>
+                        <div>
+                            Phản hồi của bạn sẽ giúp chúng tôi cải thiện hơn. Cảm ơn bạn đã sử dụng dịch vụ của chúng tôi. </div>
+                        <div class="mt-2">
+                            Hãy cho chúng tôi biết ý kiến của bạn sau ca khám của ​​bác sĩ:
+                            <%= doctor.name %>
+                        </div>
+                        <form id="formFeedBack">
+                            <div class="form-row mt-4">
+                                <div class="col">
+                                    <label for="feedbackName">Tên</label>
+                                    <input class="form-control" name="feedbackName" id="feedbackName" value="<%= doctor.getDataValue('patientName') %>" readonly>
+
+
+                                </div>
+                                <div class="col">
+                                    <label for="feedbackPhone">Số điện thoại</label>
+                                    <input class="form-control" name="feedbackPhone" id="feedbackPhone" type="text" value="<%= doctor.getDataValue('patientPhone') %>" readonly>
+                                </div>
+
+                            </div>
+                            <div class="form-group mt-2">
+                                <label for="feedbackContent">Nội dung</label>
+                                <textarea class="form-control" name="feedbackContent" id="feedbackContent" type="text"></textarea>
+                            </div>
+                            <div class="mb-4">
+                                <button type="button" class="btn btn-primary" data-doctor-id="<%= doctor.id %>" id="sendFeedback">Gửi</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <footer class="sec-foot">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h4>Liên kết</h6>
+                        <ul class="footer-links">
+                            <li><a href="/">Trang chủ</a></li>
+                            <li><a href="/all-specializations">Chuyên khoa</a></li>
+                            <li><a href="/all-doctors %>">Bác sĩ</a></li>
+                            <li><a href="/all-posts">Bài đăng</a></li>
+                        </ul>
+                </div>
+                <div class="col-md-6">
+                    <h4>Thông tin liên hệ</h6>
+                        <p>Địa chỉ: 64 Nguyễn Lương Bằng, Hòa Khánh, Liên Chiểu, Đà Nẵng</p>
+                        <p>Website: <a href="http://DoctorCare.com">http://DoctorCare.com</a></p>
+                        <p>Email: <a href="mailto:Doctorcare@gmail.com">Doctorcare@gmail.com</a></p>
+                        <p>Số điện thoại: 0123 456 789</p>
+                </div>
+            </div>
+        </div>
+    </footer>

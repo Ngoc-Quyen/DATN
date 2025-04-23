@@ -1,0 +1,88 @@
+<% extend("master.ejs") %>
+    <!-- Page Heading -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Thêm bệnh nhân</h1>
+    </div>
+
+    <!-- Content Row -->
+    <div class="row">
+        <div class="col-10 mx-auto">
+            <form id="formCreateNewPatient" method="POST" action="/users/manage/customer/create">
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="name">Họ và tên</label>
+                        <input type="text" class="form-control" id="name" name="name" placeholder="Tên">
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="phone">Số điện thoại</label>
+                        <input type="text" class="form-control" id="phone" name="phone" placeholder="Số điện thoại">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="email">Email</label>
+                        <input type="email" class="form-control" id="email" name="email" placeholder="Email">
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="password">Mật khẩu</label>
+                        <input type="password" class="form-control" id="password" name="password"
+                            placeholder="Mật khẩu">
+                    </div>
+                </div>
+
+                <div class="form-row">
+
+                    <div>
+                        <label class="col-form-label text-label" for="gender">Giới tính</label>
+                        <div class="form-control">
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="gender" id="male" value="M">
+                                <label class="form-check-label" for="male">Nam</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="gender" id="female" value="F">
+                                <label class="form-check-label" for="female">Nữ</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="gender" id="other" value="O">
+                                <label class="form-check-label" for="other">Khác</label>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="birthday">Sinh nhật</label>
+                        <input type="text" class="form-control" id="birthday" name="birthday"
+                            placeholder="Chọn ngày sinh nhật">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="address">Địa chỉ</label>
+                    <input type="text" class="form-control" id="address" name="address" placeholder="Địa chỉ">
+                </div>
+                <div class="form-group">
+                    <label for="description">Mô tả</label>
+                    <textarea id="description" class="form-control" name="description"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary" id="createNewPatient">Tạo</button>
+            </form>
+        </div>
+        <!-- Thêm một div để chứa thông báo -->
+        <div id="alertMessage" style="display: none;"></div>
+    </div>
+
+    <!-- Content Row -->
+    <script>
+        $(document).ready(function () {
+            $("div #featureManage").addClass('show');
+            $("div #featureManage").find($("#aManageCustomer")).addClass("active");
+            // Bắt sự kiện click của nút "Tạo"
+            $("#createNewPatient").click(function () {
+                // Thực hiện các xử lý khác (gọi API, ...)
+
+                // Hiển thị thông báo
+                $("#alertMessage").text("User created successfully!").fadeIn().delay(3000).fadeOut();
+            });
+        })
+    </script>

@@ -1,0 +1,34 @@
+<% extend("master.ejs") %>
+    <!-- Page Heading -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Thêm mới chuyên khoa</h1>
+    </div>
+
+    <!-- Content Row -->
+    <div class="row">
+        <div class="col-10 mx-auto">
+            <form id="formUpdateDoctor" method="POST" action="/users/manage/specialization/create">
+                <div class="form-row">
+                    <div class="form-group col-6">
+                        <label for="nameDoctor">Tên</label>
+                        <input type="text" class="form-control" id="name" name="name" placeholder="Tên">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="description">Mô tả</label>
+                    <textarea id="description" name="description" class="form-control">   </textarea>
+                </div>
+
+                <button type="submit" class="btn btn-primary" id="btnUpdateDoctor" data-doctor-id="">Thêm mới</button>
+            </form>
+        </div>
+
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            $("div #collapseUtilities").addClass('show');
+            $("div #collapseUtilities").find($("#aManageSpecialization")).addClass("active");
+            $(".admin-list-posts").removeClass("active");
+        })
+    </script>
