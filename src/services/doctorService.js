@@ -233,7 +233,6 @@ let getDoctorsForSpecialization = (id, date) => {
                     attributes: ['id', 'name', 'avatar', 'address', 'description'],
                 },
             });
-
             //get schedule each doctor
             await Promise.all(
                 doctors.map(async (doctor) => {
@@ -263,6 +262,7 @@ let getDoctorsForSpecialization = (id, date) => {
                     doctor.setDataValue('schedule', schedule);
                 })
             );
+
             resolve(doctors);
         } catch (e) {
             reject(e);

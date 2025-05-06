@@ -1,0 +1,11 @@
+[
+    { "id": "nghi_phep_nam", "text": "Nghỉ phép năm" },
+    { "id": "nghi_om", "text": "Nghỉ ốm" },
+    { "id": "nghi_viec_ca_nhan", "text": "Nghỉ việc cá nhân" },
+    { "id": "nghi_ket_hon", "text": "Nghỉ kết hôn" },
+    { "id": "nghi_tang_le", "text": "Nghỉ tang lễ" },
+    { "id": "nghi_thai_san", "text": "Nghỉ thai sản (cho nữ)" },
+    { "id": "nghi_vo_sinh", "text": "Nghỉ vợ sinh (cho nam)" },
+    { "id": "nghi_khong_luong", "text": "Nghỉ không lương" },
+    { "id": "other", "text": "Khác (vui lòng ghi rõ lý do)" }
+]

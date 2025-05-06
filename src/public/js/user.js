@@ -3,8 +3,8 @@ function handleChangeDatePicker(currentDate) {
         .datepicker()
         .on('changeDate', function (event) {
             let date = $('#datepicker').val();
-            let dateConvert = stringToDate(date, 'dd/MM/yyyy', '/');
-            let currentDateConvert = stringToDate(currentDate, 'dd/MM/yyyy', '/');
+            let dateConvert = stringToDate(date, 'dd/mm/yyyy', '/');
+            let currentDateConvert = stringToDate(currentDate, 'dd/mm/yyyy', '/');
             if (dateConvert >= currentDateConvert) {
                 //continue, refresh button
                 $('.btn-schedule').removeClass('btn-css').addClass('btn');

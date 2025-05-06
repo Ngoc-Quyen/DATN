@@ -1,0 +1,87 @@
+<% extend("master.ejs") %>
+  <!-- Page Heading -->
+  <div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">Lịch trình của Phòng khám<main></main>
+    </h1>
+  </div>
+
+  <!-- Content Row -->
+  <div class="row">
+    <div class="col-10 mx-auto">
+      <form method="GET" action="/users/manage/schedule-doctor/create-all">
+        <div class="form-row">
+          <div class="form-group col-md-3">
+            <label for="datepicker">Từ ngày:</label>
+            <input class="form-control" data-date-format="dd/mm/yyyy" id="datepicker" name="Datechon"
+              value="<%= startOfWeek %>">
+          </div>
+          <div class="form-group col-md-3">
+            <label for="datepicker">Đến ngày:</label>
+            <input class="form-control" data-date-format="dd/mm/yyyy" id="datepicker" name="Datechon"
+              value="<%= endOfWeek %>" readonly>
+          </div>
+          <!-- <button type="button" class="btn btn-primary mt-32 h-38" id="selectScheduleSystem"
+            value="<%=doctor_id  %>">Tìm</button> -->
+
+        </div>
+      </form>
+    </div>
+    <div class="card shadow mb-4">
+      <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">Lịch làm việc</h6>
+      </div>
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+            <thead>
+              <tr>
+                <th>TT</th>
+                <th>Chuyên khoa</th>
+                <% weekDays.forEach(function(day) { %>
+                  <th>
+                    <%= day.label %><br>
+                      <%= day.date %>
+                  </th>
+                  <% }) %>
+              </tr>
+            </thead>
+            <tbody>
+              <% specializations.forEach(function(specialization) { %>
+                <tr>
+                  <td>
+                    <%= specialization.id %>
+                  </td>
+                  <td>
+                    <%= specialization.name %>
+                  </td>
+                  <% weekDays.forEach(function(day) { %>
+                    <td><!-- Chèn lịch làm việc vào đây nếu có --></td>
+                    <% }) %>
+                </tr>
+                <% }) %>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script>
+    $(document).ready(function () {
+      $("#liSchedule").addClass('active');
+      $('#datepicker').datepicker({
+        format: 'dd/mm/yyyy',
+        autoclose: true
+      }).datepicker('update', '<%= startOfWeek %>');
+
+      $('#datepicker').on('changeDate', function () {
+        $(this).closest('form').submit();
+      });
+    });
+    $(document).ready(function () {
+      $("div #featureManage").addClass('show');
+      $("div #featureManage").find($("#aManageCalendar")).addClass("active");
+      $(".admin-list-posts").removeClass("active");
+    })
+  </script>

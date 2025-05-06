@@ -76,4 +76,9 @@
                 $(this).closest('form').submit();
             });
         });
+        $(document).ready(function () {
+            $("div #featureManage").addClass('show');
+            $("div #featureManage").find($("#aManageCalendar")).addClass("active");
+            $(".admin-list-posts").removeClass("active");
+        })
     </script>

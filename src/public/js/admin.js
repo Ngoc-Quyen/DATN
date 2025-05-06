@@ -891,30 +891,34 @@ let isHandlingChange = false;
 function handleChangeDatePicker() {
     $('#datepicker')
         .datepicker({
-            startDate: '+1d',
-            endDate: '+7d',
+            // startDate: '+1d',
+            // endDate: '+7d',
+            format: 'dd/mm/yyyy',
+            autoclose: true,
+            todayHighlight: true,
         })
         .on('changeDate', function (event) {
             if (!isHandlingChange) {
                 isHandlingChange = true;
 
                 let selectedDate = event.date;
+                $('#datepicker').val(formattedDate);
+                // $('.btn-schedule').removeClass('btn-css').addClass('btn');
+                // let tomorrow = new Date();
+                // tomorrow.setDate(tomorrow.getDate() + 1);
+                // tomorrow.setHours(0, 0, 0, 0);
 
-                let tomorrow = new Date();
-                tomorrow.setDate(tomorrow.getDate() + 1);
-                tomorrow.setHours(0, 0, 0, 0);
+                // let endDate = new Date();
+                // endDate.setDate(tomorrow.getDate() + 6);
+                // endDate.setHours(0, 0, 0, 0);
 
-                let endDate = new Date();
-                endDate.setDate(tomorrow.getDate() + 6);
-                endDate.setHours(0, 0, 0, 0);
-
-                if (selectedDate > tomorrow && selectedDate <= endDate) {
-                    $('.btn-schedule').removeClass('btn-css').addClass('btn');
-                } else {
-                    $('#datepicker').datepicker('setDate', tomorrow);
-                    let formattedDate = formatDate(tomorrow);
-                    alertify.error('Chỉ được chọn 6 ngày kế tiếp từ ngày ' + formattedDate);
-                }
+                // if (selectedDate > tomorrow && selectedDate <= endDate) {
+                //     $('.btn-schedule').removeClass('btn-css').addClass('btn');
+                // } else {
+                //     $('#datepicker').datepicker('setDate', tomorrow);
+                //     let formattedDate = formatDate(tomorrow);
+                //     alertify.error('Chỉ được chọn 6 ngày kế tiếp từ ngày ' + formattedDate);
+                // }
 
                 isHandlingChange = false;
             }
@@ -1776,6 +1780,24 @@ function updateDoctorTable(doctors) {
     });
 }
 
+function handleShowBookingTimeOff() {
+    $('#showBookingTimeOff').on('click', function (e) {
+        $.ajax({
+            method: 'GET',
+            url: `${window.location.origin}/new-get-time-off`,
+            data: { doctorId: $('#doctorId').val() },
+            success: function (data) {
+                $('#startDate').val(data.startDate);
+                $('#endDate').val(data.endDate);
+                $('#modalBookingTimeOff').modal('show');
+            },
+            error: function (err) {
+                console.log(error);
+                alertify.error('Đã xảy ra lỗi, vui lòng thử lại sau!');
+            },
+        });
+    });
+}
 // hàm show speciality item
 $(document).ready(function () {
     // Event delegation to handle click events for dynamically added elements
@@ -1847,7 +1869,20 @@ $(document).ready(function (e) {
         autoclose: true,
         todayHighlight: true,
     });
-
+    $('#startDate').datepicker({
+        format: 'dd/mm/yyyy',
+        weekStart: 1,
+        daysOfWeekHighlighted: '6,0',
+        autoclose: true,
+        todayHighlight: true,
+    });
+    $('#endDate').datepicker({
+        format: 'dd/mm/yyyy',
+        weekStart: 1,
+        daysOfWeekHighlighted: '6,0',
+        autoclose: true,
+        todayHighlight: true,
+    });
     loadFile(e);
     loadImageUserSetting(e);
     showModalSettingUser();
@@ -1896,4 +1931,5 @@ $(document).ready(function (e) {
     searchDoctorBy();
     updateCustomer();
     updateDoctorFinal();
+    handleShowBookingTimeOff();
 });

@@ -1454,3 +1454,11 @@ h3.show-title-post {
     width: 200px;
     height: 200px;
 }
+
+.mt-32 {
+    margin-top: 32px;
+}
+
+.h-38 {
+    height: 38px;
+}

@@ -8,10 +8,12 @@ import customerService from '../services/customerService';
 import doctorService from './../services/doctorService';
 import chatFBServie from './../services/chatFBService';
 import uploadImg from '../services/imgLoadFirebase';
+import helper from '../helper/client';
+
 import multer from 'multer';
 import moment from 'moment';
 import _ from 'lodash';
-
+moment.locale('vi');
 const statusNewId = 4;
 const statusPendingId = 3;
 const statusFailedId = 2;
@@ -792,6 +794,90 @@ let postCreateScheduleDoctor = async (req, res) => {
         message: 'success',
     });
 };
+
+const TIME_ZONE = 'Asia/Ho_Chi_Minh'; // Ví dụ: Múi giờ Việt Nam
+const REGULAR_SHIFT_REQUIRED = 2; // Số BS cần cho ca thường
+const ON_CALL_SHIFT_REQUIRED = 1; // Số BS cần cho ca trực
+const ON_CALL_MIN_PER_WEEK = 1;
+const ON_CALL_MAX_PER_WEEK = 2;
+let getCreateScheduleDoctorAll = async (req, res) => {
+    try {
+        // let doctor_id = req.params.id;
+        let doctor_id = 1;
+        let doctor = await doctorService.getDoctorForEditPage(doctor_id);
+        let selectedDate = req.query.Datechon;
+        let selectedMoment = selectedDate ? moment(selectedDate, 'DD/MM/YYYY') : moment();
+        let specializations = await homeService.getSpecializations();
+        // Lấy ngày đầu và cuối tuần (giữ nguyên là moment object)
+        let startOfWeekMoment = selectedMoment.clone().startOf('isoWeek');
+        let endOfWeekMoment = selectedMoment.clone().endOf('isoWeek');
+        // Tạo mảng ngày trong tuần
+        let weekDays = [];
+        for (let m = startOfWeekMoment.clone(); m.isSameOrBefore(endOfWeekMoment); m.add(1, 'day')) {
+            weekDays.push({
+                label: helper.capitalizeWords(m.format('dddd')), // Thứ Hai, Thứ Ba, ...
+                date: m.format('DD/MM/YYYY'),
+            });
+        }
+        // Sau đó mới format để gửi qua EJS nếu cần
+        let startOfWeek = startOfWeekMoment.format('DD/MM/YYYY');
+        let endOfWeek = endOfWeekMoment.format('DD/MM/YYYY');
+        let sevenDaySchedule = [];
+        for (let i = 0; i < 7; i++) {
+            let date = moment(new Date()).add(i, 'days').locale('vi').format('DD/MM/YYYY');
+            sevenDaySchedule.push(date);
+        }
+
+        let data = {
+            sevenDaySchedule: sevenDaySchedule,
+            doctorId: doctor_id,
+        };
+
+        let schedules = await doctorService.getDoctorSchedules(data);
+
+        schedules.forEach((x) => {
+            x.date = moment(x.date, 'DD/MM/YYYY').toDate();
+        });
+
+        schedules = _.sortBy(schedules, (x) => x.date);
+
+        schedules.forEach((x) => {
+            x.date = moment(x.date).format('DD/MM/YYYY');
+        });
+
+        let listTime = await userService.getAllCodeService('TIME');
+
+        let listDoctorByspecialtion = await userService._generateScheduleForSpecialization(1, 5, 2025);
+        listDoctorByspecialtion.forEach((doctor, index) => {
+            console.log(`Doctor #${index + 1}:`, doctor.name);
+        });
+
+        return res.render('main/users/admins/createScheduleAll.ejs', {
+            user: req.user,
+            listTime: listTime.data,
+            schedules: schedules,
+            sevenDaySchedule: sevenDaySchedule,
+            selectedDate: selectedDate,
+            doctor_name: doctor.name,
+            doctor_id: doctor_id,
+            specializations: specializations,
+            startOfWeek: startOfWeek,
+            endOfWeek: endOfWeek,
+            weekDays: weekDays,
+        });
+    } catch (e) {
+        console.log(e);
+        res.status(500).send('Server Error');
+    }
+};
+
+let postCreateScheduleDoctorAll = async (req, res) => {
+    let { timeRequest } = req.body;
+};
+
+let handleCreateScheduleAll = async (req, res) => {
+    let specializations = await homeService.getSpecializations();
+};
 module.exports = {
     getManageDoctor: getManageDoctor,
     getManageDoctorPaging: getManageDoctorPaging,
@@ -846,4 +932,6 @@ module.exports = {
 
     getCreateScheduleDoctor: getCreateScheduleDoctor,
     postCreateScheduleDoctor: postCreateScheduleDoctor,
+    getCreateScheduleDoctorAll: getCreateScheduleDoctorAll,
+    handleCreateScheduleAll: handleCreateScheduleAll,
 };

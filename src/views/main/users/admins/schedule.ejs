@@ -3,9 +3,10 @@
     <!-- Phần HTML/EJS -->
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
         <h1 class="h3 mb-0 text-gray-800">Quản lý kế hoạch</h1>
-        <!-- <a href="/doctor/manage/schedule/create" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
-        <i class="fas fa-plus-circle fa-sm text-white-50"></i> Thêm mới
-    </a> -->
+        <button type="button" class="btn btn-primary" id="showBookingTimeOff">
+            <i class="fas fa-calendar-alt"></i>
+            Xin nghỉ
+        </button>
     </div>
 
     <div class="card shadow mb-4">
@@ -71,6 +72,49 @@
                             <% }); %>
                     </tbody>
                 </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal booking time off -->
+    <div class="modal fade" id="modalBookingTimeOff" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog  mw-100 w-75" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="myLargeModalLabel">Thời gian xin nghỉ</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="doctorId" name="doctorId" value="<%= user.id %>">
+
+                    <div class="form-row">
+                        <div class="form-group col-4">
+                            <label>Họ tên:</label>
+                            <input type="text" class="form-control" id="doctorName" name="doctorName"
+                                placeholder="<%= user.name %>" value="<%= user.name %>" readonly>
+                        </div>
+                        <div class="form-group col-2">
+                            <label>Từ ngày:</label>
+                            <input type="text" class="form-control" id="startDate" name="startDate">
+                        </div>
+                        <div class="form-group col-2">
+                            <label>Đến ngày:</label>
+                            <input type="text" class="form-control" id="endDate" name="endDate">
+                        </div>
+                        <div class="form-group col-6">
+                            <label>Lí do</label>
+                            <textarea class="form-control" name="timeoffReason" id="timeoffReason"></textarea>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="btn-view-history"
+                        data-dismiss="modal">Gửi</button>
+                </div>
             </div>
         </div>
     </div>

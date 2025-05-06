@@ -142,6 +142,7 @@ let initRoutes = (app) => {
     router.post('/users/manage/customer?phone=${phone}', auth.checkLoggedIn, admin.getUserByPhone);
     router.get('/users/manage/schedule-doctor/create/:id', auth.checkLoggedIn, admin.getCreateScheduleDoctor);
     router.post('/users/manage/schedule-doctor/create/:id', auth.checkLoggedIn, admin.postCreateScheduleDoctor);
+    router.get('/users/manage/schedule-doctor/create-all/', auth.checkLoggedIn, admin.getCreateScheduleDoctorAll);
 
     router.get('/doctor/manage/schedule', doctor.getSchedule);
     router.get('/doctor/manage/schedule/create', auth.checkLoggedIn, doctor.getCreateSchedule);
@@ -245,6 +246,8 @@ let initRoutes = (app) => {
     router.post('/forgot-password/set-new-password', auth.postNewPassword);
     router.post('/users/change-password', customer.postChangePass);
     router.post('/check-current-password', customer.postCheckCurrentPass);
+
+    router.get('/new-get-time-off', auth.checkLoggedIn, doctor.getNewTimeOff);
     return app.use('/', router);
 };
 module.exports = initRoutes;

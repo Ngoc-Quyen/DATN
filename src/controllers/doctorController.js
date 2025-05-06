@@ -2,10 +2,13 @@ import doctorService from './../services/doctorService';
 import userService from './../services/userService';
 import homeService from './../services/homeService';
 import postService from '../services/postService';
+const path = require('path');
+const fs = require('fs');
 
 import _ from 'lodash';
 import moment from 'moment';
 import multer from 'multer';
+import { format } from 'date-fns';
 
 const MAX_BOOKING = 1;
 
@@ -297,7 +300,32 @@ let getEditPost = async (req, res) => {
         console.log(e);
     }
 };
+const filePath = path.join(__dirname, '../helper/data/timeoffReasons.json');
+let getNewTimeOff = async (req, res) => {
+    try {
+        let reasonList = [];
+        try {
+            const reasonListRaw = await fs.readFileSync(filePath, 'utf-8');
+            reasonList = JSON.parse(reasonListRaw);
+        } catch (error) {
+            console.error('Lỗi khi đọc hoặc phân tích tệp reasons_vi.json:', error);
+            // Cung cấp một danh sách dự phòng hoặc thông báo lỗi cụ thể
+            reasonList = [{ id: 'loi_tai_ly_do', text: 'Lỗi tải lý do (vui lòng liên hệ quản trị viên)' }];
+        }
+        let today = format(new Date(), 'dd/mm/yyyy');
 
+        console.log('today in doctorController: ', today);
+        const responseData = {
+            startDate: today,
+            endDate: today,
+            reasons: reasonList,
+        };
+        return res.status(200).json(responseData);
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json(error);
+    }
+};
 module.exports = {
     getSchedule: getSchedule,
     getCreateSchedule: getCreateSchedule,
@@ -312,4 +340,5 @@ module.exports = {
     deleteScheduleDoctorByDate: deleteScheduleDoctorByDate,
     getScheduleByDate: getScheduleByDate,
     getEditPost: getEditPost,
+    getNewTimeOff: getNewTimeOff,
 };
