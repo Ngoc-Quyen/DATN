@@ -248,6 +248,10 @@ let initRoutes = (app) => {
     router.post('/check-current-password', customer.postCheckCurrentPass);
 
     router.get('/new-get-time-off', auth.checkLoggedIn, doctor.getNewTimeOff);
+    router.post('/new-post-time-off', auth.checkLoggedIn, doctor.postNewTimeOff);
+    router.get('/doctor/manage/schedule/timeoff', doctor.getScheduleTimeOff);
+    router.post('/create-schedule-all', auth.checkLoggedIn, admin.handleCreateScheduleAll);
+
     return app.use('/', router);
 };
 module.exports = initRoutes;

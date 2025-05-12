@@ -80,7 +80,7 @@
     <div class="modal fade" id="modalBookingTimeOff" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
         aria-hidden="true">
         <div class="modal-dialog  mw-100 w-75" role="document">
-            <div class="modal-content">
+            <form class="modal-content" id="formBookingTimeOff">
                 <div class="modal-header">
                     <h5 class="modal-title" id="myLargeModalLabel">Thời gian xin nghỉ</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -104,17 +104,22 @@
                             <label>Đến ngày:</label>
                             <input type="text" class="form-control" id="endDate" name="endDate">
                         </div>
-                        <div class="form-group col-6">
+                        <div class="form-group col-4">
                             <label>Lí do</label>
-                            <textarea class="form-control" name="timeoffReason" id="timeoffReason"></textarea>
+                            <select class="form-control" id="timeoffReasonSelect" name="timeoffReasonSelect">
+                            </select>
+                        </div>
+                        <div class="form-group col-12" id="otherReasonContainer" style="display: none;">
+                            <label for="timeoffReasonOther">Lí do khác (vui lòng ghi rõ)</label>
+                            <input type="text" class="form-control" id="timeoffReasonOther" name="timeoffReasonOther">
                         </div>
                     </div>
 
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" id="btn-view-history"
+                    <button type="button" class="btn btn-primary" id="btn-booking-time-off"
                         data-dismiss="modal">Gửi</button>
                 </div>
-            </div>
+            </form>
         </div>
     </div>

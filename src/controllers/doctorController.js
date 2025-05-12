@@ -31,15 +31,6 @@ let getSchedule = async (req, res) => {
             let date = moment(new Date()).add(i, 'days').locale('vi').format('DD/MM/YYYY');
             sevenDaySchedule.push(date);
         }
-        // let today = moment().startOf('day'); // Lấy ngày hiện tại và đặt thời gian về 00:00:00
-        // let currentDayOfWeek = today.day(); // Lấy số thứ tự của ngày trong tuần (0: Chủ Nhật, 1: Thứ Hai, ..., 6: Thứ Bảy)
-
-        // // Tính toán lần lượt 7 ngày trong tuần bắt đầu từ ngày hiện tại
-        // for (let i = 1; i < 8; i++) {
-        //     let date = today.clone().add(i - currentDayOfWeek, 'days'); // Trừ đi số ngày hiện tại so với ngày đầu tuần (thứ Hai)
-        //     let formattedDate = date.locale('vi').format('DD/MM/YYYY'); // Định dạng ngày theo định dạng 'DD/MM/YYYY'
-        //     sevenDaySchedule.push(formattedDate); // Thêm ngày vào mảng
-        // }
         let data = {
             sevenDaySchedule: sevenDaySchedule,
             doctorId: req.user.id,
@@ -300,7 +291,7 @@ let getEditPost = async (req, res) => {
         console.log(e);
     }
 };
-const filePath = path.join(__dirname, '../helper/data/timeoffReasons.json');
+const filePath = path.join(__dirname, '../helper/data/timeoffReason.json');
 let getNewTimeOff = async (req, res) => {
     try {
         let reasonList = [];
@@ -308,22 +299,59 @@ let getNewTimeOff = async (req, res) => {
             const reasonListRaw = await fs.readFileSync(filePath, 'utf-8');
             reasonList = JSON.parse(reasonListRaw);
         } catch (error) {
-            console.error('Lỗi khi đọc hoặc phân tích tệp reasons_vi.json:', error);
+            console.error('Lỗi khi đọc hoặc phân tích tệp timeoffReason.json:', error);
             // Cung cấp một danh sách dự phòng hoặc thông báo lỗi cụ thể
             reasonList = [{ id: 'loi_tai_ly_do', text: 'Lỗi tải lý do (vui lòng liên hệ quản trị viên)' }];
         }
-        let today = format(new Date(), 'dd/mm/yyyy');
-
-        console.log('today in doctorController: ', today);
+        let today = new Date();
+        let todayStr = format(today, 'dd/MM/yyyy');
         const responseData = {
-            startDate: today,
-            endDate: today,
-            reasons: reasonList,
+            startDate: todayStr,
+            endDate: todayStr,
+            reasonList: reasonList,
         };
         return res.status(200).json(responseData);
     } catch (error) {
         console.log(error);
         return res.status(500).json(error);
+    }
+};
+let postNewTimeOff = async (req, res) => {
+    try {
+        let doctorId = req.user.id;
+        let dataByBody = req.body;
+        let result = await doctorService.createTimeOff(doctorId, dataByBody);
+        result.timeOff.startDate = moment(result.timeOff.startDate).format('DD/MM/YYYY');
+        result.timeOff.endDate = moment(result.timeOff.endDate).format('DD/MM/YYYY');
+
+        if (result.errCode === 0) {
+            return res.status(200).json({
+                message: 'success',
+                data: result.timeOff,
+            });
+        } else {
+            return res.status(200).json({
+                message: result.errMessage,
+            });
+        }
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json(error);
+    }
+};
+let getScheduleTimeOff = async (req, res) => {
+    try {
+        let doctorId = req.user.id;
+        let timeOffs = await doctorService.getTimeOffByDoctorId(doctorId);
+        if (!timeOffs || timeOffs.length === 0) {
+            timeOffs = [];
+        }
+        return res.render('main/users/admins/timeoffDoctor.ejs', {
+            user: req.user,
+            timeOffs: timeOffs,
+        });
+    } catch (e) {
+        console.log(e);
     }
 };
 module.exports = {
@@ -341,4 +369,6 @@ module.exports = {
     getScheduleByDate: getScheduleByDate,
     getEditPost: getEditPost,
     getNewTimeOff: getNewTimeOff,
+    postNewTimeOff: postNewTimeOff,
+    getScheduleTimeOff: getScheduleTimeOff,
 };

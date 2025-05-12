@@ -3,7 +3,7 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
     async up(queryInterface, Sequelize) {
-        return queryInterface.createTable('timeoff', {
+        return queryInterface.createTable('timeoffs', {
             id: {
                 allowNull: false,
                 autoIncrement: true,
@@ -46,6 +46,6 @@ module.exports = {
     },
 
     async down(queryInterface, Sequelize) {
-        return queryInterface.dropTable('timeoff');
+        return queryInterface.dropTable('timeoffs');
     },
 };

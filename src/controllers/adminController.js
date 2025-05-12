@@ -7,6 +7,7 @@ import specializationService from './../services/specializationService';
 import customerService from '../services/customerService';
 import doctorService from './../services/doctorService';
 import chatFBServie from './../services/chatFBService';
+import scheduleService from './../services/scheduleService';
 import uploadImg from '../services/imgLoadFirebase';
 import helper from '../helper/client';
 
@@ -805,7 +806,7 @@ let getCreateScheduleDoctorAll = async (req, res) => {
         // let doctor_id = req.params.id;
         let doctor_id = 1;
         let doctor = await doctorService.getDoctorForEditPage(doctor_id);
-        let selectedDate = req.query.Datechon;
+        let selectedDate = req.query.DatechonStart;
         let selectedMoment = selectedDate ? moment(selectedDate, 'DD/MM/YYYY') : moment();
         let specializations = await homeService.getSpecializations();
         // Lấy ngày đầu và cuối tuần (giữ nguyên là moment object)
@@ -846,12 +847,40 @@ let getCreateScheduleDoctorAll = async (req, res) => {
         });
 
         let listTime = await userService.getAllCodeService('TIME');
+        // let currentMonth = moment(selectedDate, 'DD/MM/YYYY').month(); // Lấy tháng từ selectedDate (moment().month() trả về từ 0-11)
+        // let currentYear = moment(selectedDate, 'DD/MM/YYYY').year(); // Lấy năm từ selectedDate
+        let currentMonth = moment().month() + 1; // Tháng hiện tại (moment().month() trả về từ 0-11)
+        let currentYear = moment().year(); // Năm hiện tại
+        // Nếu startOfWeek và endOfWeek khác tháng thì lấy dữ liệu cả 2 tháng
+        let listScheduleAll = [];
+        if (startOfWeekMoment.month() !== endOfWeekMoment.month()) {
+            let startMonth = startOfWeekMoment.month() + 1; // Tháng bắt đầu
+            let startYear = startOfWeekMoment.year();
+            let endMonth = endOfWeekMoment.month() + 1; // Tháng kết thúc
+            let endYear = endOfWeekMoment.year();
 
-        let listDoctorByspecialtion = await userService._generateScheduleForSpecialization(1, 5, 2025);
-        listDoctorByspecialtion.forEach((doctor, index) => {
-            console.log(`Doctor #${index + 1}:`, doctor.name);
+            // Lấy dữ liệu cho tháng bắt đầu
+            let schedulesStartMonth = await scheduleService.getAllScheduleByMonthYear(startMonth, startYear);
+            // Lấy dữ liệu cho tháng kết thúc
+            let schedulesEndMonth = await scheduleService.getAllScheduleByMonthYear(endMonth, endYear);
+
+            // Gộp dữ liệu từ cả hai tháng
+            listScheduleAll = [...schedulesStartMonth, ...schedulesEndMonth];
+        } else {
+            // Nếu cùng tháng, chỉ lấy dữ liệu của tháng đó
+            let currentMonth = startOfWeekMoment.month() + 1;
+            let currentYear = startOfWeekMoment.year();
+            listScheduleAll = await scheduleService.getAllScheduleByMonthYear(currentMonth, currentYear);
+        }
+        if (selectedDate) {
+            currentMonth = moment(selectedDate, 'DD/MM/YYYY').month() + 1; // Lấy tháng từ selectedDate
+            currentYear = moment(selectedDate, 'DD/MM/YYYY').year(); // Lấy năm từ selectedDate
+        }
+
+        // let listScheduleAll = await scheduleService.getAllScheduleByMonthYear(currentMonth, currentYear);
+        listScheduleAll.forEach((schedule) => {
+            schedule.date = moment(schedule.date).format('DD/MM/YYYY');
         });
-
         return res.render('main/users/admins/createScheduleAll.ejs', {
             user: req.user,
             listTime: listTime.data,
@@ -864,6 +893,9 @@ let getCreateScheduleDoctorAll = async (req, res) => {
             startOfWeek: startOfWeek,
             endOfWeek: endOfWeek,
             weekDays: weekDays,
+            listScheduleAll: listScheduleAll,
+            currentMonth: currentMonth,
+            currentYear: currentYear,
         });
     } catch (e) {
         console.log(e);
@@ -871,12 +903,20 @@ let getCreateScheduleDoctorAll = async (req, res) => {
     }
 };
 
-let postCreateScheduleDoctorAll = async (req, res) => {
-    let { timeRequest } = req.body;
-};
-
 let handleCreateScheduleAll = async (req, res) => {
+    let { month, year } = req.body;
     let specializations = await homeService.getSpecializations();
+    const specializationIds = specializations.map((spec) => spec.id);
+    const result = await scheduleService.generateScheduleForAllSpecializations(month, year, specializationIds);
+
+    const overallSuccess = result.every((res) => res.success);
+    const schedulesCreated = result.some((res) => res.data && res.data.length > 0);
+
+    // Trả về một thông báo tổng hợp hoặc chi tiết từng khoa
+    return res.status(overallSuccess && schedulesCreated ? 201 : 200).json({
+        message: 'Quá trình tạo lịch cho phòng khám đã hoàn tất.',
+        details: result, // Chi tiết kết quả cho từng khoa
+    });
 };
 module.exports = {
     getManageDoctor: getManageDoctor,

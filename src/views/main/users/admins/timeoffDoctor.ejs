@@ -1,0 +1,127 @@
+<% extend("master.ejs") %>
+
+  <!-- Phần HTML/EJS -->
+  <div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">Lịch</h1>
+    <button type="button" class="btn btn-primary" id="showBookingTimeOff">
+      <i class="fas fa-calendar-alt"></i>
+      Xin nghỉ
+    </button>
+  </div>
+
+  <div class="card shadow mb-4">
+    <div class="card-header py-3 d-flex justify-content-between align-items-center">
+      <h6 class="m-0 font-weight-bold text-primary">Kế hoạch</h6>
+      <div>
+        <select id="monthSelect" class="form-control d-inline-block w-auto">
+          <% for (let i=0; i < 12; i++) { %>
+            <option value="<%= i %>" <%=i===new Date().getMonth() ? "selected" : "" %>>
+              <%= new Date(0, i).toLocaleString("vi", { month: "long" }) %>
+            </option>
+            <% } %>
+        </select>
+        <select id="yearSelect" class="form-control d-inline-block w-auto">
+          <% for (let i=new Date().getFullYear() - 5; i <=new Date().getFullYear() + 5; i++) { %>
+            <option value="<%= i %>" <%=i===new Date().getFullYear() ? "selected" : "" %>>
+              <%= i %>
+            </option>
+            <% } %>
+        </select>
+        <button id="viewCalendar" class="btn btn-primary btn-sm">Xem</button>
+      </div>
+    </div>
+    <div class="card-body">
+      <div id="calendar"></div>
+      <h5>
+        <span id="currentMonthYear">
+          <%= ("0" + (new Date().getMonth() + 1)).slice(-2) %>/<%= new Date().getFullYear() %>
+        </span>
+      </h5>
+      <table class="table table-bordered text-center">
+        <thead class="thead-light">
+          <tr>
+            <th>Chủ Nhật</th>
+            <th>Thứ 2</th>
+            <th>Thứ 3</th>
+            <th>Thứ 4</th>
+            <th>Thứ 5</th>
+            <th>Thứ 6</th>
+            <th>Thứ 7</th>
+          </tr>
+        </thead>
+        <tbody id="calendarBody">
+          <% const currentDate=new Date(); const currentMonth=currentDate.getMonth(); const
+            currentYear=currentDate.getFullYear(); const daysInMonth=new Date(currentYear, currentMonth + 1,
+            0).getDate(); const firstDay=new Date(currentYear, currentMonth, 1).getDay(); let day=1; for (let i=0; i <
+            6; i++) { %>
+            <tr>
+              <% for (let j=0; j < 7; j++) { %>
+                <% if (i===0 && j < firstDay) { %>
+                  <td></td>
+                  <% } else if (day> daysInMonth) { %>
+                    <td></td>
+                    <% } else { %>
+                      <td
+                        class="font-weight-bold <%= day === currentDate.getDate() && currentMonth === currentDate.getMonth() && currentYear === currentDate.getFullYear() ? 'bg-primary text-white' : '' %>">
+                        <%= day++ %>
+                      </td>
+                      <% } %>
+                        <% } %>
+            </tr>
+            <% } %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+
+  </script>
+
+
+
+  <!-- Modal booking time off -->
+  <div class="modal fade" id="modalBookingTimeOff" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog  mw-100 w-75" role="document">
+      <form class="modal-content" id="formBookingTimeOff">
+        <div class="modal-header">
+          <h5 class="modal-title" id="myLargeModalLabel">Thời gian xin nghỉ</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" id="doctorId" name="doctorId" value="<%= user.id %>">
+
+          <div class="form-row">
+            <div class="form-group col-4">
+              <label>Họ tên:</label>
+              <input type="text" class="form-control" id="doctorName" name="doctorName" placeholder="<%= user.name %>"
+                value="<%= user.name %>" readonly>
+            </div>
+            <div class="form-group col-2">
+              <label>Từ ngày:</label>
+              <input type="text" class="form-control" id="startDate" name="startDate">
+            </div>
+            <div class="form-group col-2">
+              <label>Đến ngày:</label>
+              <input type="text" class="form-control" id="endDate" name="endDate">
+            </div>
+            <div class="form-group col-4">
+              <label>Lí do</label>
+              <select class="form-control" id="timeoffReasonSelect" name="timeoffReasonSelect">
+              </select>
+            </div>
+            <div class="form-group col-12" id="otherReasonContainer" style="display: none;">
+              <label for="timeoffReasonOther">Lí do khác (vui lòng ghi rõ)</label>
+              <input type="text" class="form-control" id="timeoffReasonOther" name="timeoffReasonOther">
+            </div>
+          </div>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" id="btn-booking-time-off" data-dismiss="modal">Gửi</button>
+        </div>
+      </form>
+    </div>
+  </div>

@@ -1,8 +1,8 @@
 'use strict';
 
 module.exports = (sequelize, DataTypes) => {
-    const TimeOff = sequelize.define(
-        'TimeOff',
+    const TimeOffs = sequelize.define(
+        'TimeOffs',
         {
             doctorId: DataTypes.INTEGER,
             startDate: DataTypes.DATEONLY,
@@ -15,10 +15,10 @@ module.exports = (sequelize, DataTypes) => {
         },
         {}
     );
-    TimeOff.associate = function (models) {
-        models.TimeOff.belongsTo(models.User, { foreignKey: 'doctorId' });
-        models.TimeOff.belongsTo(models.Status, { foreignKey: 'statusId' });
-        models.TimeOff.belongsTo(models.User, { foreignKey: 'approvedId' });
+    TimeOffs.associate = function (models) {
+        models.TimeOffs.belongsTo(models.User, { foreignKey: 'doctorId' });
+        models.TimeOffs.belongsTo(models.Status, { foreignKey: 'statusId' });
+        models.TimeOffs.belongsTo(models.User, { foreignKey: 'approverId' });
     };
-    return TimeOff;
+    return TimeOffs;
 };

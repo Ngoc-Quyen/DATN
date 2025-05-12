@@ -893,7 +893,7 @@ function handleChangeDatePicker() {
         .datepicker({
             // startDate: '+1d',
             // endDate: '+7d',
-            format: 'dd/mm/yyyy',
+            format: 'dd/MM/yyyy',
             autoclose: true,
             todayHighlight: true,
         })
@@ -1779,9 +1779,11 @@ function updateDoctorTable(doctors) {
         tbody.append(row);
     });
 }
-
 function handleShowBookingTimeOff() {
     $('#showBookingTimeOff').on('click', function (e) {
+        let $reasonSelect = $('#timeoffReasonSelect');
+        let $otherReasonContainer = $('#otherReasonContainer');
+        let $otherReasonInput = $('#timeoffReasonOther');
         $.ajax({
             method: 'GET',
             url: `${window.location.origin}/new-get-time-off`,
@@ -1789,15 +1791,134 @@ function handleShowBookingTimeOff() {
             success: function (data) {
                 $('#startDate').val(data.startDate);
                 $('#endDate').val(data.endDate);
+                let currentReasonList = data.reasonList;
+
+                // Populate the reasonSelect dropdown
+                $reasonSelect.empty();
+                currentReasonList.forEach(function (reason) {
+                    $reasonSelect.append(new Option(reason.text, reason.text));
+                });
+
+                $reasonSelect.on('change', function () {
+                    if ($(this).val() === 'Khác') {
+                        $otherReasonContainer.css('display', 'block');
+                    } else {
+                        $otherReasonContainer.css('display', 'none');
+                    }
+                });
+
                 $('#modalBookingTimeOff').modal('show');
             },
             error: function (err) {
+                console.log(err);
+                alertify.error('Đã xảy ra lỗi, vui lòng thử lại sau!');
+            },
+        });
+    });
+}
+
+function postBookingTimeOff() {
+    $('#btn-booking-time-off').on('click', function (e) {
+        e.preventDefault();
+        let dataRequest = {
+            doctorId: $('#doctorId').val(),
+            startDate: $('#startDate').val(),
+            endDate: $('#endDate').val(),
+            reason: $('#timeoffReasonSelect').val(),
+        };
+        if (dataRequest.reason === 'Khác') {
+            dataRequest.reason = $('#timeoffReasonOther').val();
+        }
+        $.ajax({
+            method: 'POST',
+            url: `${window.location.origin}/new-post-time-off`,
+            data: dataRequest,
+            success: function (data) {
+                alertify.success('Đã gửi yêu cầu nghỉ phép thành công!');
+                $('#modalBookingTimeOff').modal('hide');
+                setTimeout(function () {
+                    window.location.href = '/doctor/manage/schedule/timeoff';
+                }, 2000);
+            },
+            error: function (error) {
                 console.log(error);
                 alertify.error('Đã xảy ra lỗi, vui lòng thử lại sau!');
             },
         });
     });
 }
+
+function showCalendarDoctor() {
+    $('#viewCalendar').on('click', function () {
+        const month = parseInt($('#monthSelect').val());
+        const year = parseInt($('#yearSelect').val());
+        const calendarBody = $('#calendarBody');
+        const currentMonth = $('#currentMonth');
+        const currentYear = $('#currentYear');
+
+        currentMonth.text(new Date(year, month).toLocaleString('vi', { month: 'long' }));
+        currentYear.text(year);
+
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+        const firstDay = new Date(year, month, 1).getDay();
+        let day = 1;
+
+        calendarBody.empty();
+        for (let i = 0; i < 6; i++) {
+            const row = $('<tr></tr>');
+            for (let j = 0; j < 7; j++) {
+                const cell = $('<td></td>');
+                if (i === 0 && j < firstDay) {
+                    row.append(cell);
+                } else if (day > daysInMonth) {
+                    row.append(cell);
+                } else {
+                    cell.text(day).addClass('font-weight-bold');
+                    if (
+                        day === new Date().getDate() &&
+                        month === new Date().getMonth() &&
+                        year === new Date().getFullYear()
+                    ) {
+                        cell.addClass('bg-primary text-white');
+                    }
+                    day++;
+                    row.append(cell);
+                }
+            }
+            calendarBody.append(row);
+        }
+    });
+}
+
+function createScheduleAll() {
+    $('#createScheduleAll').on('click', function (e) {
+        e.preventDefault();
+        const selectedMonth = parseInt($('#monthPicker').val()); // lấy giá trị đã chọn từ select
+        const selectedYear = parseInt($('#yearPicker').val());
+
+        const dataRequest = {
+            year: selectedYear,
+            month: selectedMonth,
+        };
+
+        $.ajax({
+            method: 'POST',
+            url: `${window.location.origin}/create-schedule-all`,
+            data: dataRequest,
+            success: function (data) {
+                alertify.success(data.message);
+                setTimeout(function () {
+                    window.location.href = '/users/manage/schedule-doctor/create-all';
+                }, 2000);
+            },
+            error: function (error) {
+                console.log(error);
+                alertify.error('Đã xảy ra lỗi, vui lòng thử lại sau!');
+            },
+        });
+    });
+}
+
 // hàm show speciality item
 $(document).ready(function () {
     // Event delegation to handle click events for dynamically added elements
@@ -1883,6 +2004,7 @@ $(document).ready(function (e) {
         autoclose: true,
         todayHighlight: true,
     });
+
     loadFile(e);
     loadImageUserSetting(e);
     showModalSettingUser();
@@ -1932,4 +2054,7 @@ $(document).ready(function (e) {
     updateCustomer();
     updateDoctorFinal();
     handleShowBookingTimeOff();
+    postBookingTimeOff();
+    showCalendarDoctor();
+    createScheduleAll();
 });

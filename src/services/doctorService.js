@@ -9,6 +9,7 @@ import { transMailRemedy } from '../../lang/en';
 import { resolve } from 'path';
 import { reject } from 'bluebird';
 import helper from '../helper/client';
+import { da } from 'date-fns/locale';
 
 var Minizip = require('minizip-asm.js');
 var fs = require('fs');
@@ -752,6 +753,58 @@ let getInfoDoctorsByCriteria = (dulieu, loai) => {
     });
 };
 
+let createTimeOff = async (doctorId, dataRequest) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let doctor = await db.User.findOne({
+                where: { id: doctorId },
+            });
+            if (!doctor) {
+                resolve({
+                    errCode: 1,
+                    errMessage: 'Doctor not found!',
+                });
+                return;
+            }
+            console.log(': ', dataRequest);
+            let startDate = moment(dataRequest.startDate, 'DD/MM/YYYY').format('YYYY-MM-DD');
+            let endDate = moment(dataRequest.endDate, 'DD/MM/YYYY').format('YYYY-MM-DD');
+            let timeOff = await db.TimeOffs.create({
+                doctorId: doctorId,
+                startDate: startDate,
+                endDate: endDate,
+                reason: dataRequest.reason,
+                statusId: 3, // Default statusId
+                approverId: null, // ApproverId is empty
+                createdAt: new Date(),
+                updatedAt: new Date(),
+            });
+
+            resolve({
+                errCode: 0,
+                errMessage: 'Time off created successfully!',
+                timeOff,
+            });
+        } catch (error) {
+            reject(error);
+        }
+    });
+};
+let getTimeOffByDoctorId = async (doctorId) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let timeOffs = await db.TimeOffs.findAll({
+                where: { doctorId: doctorId },
+                attributes: ['startDate', 'endDate', 'reason', 'statusId'],
+                order: [['createdAt', 'DESC']],
+            });
+            resolve(timeOffs);
+        } catch (error) {
+            reject(error);
+        }
+    });
+};
+
 module.exports = {
     getDoctorForFeedbackPage: getDoctorForFeedbackPage,
     getDoctorWithSchedule: getDoctorWithSchedule,
@@ -777,4 +830,6 @@ module.exports = {
     getInfoDoctorsByCriteria: getInfoDoctorsByCriteria,
 
     updateProfile: updateProfile,
+    createTimeOff: createTimeOff,
+    getTimeOffByDoctorId: getTimeOffByDoctorId,
 };

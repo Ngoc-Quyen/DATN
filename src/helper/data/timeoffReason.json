@@ -7,5 +7,5 @@
     { "id": "nghi_thai_san", "text": "Nghỉ thai sản (cho nữ)" },
     { "id": "nghi_vo_sinh", "text": "Nghỉ vợ sinh (cho nam)" },
     { "id": "nghi_khong_luong", "text": "Nghỉ không lương" },
-    { "id": "other", "text": "Khác (vui lòng ghi rõ lý do)" }
+    { "id": "other", "text": "Khác" }
 ]

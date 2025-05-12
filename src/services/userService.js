@@ -810,58 +810,7 @@ let updateInfor = async (data) => {
 let _generateScheduleForSpecialization = (specializationId, month, year, options = {}) => {
     return new Promise(async (resolve, reject) => {
         try {
-            let { transaction, approveStatusId } = options;
-            let monthIndex = month - 1;
-            let startDate = startOfMonth(new Date(year, monthIndex));
-            let endDate = endOfMonth(new Date(year, monthIndex));
-            let startDateStr = format(startDate, 'dd/mm/yyyy');
-            let endDateStr = format(endDate, 'dd/mm/yyyy');
-            let daysInMonth = eachDayOfInterval({ start: startDate, end: endDate });
-
-            let doctorsUsers = await db.Doctor_User.findAll({
-                where: { specializationId: specializationId },
-                attributes: ['specializationId'],
-                include: {
-                    model: db.User,
-                    attributes: ['id', 'name', 'avatar', 'address', 'description'],
-                },
-            });
-            let doctors = doctorsUsers.map((doctor) => doctor.User);
-            if (!doctors || doctors.length === 0) {
-                console.log(`Khoa ID ${specializationId} không có bác sĩ nào. Bỏ qua.`);
-                return []; // Không có bác sĩ thì không xếp lịch
-            }
-            let doctorIds = doctors.map((doctor) => doctor.id);
-
-            // --- 2. Khởi tạo Cấu trúc Lịch và Thống kê ---
-            let schedule = {}; // { 'YYYY-MM-DD': { regular: [], onCall: null } }
-            let doctorStarts = doctors.reduce((acc, doc) => {
-                acc[doc.id] = { regularShifts: 0, onCallShifts: {} };
-                return acc;
-            }, {});
-            daysInMonth.forEach((day) => {
-                let dateStr = format(day, 'dd/mm/yyyy');
-                schedule[dateStr] = { regular: [], onCall: null };
-            });
-
-            // --- 3. Thuật toán Xếp lịch (Heuristic) ---
-            for (let day of daysInMonth) {
-                let dateStr = format(day, 'dd/mm/yyyy');
-                let dayOfWeek = getDay(day); // 0=Sun, 1=Mon, ..., 6=Sat
-                if (dayOfWeek >= 1 && dayOfWeek <= 5 && shiftConfig.onCallRequired > 0) {
-                    let assignedCount = 0;
-                    let potentialCandidates = [];
-
-                    for (let doctor of doctors) {
-                        // có cần kiểm trả nghỉ phép không?
-                        let nextDateStr = format(addDays(day, 1), 'dd/mm/yyyy');
-                    }
-                }
-            }
-            resolve(doctors);
-        } catch (error) {
-            reject(error);
-        }
+        } catch (error) {}
     });
 };
 let handleCreateScheduleAll = async () => {

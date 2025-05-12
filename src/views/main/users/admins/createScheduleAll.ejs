@@ -10,19 +10,40 @@
     <div class="col-10 mx-auto">
       <form method="GET" action="/users/manage/schedule-doctor/create-all">
         <div class="form-row">
-          <div class="form-group col-md-3">
+          <div class="form-group col-md-2">
             <label for="datepicker">Từ ngày:</label>
-            <input class="form-control" data-date-format="dd/mm/yyyy" id="datepicker" name="Datechon"
+            <input class="form-control" data-date-format="dd/MM/yyyy" id="datepicker" name="DatechonStart"
               value="<%= startOfWeek %>">
           </div>
-          <div class="form-group col-md-3">
+          <div class="form-group col-md-2">
             <label for="datepicker">Đến ngày:</label>
-            <input class="form-control" data-date-format="dd/mm/yyyy" id="datepicker" name="Datechon"
+            <input class="form-control" data-date-format="dd/MM/yyyy" id="datepicker" name="DatechonEnd"
               value="<%= endOfWeek %>" readonly>
           </div>
-          <!-- <button type="button" class="btn btn-primary mt-32 h-38" id="selectScheduleSystem"
-            value="<%=doctor_id  %>">Tìm</button> -->
 
+        </div>
+        <div class="form-row">
+          <div class="form-group col-2">
+            <label for="monthPicker">Tháng:</label>
+            <select class="form-control" id="monthPicker" name="month">
+              <% for (let i=1; i <=12; i++) { %>
+                <option value="<%= i %>" <%=i===currentMonth ? 'selected' : '' %>>
+                  <%= i %>
+                </option>
+                <% } %>
+            </select>
+          </div>
+          <div class="form-group col-2">
+            <label for="yearPicker">Năm:</label>
+            <select class="form-control" id="yearPicker" name="year">
+              <% for (let i=currentYear - 5; i <=currentYear + 10; i++) { %>
+                <option value="<%= i %>" <%=i===currentYear ? 'selected' : '' %>>
+                  <%= i %>
+                </option>
+                <% } %>
+            </select>
+          </div>
+          <button type="submit" class="btn btn-primary mt-32 h-38" id="createScheduleAll">Tạo lịch</button>
         </div>
       </form>
     </div>
@@ -32,16 +53,24 @@
       </div>
       <div class="card-body">
         <div class="table-responsive">
-          <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+          <table class="table table-bordered text-center" id="dataTable" width="100%" cellspacing="0">
             <thead>
               <tr>
-                <th>TT</th>
-                <th>Chuyên khoa</th>
+                <th style="width: 5%;">TT</th>
+                <th style="width: 15%;">Chuyên khoa</th>
                 <% weekDays.forEach(function(day) { %>
-                  <th>
-                    <%= day.label %><br>
+                  <th colspan="2" style=`width: <%=100 / (weekDays.length * 2) %>%; text-align: center;`>
+                    <%= day.label.replace('Nam', 'Năm' ).replace('Sau', 'Sáu' ) %><br>
                       <%= day.date %>
                   </th>
+                  <% }) %>
+              </tr>
+              <tr>
+                <th></th>
+                <th></th>
+                <% weekDays.forEach(function(day) { const columnWidth=50 / weekDays.length; %>
+                  <th style=`width: <%=columnWidth %>%;`>Ca thường</th>
+                  <th style=`width: <%=columnWidth %>%;`>Ca trực</th>
                   <% }) %>
               </tr>
             </thead>
@@ -54,15 +83,31 @@
                   <td>
                     <%= specialization.name %>
                   </td>
-                  <% weekDays.forEach(function(day) { %>
-                    <td><!-- Chèn lịch làm việc vào đây nếu có --></td>
+                  <% weekDays.forEach(function(day) { const columnWidth=50 / weekDays.length; %>
+                    <td style=`width: <%=40 / weekDays.length %>%;`>
+                      <% const onCallDoctor=listScheduleAll.find(schedule=>
+                        schedule.date === day.date &&
+                        schedule.specializationId === specialization.id &&
+                        schedule.type === 'regular'
+                        );
+                        %>
+                        <%= onCallDoctor && onCallDoctor.User ? onCallDoctor.User.name : 'X' %>
+                    </td>
+                    <td style=`width: <%=40 / weekDays.length %>%;`>
+                      <% const regularDoctor=listScheduleAll.find(schedule=>
+                        schedule.date === day.date &&
+                        schedule.specializationId === specialization.id &&
+                        schedule.type === 'on-call'
+                        );
+                        %>
+                        <%= regularDoctor && regularDoctor.User ? regularDoctor.User.name : 'X' %>
+                    </td>
                     <% }) %>
                 </tr>
                 <% }) %>
             </tbody>
           </table>
         </div>
-
       </div>
     </div>
   </div>
@@ -71,7 +116,7 @@
     $(document).ready(function () {
       $("#liSchedule").addClass('active');
       $('#datepicker').datepicker({
-        format: 'dd/mm/yyyy',
+        format: 'dd/MM/yyyy',
         autoclose: true
       }).datepicker('update', '<%= startOfWeek %>');
 

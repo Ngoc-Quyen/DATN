@@ -24,7 +24,10 @@ module.exports = (sequelize, DataTypes) => {
             updatedAt: DataTypes.DATE,
             deletedAt: DataTypes.DATE,
         },
-        {}
+        {
+            tableName: 'AllSchedule', // Đặt tên bảng chính xác
+            freezeTableName: true, // Ngăn Sequelize tự động chuyển đổi tên bảng
+        }
     );
     AllSchedule.associate = function (models) {
         models.AllSchedule.belongsTo(models.User, { foreignKey: 'doctorId' });
