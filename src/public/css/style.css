@@ -1462,3 +1462,19 @@ h3.show-title-post {
 .h-38 {
     height: 38px;
 }
+
+.fs-5 {
+    font-size: 20px;
+}
+
+.custom-evenly {
+    justify-content: space-evenly;
+}
+
+.curor-pointer {
+    cursor: pointer;
+}
+
+.pointer-events-auto {
+    pointer-events: auto;
+}

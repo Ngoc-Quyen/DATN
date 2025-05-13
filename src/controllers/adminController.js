@@ -918,6 +918,39 @@ let handleCreateScheduleAll = async (req, res) => {
         details: result, // Chi tiết kết quả cho từng khoa
     });
 };
+
+let getReschedule = async (req, res) => {
+    let currentDate = moment().format('DD/MM/YYYY');
+    let date = '';
+    let canActive = false;
+    if (req.query.dateDoctorAppointment) {
+        date = req.query.dateDoctorAppointment;
+        if (date === currentDate) canActive = true;
+    } else {
+        //get currentDate
+        date = currentDate;
+        canActive = true;
+    }
+    let listTimeOff = await scheduleService.getAllScheduleTimeOffs();
+    return res.render('main/users/admins/manageScheduleTimeOff.ejs', {
+        user: req.user,
+        date: date,
+        listTimeOff: listTimeOff,
+    });
+};
+
+let getRescheduleOption = async (req, res) => {
+    let timeOffId = req.params.id;
+    let timeOff = await scheduleService.getScheduleTimeOffById(timeOffId);
+    console.log('timeOff: ', timeOff);
+    return;
+    // return res.render('main/users/admins/manageScheduleTimeOffOption.ejs', {
+    //     user: req.user,
+    //     date: date,
+    //     timeOff: timeOff,
+    // });
+};
+
 module.exports = {
     getManageDoctor: getManageDoctor,
     getManageDoctorPaging: getManageDoctorPaging,
@@ -974,4 +1007,7 @@ module.exports = {
     postCreateScheduleDoctor: postCreateScheduleDoctor,
     getCreateScheduleDoctorAll: getCreateScheduleDoctorAll,
     handleCreateScheduleAll: handleCreateScheduleAll,
+
+    getReschedule: getReschedule,
+    getRescheduleOption: getRescheduleOption,
 };

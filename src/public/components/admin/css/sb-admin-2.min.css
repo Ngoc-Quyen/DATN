@@ -291,7 +291,7 @@ button {
 [type=reset]:not(:disabled),
 [type=submit]:not(:disabled),
 button:not(:disabled) {
-  cursor: pointer
+  /* cursor: pointer */
 }
 
 [type=button]::-moz-focus-inner,

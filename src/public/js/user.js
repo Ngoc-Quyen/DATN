@@ -180,7 +180,6 @@ function showDetailBookend(patientId) {
             $('#patientTime1').val(data.patient.timeBooking);
             $('#patientReason1').val(data.patient.description);
             $('#patientAddress1').val(data.patient.address);
-            console.log('doctor.name: ', data.doctor.name);
             $('#patientDoctor1').val(data.doctor.name);
             if (data.ExtraInfo) {
                 $('#patientHistoryBreath').val(data.ExtraInfo.historyBreath);
@@ -654,7 +653,6 @@ function selectNotifiUpdate() {
     const userId = form.data('user-id');
     $('#formUpdateUser').on('submit', function (e) {
         e.preventDefault();
-        console.log('Ham nay duoc goi');
         $.ajax({
             url: `${window.location.origin}/users/edit/${userId}`,
             method: 'POST',

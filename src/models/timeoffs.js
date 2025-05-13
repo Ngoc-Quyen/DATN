@@ -16,9 +16,9 @@ module.exports = (sequelize, DataTypes) => {
         {}
     );
     TimeOffs.associate = function (models) {
-        models.TimeOffs.belongsTo(models.User, { foreignKey: 'doctorId' });
+        models.TimeOffs.belongsTo(models.User, { foreignKey: 'doctorId', as: 'Doctor' });
         models.TimeOffs.belongsTo(models.Status, { foreignKey: 'statusId' });
-        models.TimeOffs.belongsTo(models.User, { foreignKey: 'approverId' });
+        models.TimeOffs.belongsTo(models.User, { foreignKey: 'approverId', as: 'Approver' });
     };
     return TimeOffs;
 };

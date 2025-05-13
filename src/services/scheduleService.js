@@ -45,6 +45,11 @@ let generateMonthlySchedule = async (month, year, specializationId) => {
                     doctorId: doctorsInSpecialization.map((doc) => doc.User.id),
                     startDate: { [Op.lte]: dateFns.format(lastDayOfMonth, 'yyyy-MM-dd') },
                     endDate: { [Op.gte]: dateFns.format(firstDayOfMonth, 'yyyy-MM-dd') },
+                    statusId: {
+                        [Op.or]: [
+                            { [Op.eq]: 1 }, // Trạng thái 'SUCCESS'
+                        ],
+                    },
                 },
             });
             const approvedStatus = await db.Status.findOne({ where: { name: 'SUCCESS' } });
@@ -68,7 +73,6 @@ let generateMonthlySchedule = async (month, year, specializationId) => {
                 const dayOfWeek = dateFns.getDay(day);
 
                 if (dayOfWeek >= 1 && dayOfWeek <= 5) {
-                    // Đêm T2, T3, T4, T5, T6
                     for (let i = 0; i < ON_CALL_SHIFTS_PER_NIGHT_REQUIRED; i++) {
                         const candidates = [];
                         for (const doctor of doctorsInSpecialization) {
@@ -84,7 +88,7 @@ let generateMonthlySchedule = async (month, year, specializationId) => {
                             }
 
                             const isOnLeaveToday = await isDoctorOnLeave(doctor.User.id, dateStr, allLeaveRequests);
-                            const nextDayDate = dateFns.addDays(day, 1); // Sử dụng addDays đã import
+                            const nextDayDate = dateFns.addDays(day, 1);
                             const nextDayStr = dateFns.format(nextDayDate, 'yyyy-MM-dd');
                             const isOnLeaveTomorrow = await isDoctorOnLeave(
                                 doctor.User.id,
@@ -94,7 +98,6 @@ let generateMonthlySchedule = async (month, year, specializationId) => {
 
                             if (isOnLeaveToday || isOnLeaveTomorrow) continue;
 
-                            // Lọc các ca đã được gán cho bác sĩ này để kiểm tra ràng buộc
                             const doctorCurrentGeneratedShifts = generatedShifts.filter(
                                 (s) => s.doctorId === doctor.User.id
                             );
@@ -108,12 +111,12 @@ let generateMonthlySchedule = async (month, year, specializationId) => {
                             )
                                 continue;
 
-                            const weekNum = dateFns.getWeek(day, { weekStartsOn: 1 }); // Sử dụng getWeek đã import
+                            const weekNum = dateFns.getWeek(day, { weekStartsOn: 1 });
                             const currentOnCallInWeek = doctorShiftCounts[doctor.User.id].onCallWeekly[weekNum] || 0;
                             if (currentOnCallInWeek >= ON_CALL_SHIFTS_PER_WEEK_MAX) continue;
 
-                            // Kiểm tra nếu bác sĩ đã trực vào ngày trước đó
-                            const previousDayDate = dateFns.subDays(day, 3); // Lùi lại 3 ngày (thứ 6 -> thứ 2)
+                            // ❗️MỚI: Kiểm tra nếu bác sĩ đã trực vào ngày hôm trước (tránh 2 ca trực liên tiếp)
+                            const previousDayDate = dateFns.subDays(day, 1);
                             const previousDayStr = dateFns.format(previousDayDate, 'yyyy-MM-dd');
                             const wasOnCallPreviousDay = generatedShifts.some(
                                 (s) =>
@@ -136,7 +139,6 @@ let generateMonthlySchedule = async (month, year, specializationId) => {
                             ).reduce((a, b) => a + b, 0);
                             let priority = avgOnCall - totalOnCall;
 
-                            // Ưu tiên nếu trong tuần chưa đủ ca tối thiểu
                             if (currentOnCallInWeek < ON_CALL_SHIFTS_PER_WEEK_MIN) priority += 5;
 
                             candidates.push({ doctorId: doctor.User.id, priority });
@@ -162,11 +164,7 @@ let generateMonthlySchedule = async (month, year, specializationId) => {
                             doctorShiftCounts[assignedDoctorId].onCallWeekly[weekNum] =
                                 (doctorShiftCounts[assignedDoctorId].onCallWeekly[weekNum] || 0) + 1;
                         } else {
-                            // console.warn(
-                            //     `!!! Không tìm đủ bác sĩ trực đêm ${dateStr} (cần ${ON_CALL_SHIFTS_PER_NIGHT_REQUIRED}, vị trí ${
-                            //         i + 1
-                            //     })`
-                            // );
+                            // console.warn(`!!! Không tìm đủ bác sĩ trực đêm ${dateStr}`);
                         }
                     }
                 }
@@ -429,8 +427,168 @@ let getAllScheduleByMonthYear = async (month, year) => {
         }
     });
 };
+
+let getAllScheduleByDoctorId = async (doctorId) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let schedules = await db.AllSchedule.findAll({
+                where: {
+                    doctorId: doctorId,
+                },
+                attributes: ['id', 'doctorId', 'specializationId', 'statusId', 'type', 'date', 'startTime', 'endTime'],
+                order: [
+                    ['date', 'ASC'],
+                    ['startTime', 'ASC'],
+                ],
+                include: [
+                    {
+                        model: db.User,
+                        attributes: ['id', 'name', 'avatar'],
+                    },
+                    {
+                        model: db.Specialization,
+                        attributes: ['id', 'name'],
+                    },
+                    {
+                        model: db.Status,
+                        attributes: ['id', 'name'],
+                    },
+                ],
+            });
+
+            if (!schedules || schedules.length === 0) {
+                schedules = [];
+            }
+
+            resolve(schedules.map((schedule) => schedule.dataValues));
+        } catch (error) {
+            console.error('Error fetching schedules:', error);
+            reject(error);
+        }
+    });
+};
+
+let getAllScheduleTimeOffs = async () => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let timeOffs = await db.TimeOffs.findAll({
+                attributes: ['id', 'doctorId', 'startDate', 'endDate', 'reason', 'statusId'],
+                order: [['startDate', 'ASC']],
+                include: [
+                    {
+                        model: db.User,
+                        as: 'Doctor', // phải đúng với alias
+                        attributes: ['id', 'name'],
+                        include: [
+                            {
+                                model: db.Doctor_User,
+                                attributes: ['specializationId'],
+                                include: [
+                                    {
+                                        model: db.Specialization,
+                                        attributes: ['id', 'name'],
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                    {
+                        model: db.Status,
+                        attributes: ['id', 'name'],
+                    },
+                ],
+            });
+            // Xử lý dữ liệu để định dạng lại nếu cần
+            timeOffs = timeOffs.map((timeOff) => {
+                const doctorUser = timeOff.Doctor?.Doctor_User || {};
+                return {
+                    id: timeOff.id,
+                    doctorId: timeOff.doctorId,
+                    startDate: timeOff.startDate,
+                    endDate: timeOff.endDate,
+                    reason: timeOff.reason,
+                    statusId: timeOff.statusId,
+                    statusName: timeOff.Status?.name || 'Unknown',
+                    doctorName: timeOff.Doctor?.name || 'Unknown',
+                    specializationId: doctorUser.Specialization?.id || null,
+                    specializationName: doctorUser.Specialization?.name || 'Unknown',
+                };
+            });
+
+            if (!timeOffs || timeOffs.length === 0) {
+                timeOffs = [];
+            }
+
+            resolve(timeOffs);
+        } catch (error) {
+            console.error('Error fetching time offs:', error);
+            reject(error);
+        }
+    });
+};
+
+let getScheduleTimeOffById = async (id) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let timeOff = await db.TimeOffs.findOne({
+                where: {
+                    id: id,
+                },
+                attributes: ['id', 'doctorId', 'startDate', 'endDate', 'reason', 'statusId'],
+                order: [['startDate', 'ASC']],
+                include: [
+                    {
+                        model: db.User,
+                        as: 'Doctor', // phải đúng với alias
+                        attributes: ['id', 'name'],
+                        include: [
+                            {
+                                model: db.Doctor_User,
+                                attributes: ['specializationId'],
+                                include: [
+                                    {
+                                        model: db.Specialization,
+                                        attributes: ['id', 'name'],
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                    {
+                        model: db.Status,
+                        attributes: ['id', 'name'],
+                    },
+                ],
+            });
+            // Xử lý dữ liệu để định dạng lại nếu cần
+            if (timeOff) {
+                const doctorUser = timeOff.Doctor?.Doctor_User || {};
+                timeOff = {
+                    id: timeOff.id,
+                    doctorId: timeOff.doctorId,
+                    startDate: timeOff.startDate,
+                    endDate: timeOff.endDate,
+                    reason: timeOff.reason,
+                    statusId: timeOff.statusId,
+                    statusName: timeOff.Status?.name || 'Unknown',
+                    doctorName: timeOff.Doctor?.name || 'Unknown',
+                    specializationId: doctorUser.Specialization?.id || null,
+                    specializationName: doctorUser.Specialization?.name || 'Unknown',
+                };
+            }
+
+            resolve(timeOff);
+        } catch (error) {
+            console.error('Error fetching time offs:', error);
+            reject(error);
+        }
+    });
+};
 module.exports = {
     generateMonthlySchedule: generateMonthlySchedule,
     generateScheduleForAllSpecializations: generateScheduleForAllSpecializations,
     getAllScheduleByMonthYear: getAllScheduleByMonthYear,
+    getAllScheduleByDoctorId: getAllScheduleByDoctorId,
+    getAllScheduleTimeOffs: getAllScheduleTimeOffs,
+    getScheduleTimeOffById: getScheduleTimeOffById,
 };

@@ -2,6 +2,7 @@ import doctorService from './../services/doctorService';
 import userService from './../services/userService';
 import homeService from './../services/homeService';
 import postService from '../services/postService';
+import scheduleService from '../services/scheduleService';
 const path = require('path');
 const fs = require('fs');
 
@@ -342,13 +343,51 @@ let postNewTimeOff = async (req, res) => {
 let getScheduleTimeOff = async (req, res) => {
     try {
         let doctorId = req.user.id;
+        let { month, year } = req.query;
         let timeOffs = await doctorService.getTimeOffByDoctorId(doctorId);
         if (!timeOffs || timeOffs.length === 0) {
             timeOffs = [];
         }
+        timeOffs = timeOffs.map((timeOff) => timeOff.dataValues);
+        let listSchedule = await scheduleService.getAllScheduleByDoctorId(doctorId);
+        if (!listSchedule || listSchedule.length === 0) {
+            listSchedule = [];
+        }
+        // console.log('timeOffs: ', timeOffs);
+        if (month && year) {
+            timeOffs = timeOffs.filter((timeOff) => {
+                const startDate = moment(timeOff.startDate);
+                const endDate = moment(timeOff.endDate);
+                return (
+                    (moment(startDate).month() + 1 === parseInt(month) &&
+                        moment(startDate).year() === parseInt(year)) ||
+                    (moment(endDate).month() + 1 === parseInt(month) && moment(endDate).year() === parseInt(year))
+                );
+            });
+            // Trả về JSON nếu yêu cầu đến từ AJAX
+            let timeOffDays = [];
+
+            timeOffs.forEach((timeOff) => {
+                let startDate = new Date(timeOff.startDate);
+                let endDate = new Date(timeOff.endDate);
+
+                while (startDate <= endDate) {
+                    timeOffDays.push({
+                        date: new Date(startDate), // Thêm ngày vào danh sách
+                        reason: timeOff.reason, // Thêm lý do vào danh sách
+                        statusId: timeOff.statusId, // Thêm trạng thái vào danh sách
+                    });
+                    startDate.setDate(startDate.getDate() + 1); // Tăng ngày lên 1
+                }
+            });
+
+            return res.status(200).json({ timeOffDays, listSchedule });
+        }
+
         return res.render('main/users/admins/timeoffDoctor.ejs', {
             user: req.user,
             timeOffs: timeOffs,
+            listSchedule: listSchedule,
         });
     } catch (e) {
         console.log(e);

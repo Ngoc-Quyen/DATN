@@ -252,6 +252,9 @@ let initRoutes = (app) => {
     router.get('/doctor/manage/schedule/timeoff', doctor.getScheduleTimeOff);
     router.post('/create-schedule-all', auth.checkLoggedIn, admin.handleCreateScheduleAll);
 
+    router.get('/users/manage/reschedule/time-off', auth.checkLoggedIn, admin.getReschedule);
+    router.get('/users/manage/reschedule/time-off/option/:id', auth.checkLoggedIn, admin.getRescheduleOption);
+
     return app.use('/', router);
 };
 module.exports = initRoutes;

@@ -1858,7 +1858,7 @@ function showCalendarDoctor() {
 
         currentMonth.text(new Date(year, month).toLocaleString('vi', { month: 'long' }));
         currentYear.text(year);
-
+        $('#currentMonthYear').text(`${('0' + (month + 1)).slice(-2)}/${year}`);
         const daysInMonth = new Date(year, month + 1, 0).getDate();
         const firstDay = new Date(year, month, 1).getDay();
         let day = 1;
@@ -1887,6 +1887,66 @@ function showCalendarDoctor() {
             }
             calendarBody.append(row);
         }
+
+        // Load time-off data and update calendar
+        $.ajax({
+            method: 'GET',
+            url: `${window.location.origin}/doctor/manage/schedule/timeoff`,
+            data: { month: month + 1, year: year },
+            success: function (data) {
+                data.timeOffDays.forEach((timeOffDay) => {
+                    const date = new Date(timeOffDay.date);
+                    if (date.getMonth() === month && date.getFullYear() === year) {
+                        const dayCell = calendarBody.find('td').filter(function () {
+                            return $(this).text() == date.getDate();
+                        });
+                        if (timeOffDay.statusId === 3) {
+                            dayCell
+                                .addClass('bg-warning text-white')
+                                .attr('title', timeOffDay.reason || 'No reason provided');
+                        } else if (timeOffDay.statusId === 1) {
+                            dayCell
+                                .addClass('bg-secondary text-white')
+                                .attr('title', timeOffDay.reason || 'No reason provided');
+                        } else {
+                            dayCell
+                                .addClass('bg-danger text-white')
+                                .attr('title', timeOffDay.reason || 'No reason provided');
+                        }
+                    }
+                });
+                // Lặp qua các ngày trong tháng và cập nhật icon từ listSchedule
+                for (const schedule of data.listSchedule) {
+                    const date = new Date(schedule.date);
+                    if (date.getMonth() === month && date.getFullYear() === year) {
+                        const dayCell = calendarBody.find('td').filter(function () {
+                            return $(this).text() == date.getDate();
+                        });
+
+                        let iconHtml = '';
+
+                        // Thêm icon vào ngày dựa trên loại lịch (on-call hoặc regular)
+                        if (schedule.type === 'on-call') {
+                            iconHtml = '<i class="fas fa-moon pl-2"></i>';
+                            dayCell.addClass('bg-info text-white');
+                        } else if (schedule.type === 'regular') {
+                            iconHtml = '<i class="fas fa-calendar-alt pl-2"></i>';
+                            dayCell.addClass('bg-success text-white');
+                        }
+
+                        // Thêm icon vào ô ngày
+                        dayCell.find('.schedule-icon').remove(); // Xóa các icon cũ nếu có
+                        if (iconHtml) {
+                            dayCell.append('<span class="schedule-icon">' + iconHtml + '</span>');
+                        }
+                    }
+                }
+            },
+            error: function (error) {
+                console.log(error);
+                alertify.error('Đã xảy ra lỗi, vui lòng thử lại sau!');
+            },
+        });
     });
 }
 

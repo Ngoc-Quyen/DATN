@@ -766,7 +766,6 @@ let createTimeOff = async (doctorId, dataRequest) => {
                 });
                 return;
             }
-            console.log(': ', dataRequest);
             let startDate = moment(dataRequest.startDate, 'DD/MM/YYYY').format('YYYY-MM-DD');
             let endDate = moment(dataRequest.endDate, 'DD/MM/YYYY').format('YYYY-MM-DD');
             let timeOff = await db.TimeOffs.create({

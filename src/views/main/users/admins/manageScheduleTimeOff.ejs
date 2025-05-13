@@ -1,0 +1,88 @@
+<% extend("master.ejs") %>
+  <!-- Page Heading -->
+  <div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">Quản lý lịch xin nghỉ </h1>
+    <div class="my-3">
+      <label for="dateDoctorAppointment">Thời gian </label>
+      <form method="GET" action="">
+        <div class="form-row">
+          <input id="dateDoctorAppointment" name="dateDoctorAppointment" value="<%= date %>" type="text"
+            class="form-control col-6 mr-4">
+          <a href="#" class="btn btn-primary" id="btn_SearchBooking" style="color: white;">Tìm</a>
+        </div>
+
+      </form>
+    </div>
+  </div>
+
+  <div class="card shadow mb-4">
+    <div class="card-header py-3">
+      <h6 class="m-0 font-weight-bold text-primary">Danh sách lịch xin nghỉ phép</h6>
+    </div>
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+          <thead>
+            <tr>
+              <th>Tên bác sĩ</th>
+              <th>Chuyên khoa</th>
+              <th>Ngày xin nghỉ</th>
+              <th>Lí do</th>
+              <th>Tình trạng</th>
+              <th>Hành động</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% listTimeOff.forEach(function(timeOff) { %>
+              <tr class="<%= timeOff.statusId === 3 ? 'text-primary' : timeOff.statusId === 2 ? 'text-danger' : '' %>">
+                <td>
+                  <%= timeOff.doctorName %>
+                </td>
+                <td>
+                  <%= timeOff.specializationName %>
+                </td>
+                <td>
+                  <%= new Date(timeOff.startDate).toLocaleDateString('vi-VN') %>
+                    <i class="fas fa-arrow-right py-0 px-1"></i>
+                    <%= new Date(timeOff.endDate).toLocaleDateString('vi-VN') %>
+                </td>
+                <td>
+                  <%= timeOff.reason %>
+                <td>
+                  <% if (timeOff.statusId===1) { %> Đã duyệt
+                    <% } else if (timeOff.statusId===3) { %> Chờ duyệt
+                      <% } else { %> Không duyệt
+                        <% } %>
+                </td>
+                <td class="d-flex custom-evenly">
+                  <a class="btn <%= timeOff.statusId === 3 ? 'btn-primary ' : 'btn-secondary disabled' %>"
+                    href="/users/manage/reschedule/time-off/option/<%= timeOff.id %>" title="Chấp nhận"
+                    id="btnAcceptTimeOff">
+                    <i class="fas fa-check-circle fs-5"></i>
+                  </a>
+                  <button
+                    class="btn <%= timeOff.statusId === 3 ? 'btn-danger bg-danger curor-pointer' : 'btn-secondary disabled' %>"
+                    data-time-off-id="<%= timeOff.id %>" href="#" title="Từ chối" id="btnRefuseTimeOff">
+                    <i class="fas fa-times-circle fs-5"></i>
+                  </button>
+                </td>
+              </tr>
+
+              <% }) %>
+
+          </tbody>
+        </table>
+      </div>
+
+
+    </div>
+  </div>
+
+
+  <script>
+    $(document).ready(function () {
+      $("div #featureManage").addClass('show');
+      $("div #featureManage").find($("#aManageReschedule")).addClass("active");
+      $(".admin-list-posts").removeClass("active");
+    })
+  </script>

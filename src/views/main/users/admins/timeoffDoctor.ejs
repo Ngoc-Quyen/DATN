@@ -52,24 +52,55 @@
         <tbody id="calendarBody">
           <% const currentDate=new Date(); const currentMonth=currentDate.getMonth(); const
             currentYear=currentDate.getFullYear(); const daysInMonth=new Date(currentYear, currentMonth + 1,
-            0).getDate(); const firstDay=new Date(currentYear, currentMonth, 1).getDay(); let day=1; for (let i=0; i <
-            6; i++) { %>
-            <tr>
-              <% for (let j=0; j < 7; j++) { %>
-                <% if (i===0 && j < firstDay) { %>
-                  <td></td>
-                  <% } else if (day> daysInMonth) { %>
-                    <td></td>
-                    <% } else { %>
-                      <td
-                        class="font-weight-bold <%= day === currentDate.getDate() && currentMonth === currentDate.getMonth() && currentYear === currentDate.getFullYear() ? 'bg-primary text-white' : '' %>">
-                        <%= day++ %>
-                      </td>
-                      <% } %>
-                        <% } %>
-            </tr>
-            <% } %>
+            0).getDate(); const firstDay=new Date(currentYear, currentMonth, 1).getDay(); let day=1; const
+            getDayDisplayInfo=(day)=> {
+            const dateStr = `${currentYear}-${("0" + (currentMonth + 1)).slice(-2)}-${("0" + day).slice(-2)}`;
+            let result = { class: '', icon: '', title: '' };
+
+            // Check schedule
+            for (const schedule of listSchedule) {
+            if (schedule.date === dateStr) {
+            if (schedule.type === 'on-call') {
+            result.class = 'bg-info text-white';
+            result.icon = '<i class="fas fa-moon"></i>';
+            } else if (schedule.type === 'regular') {
+            result.class = 'bg-success text-white';
+            result.icon = '<i class="fas fa-calendar-alt"></i>';
+            }
+            break;
+            }
+            }
+
+            // Check time off
+            for (const timeOff of timeOffs) {
+            const startDate = new Date(timeOff.startDate);
+            const endDate = new Date(timeOff.endDate);
+            const targetDate = new Date(dateStr);
+            if (targetDate >= startDate && targetDate <= endDate) { result.title=timeOff.reason; if
+              (timeOff.statusId===3) { result.class='bg-warning text-white' ; } else if (timeOff.statusId===1) {
+              result.class='bg-secondary text-white' ; } break; } } return result; }; %>
+
+
+              <% for (let i=0; i < 6; i++) { %>
+                <tr>
+                  <% for (let j=0; j < 7; j++) { %>
+                    <% if (i===0 && j < firstDay) { %>
+                      <td></td>
+                      <% } else if (day> daysInMonth) { %>
+                        <td></td>
+                        <% } else { const info=getDayDisplayInfo(day); const isToday=(day===currentDate.getDate() &&
+                          currentMonth===currentDate.getMonth() && currentYear===currentDate.getFullYear()); const
+                          todayClass=isToday ? 'bg-primary text-white' : '' ; %>
+                          <td class="font-weight-bold <%= todayClass %> <%= info.class %>" title="<%= info.title %>">
+                            <%= day++ %> <%- info.icon %>
+                          </td>
+                          <% } %>
+                            <% } %>
+                </tr>
+                <% } %>
+
         </tbody>
+
       </table>
     </div>
   </div>
