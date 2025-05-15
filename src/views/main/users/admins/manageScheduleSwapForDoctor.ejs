@@ -1,0 +1,75 @@
+<% extend("master.ejs") %>
+  <!-- Page Heading -->
+  <div class="d-sm-flex flex-column align-items-start justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800 mb-4 ">Yêu cầu đổi lịch</h1>
+  </div>
+
+  <div class="card shadow mb-4">
+    <div class="card-header py-3">
+      <h4 class="m-0 font-weight-bold text-primary">Danh sách yêu cầu đổi lịch</h4>
+    </div>
+    <div class="card-body">
+      <% if (listScheduleSwap.length===0) { %>
+        <p class="text-center text-muted">
+          Không có yêu cầu đổi lịch!!
+        </p>
+        <% } else { %>
+          <div class="table-responsive">
+            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+              <thead>
+                <tr>
+                  <th>Tên bác sĩ muốn đổi</th>
+                  <th>Ngày muốn đổi</th>
+                  <th>Loại ca làm việc</th>
+                  <th>Thời gian được đổi lại</th>
+                  <th>Trạng thái</th>
+                  <th>Hành động</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% listScheduleSwap.forEach(function(reSchedule) { %>
+                  <tr
+                    class="<%= reSchedule.statusId === 2 ? 'text-danger' : reSchedule.statusId === 3 ? 'text-primary' : '' %>">
+                    <td>
+                      <%= reSchedule.doctorName %>
+                    </td>
+                    <td>
+                      <%= new Date(reSchedule.dateASwap).toLocaleDateString('vi-VN') %>
+                    </td>
+                    <td>
+                      <%= reSchedule.type==='regular' ? 'Ca thường' : 'Ca trực' %>
+                    </td>
+                    <td>
+                      <%= new Date(reSchedule.dateBSwap).toLocaleDateString('vi-VN') %>
+                    </td>
+                    <td>
+                      <%= reSchedule.statusId===1 ? 'Đã duyệt' : reSchedule.statusId===2 ? 'Không duyệt' :
+                        reSchedule.statusId===3 ?'Chờ duyệt' : 'Gợi ý' %>
+                    </td>
+                    <td class="d-flex">
+                      <button
+                        class="btn btn-primary mr-3 <%= reSchedule.statusId === 3 ? 'cursor-pointer' : 'disabled' %> "
+                        <%=reSchedule.statusId !==3 ? 'disabled' : '' %>
+                        title="Chấp nhận" id='btnSwapScheduleAccept'
+                        data-schedule-swap-id="<%= reSchedule.id %>"
+                          data-doctor-swap-id="<%= reSchedule.doctorSwapId %>"
+                            data-date-a-swap="<%= reSchedule.dateASwap %>"
+                              data-date-b-swap="<%= reSchedule.dateBSwap %>"
+                                data-type="<%= reSchedule.type %>"
+                                  data-status-id="<%= reSchedule.statusId %>">
+                                    <i class="fas fa-check fs-5"></i>
+                      </button>
+                      <button class="btn btn-danger <%= reSchedule.statusId === 3 ? 'cursor-pointer' : 'disabled' %> "
+                        <%=reSchedule.statusId !==3 ? 'disabled' : '' %>
+                        title="Từ chối" id="btnSwapScheduleCancel"
+                        data-schedule-swap-id="<%= reSchedule.id %>">
+                          <i class="fas fa-times fs-5"></i>
+                    </td>
+                  </tr>
+                  <% }) %>
+              </tbody>
+            </table>
+          </div>
+          <% } %>
+    </div>
+  </div>

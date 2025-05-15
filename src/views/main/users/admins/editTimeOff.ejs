@@ -35,13 +35,14 @@
             <% } else { %> Không duyệt
             <% } %>" readonly>
         </div>
-        <div class="button ">
-          <button class="btn btn-primary <%=timeOff.statusId ===3 ? 'curor-pointer' : 'disable' %>  mb-2"
-            id="btnAcceptTimeOff" data-time-off-id="<%= timeOff.id  %>" <%=timeOff.statusId !==3 ? 'disabled' : ''
-            %>>Đồng
+        <div class="button d-flex align-items-center justify-content-evenly">
+          <button class="btn btn-primary mr-2 <%=timeOff.statusId ===3 ? 'cursor-pointer' : 'disable' %>"
+            style="margin-bottom: -17px;" id="btnAcceptTimeOff" data-time-off-id="<%= timeOff.id  %>"
+            <%=timeOff.statusId !==3 ? 'disabled' : '' %>>Đồng
             ý</button>
-          <button class="btn btn-danger bg-danger <%=timeOff.statusId ===3 ? 'curor-pointer' : 'disable' %>"
-            id="btnRefuseTimeOff" data-time-off-id="<%= timeOff.id  %>" <%=timeOff.statusId !==3 ? 'disabled' : '' %>>Từ
+          <button class="btn btn-danger bg-danger <%=timeOff.statusId ===3 ? 'cursor-pointer' : 'disable' %>"
+            style="margin-bottom: -17px;" id="btnRefuseTimeOff" data-time-off-id="<%= timeOff.id  %>"
+            <%=timeOff.statusId !==3 ? 'disabled' : '' %>>Từ
             chối</button>
         </div>
       </div>
@@ -66,6 +67,7 @@
                   <th>Ngày đổi</th>
                   <th>Loại ca làm việc</th>
                   <th>Thời gian thay thế</th>
+                  <th>Trạng thái</th>
                   <th>Hành động</th>
                 </tr>
               </thead>
@@ -73,26 +75,33 @@
                 <% listReschedule.forEach(function(reSchedule) { %>
                   <tr>
                     <td>
-                      <%= reSchedule.doctorBName %>
+                      <%= reSchedule.doctorSwapName %>
                     </td>
                     <td>
-                      <%= new Date(reSchedule.swapDate).toLocaleDateString('vi-VN') %>
+                      <%= new Date(reSchedule.dateASwap).toLocaleDateString('vi-VN') %>
                     </td>
                     <td>
-                      <%= reSchedule.swapType==='regular' ? 'Ca thường' : 'Ca trực' %>
+                      <%= reSchedule.type==='regular' ? 'Ca thường' : 'Ca trực' %>
                     </td>
                     <td>
-                      <%= new Date(reSchedule.doctorASwapDate).toLocaleDateString('vi-VN') %>
+                      <%= new Date(reSchedule.dateBSwap).toLocaleDateString('vi-VN') %>
                     </td>
                     <td>
-                      <button class="btn btn-primary <%= timeOff.statusId === 3 ? 'curor-pointer' : 'disabled' %>  w-50"
-                        <%=timeOff.statusId !==3 ? 'disabled' : '' %>
-                        title="Chấp nhận" id="btnSwapScheduleAccept"
+                      <%= reSchedule.statusId===1 ? 'Đã duyệt' : reSchedule.statusId===2 ? 'Không duyệt' :
+                        reSchedule.statusId===3 ?'Chờ duyệt' : 'Gợi ý' %>
+                    </td>
+                    <td>
+                      <button
+                        class="btn btn-primary <%= reSchedule.statusId === 4 ? 'cursor-pointer' : 'disabled' %>  w-50"
+                        <%=reSchedule.statusId !==4 ? 'disabled' : '' %>
+                        title="Lưu" id="btnSaveOptionSwapSchedule"
                         data-doctor-id="<%= timeOff.doctorId %>"
-                          data-doctor-swap-id="<%= reSchedule.doctorBId %>"
-                            data-swap-date="<%= reSchedule.swapDate %>"
-                              data-doctora-swap-date="<%= reSchedule.doctorASwapDate %>">
-                                <i class="fas fa-check-circle fs-5"></i>
+                          data-doctor-swap-id="<%= reSchedule.doctorSwapId %>"
+                            data-date-a-swap="<%= reSchedule.dateASwap %>"
+                              data-date-b-swap="<%= reSchedule.dateBSwap %>"
+                                data-type="<%= reSchedule.type %>"
+                                  data-status-id="<%= reSchedule.statusId %>">
+                                    <i class="fas fa-save fs-5"></i>
                       </button>
                     </td>
                   </tr>

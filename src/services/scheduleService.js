@@ -543,7 +543,7 @@ let getScheduleTimeOffById = async (id) => {
                     {
                         model: db.User,
                         as: 'Doctor', // phải đúng với alias
-                        attributes: ['id', 'name'],
+                        attributes: ['id', 'name', 'email'],
                         include: [
                             {
                                 model: db.Doctor_User,
@@ -575,6 +575,7 @@ let getScheduleTimeOffById = async (id) => {
                     statusId: timeOff.statusId,
                     statusName: timeOff.Status?.name || 'Unknown',
                     doctorName: timeOff.Doctor?.name || 'Unknown',
+                    doctorEmail: timeOff.Doctor?.email || 'Unknown',
                     specializationId: doctorUser.Specialization?.id || null,
                     specializationName: doctorUser.Specialization?.name || 'Unknown',
                 };
@@ -693,6 +694,27 @@ let findSwapOptions = async (doctorId, specializationId, startDate, endDate) => 
                 for (const doctor of otherDoctors) {
                     // Lấy lịch làm việc của bác sĩ B trong khoảng thời gian xin nghỉ của bác sĩ A
                     let doctorBSchedule = await getScheduleByDateAndDoctorId(doctor.doctorId, startDate, endDate);
+                    // Lấy danh sách ngày nghỉ phép của bác sĩ A và bác sĩ B
+                    let doctorATimeOffs = await db.TimeOffs.findAll({
+                        where: {
+                            doctorId: doctorId,
+                            statusId: 1, // SUCCESS
+                        },
+                        attributes: ['startDate', 'endDate'],
+                    });
+                    let doctorBTimeOffs = await db.TimeOffs.findAll({
+                        where: {
+                            doctorId: doctor.doctorId,
+                            statusId: 1, // SUCCESS
+                        },
+                        attributes: ['startDate', 'endDate'],
+                    });
+                    // Hàm kiểm tra 1 ngày có nằm trong khoảng nghỉ phép không
+                    const isInTimeOff = (date, timeOffs) => {
+                        return timeOffs.some((off) =>
+                            moment(date).isBetween(off.startDate, off.endDate, undefined, '[]')
+                        );
+                    };
                     // Kiểm tra bác sĩ B có lịch trống vào ngày của ca làm việc của bác sĩ A
                     const isDoctorBAvailable = !doctorBSchedule.some((shiftB) => shiftB.date === shiftA.date);
                     // Kiểm tra bác sĩ B không có lịch "on-call" vào ngày trước đó
@@ -700,7 +722,12 @@ let findSwapOptions = async (doctorId, specializationId, startDate, endDate) => 
                         doctor.doctorId,
                         moment(shiftA.date, 'YYYY-MM-DD').subtract(1, 'days').format('YYYY-MM-DD')
                     );
-                    if (isDoctorBAvailable && (!doctorBOnCallPreviousDay || doctorBOnCallPreviousDay.length === 0)) {
+                    // Kiểm tra ngày swap có trùng timeoff của bác sĩ B không
+                    if (
+                        isDoctorBAvailable &&
+                        (!doctorBOnCallPreviousDay || doctorBOnCallPreviousDay.length === 0) &&
+                        !isInTimeOff(shiftA.date, doctorBTimeOffs)
+                    ) {
                         // Tìm ngày bác sĩ A có thể làm lại cho bác sĩ B
                         let doctorAFutureSchedule = await getAllScheduleByDoctorId(doctorId);
                         let doctorBFutureSchedule = await getAllScheduleByDoctorId(doctor.doctorId);
@@ -717,17 +744,19 @@ let findSwapOptions = async (doctorId, specializationId, startDate, endDate) => 
                                             shiftB.date ||
                                         moment(shiftA.date, 'YYYY-MM-DD').subtract(1, 'days').format('YYYY-MM-DD') ===
                                             shiftB.date
-                                ) // Ngày không vi phạm điều kiện nghỉ ngơi của bác sĩ A
+                                ) &&
+                                !isInTimeOff(shiftB.date, doctorATimeOffs) // Ngày làm lại không trùng timeoff của bác sĩ A // Ngày không vi phạm điều kiện nghỉ ngơi của bác sĩ A
                             );
                         });
 
                         if (doctorAFutureAvailableDate) {
                             swapOptions.push({
-                                doctorBId: doctor.doctorId,
-                                doctorBName: doctor.doctorName,
-                                swapDate: shiftA.date, // Ngày bác sĩ B làm thay cho bác sĩ A
-                                swapType: shiftA.type, // Loại ca làm việc
-                                doctorASwapDate: doctorAFutureAvailableDate.date, // Ngày bác sĩ A làm lại cho bác sĩ B
+                                doctorSwapId: doctor.doctorId,
+                                doctorSwapName: doctor.doctorName,
+                                dateASwap: shiftA.date, // Ngày bác sĩ B làm thay cho bác sĩ A
+                                type: shiftA.type, // Loại ca làm việc
+                                dateBSwap: doctorAFutureAvailableDate.date, // Ngày bác sĩ A làm lại cho bác sĩ B
+                                statusId: 4,
                             });
                         }
                     }
@@ -785,6 +814,179 @@ let updateScheduleByDoctorIdAndDate = async (doctorId, date, data) => {
         }
     });
 };
+
+let createSwapSchedule = async (data) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let dataRequest = {
+                doctorId: Number(data.doctorId),
+                doctorSwapId: Number(data.doctorSwapId),
+                dateASwap: data.dateASwap,
+                dateBSwap: data.dateBSwap,
+                reason: data.reason,
+                type: data.type,
+                statusId: 3, // Đợi duyệt
+            };
+            let swapSchedule = await db.SwapSchedules.create(dataRequest);
+            resolve({ success: true, message: 'Tạo lịch đổi ca thành công.', data: swapSchedule.dataValues });
+        } catch (error) {
+            console.error('Error creating swap schedule:', error);
+            reject(error);
+        }
+    });
+};
+let getSwapScheduleByDoctorIdAndDate = async (doctorId, startDate, endDate) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let swapSchedule = await db.SwapSchedules.findAll({
+                where: {
+                    doctorId: doctorId,
+                    dateASwap: {
+                        [Op.gte]: startDate,
+                        [Op.lte]: endDate,
+                    },
+                },
+                attributes: ['id', 'doctorId', 'doctorSwapId', 'dateASwap', 'dateBSwap', 'reason', 'type', 'statusId'],
+                include: [
+                    {
+                        model: db.User,
+                        as: 'Doctor',
+                        attributes: ['id', 'name'],
+                    },
+                    {
+                        model: db.User,
+                        as: 'DoctorSwap',
+                        attributes: ['id', 'name'],
+                    },
+                ],
+            });
+            if (!swapSchedule || swapSchedule.length === 0) {
+                swapSchedule = [];
+            } else {
+                swapSchedule = swapSchedule.map((s) => ({
+                    id: s.id,
+                    doctorId: s.doctorId,
+                    doctorName: s.Doctor?.name || null,
+                    doctorSwapId: s.doctorSwapId,
+                    doctorSwapName: s.DoctorSwap?.name || null,
+                    dateASwap: s.dateASwap,
+                    dateBSwap: s.dateBSwap,
+                    reason: s.reason,
+                    type: s.type,
+                    statusId: s.statusId,
+                }));
+            }
+            resolve(swapSchedule);
+        } catch (error) {
+            console.error('Error fetching swap schedule:', error);
+            reject(error);
+        }
+    });
+};
+let getAllScheduleSwapByDoctocSwapId = async (doctorSwapId) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let swapSchedule = await db.SwapSchedules.findAll({
+                where: {
+                    doctorSwapId: doctorSwapId,
+                },
+                attributes: ['id', 'doctorId', 'doctorSwapId', 'dateASwap', 'dateBSwap', 'reason', 'type', 'statusId'],
+                include: [
+                    {
+                        model: db.User,
+                        as: 'Doctor',
+                        attributes: ['id', 'name'],
+                    },
+                    {
+                        model: db.User,
+                        as: 'DoctorSwap',
+                        attributes: ['id', 'name'],
+                    },
+                ],
+            });
+            if (!swapSchedule || swapSchedule.length === 0) {
+                swapSchedule = [];
+            } else {
+                swapSchedule = swapSchedule.map((s) => ({
+                    id: s.id,
+                    doctorId: s.doctorId,
+                    doctorName: s.Doctor?.name || null,
+                    doctorSwapId: s.doctorSwapId,
+                    doctorSwapName: s.DoctorSwap?.name || null,
+                    dateASwap: s.dateASwap,
+                    dateBSwap: s.dateBSwap,
+                    reason: s.reason,
+                    type: s.type,
+                    statusId: s.statusId,
+                }));
+            }
+            resolve(swapSchedule);
+        } catch (error) {
+            console.error('Error fetching swap schedule:', error);
+            reject(error);
+        }
+    });
+};
+
+let updateScheduleSwapById = async (id, data) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let swapSchedule = await db.SwapSchedules.findOne({
+                where: { id: id },
+            });
+            if (!swapSchedule) {
+                return resolve({ success: false, message: 'Không tìm thấy yêu cầu đổi ca.' });
+            }
+
+            await swapSchedule.update(data);
+            resolve({ success: true, message: 'Cập nhật yêu cầu đổi ca thành công.' });
+        } catch (error) {
+            console.error('Error updating swap schedule:', error);
+            reject(error);
+        }
+    });
+};
+let getScheduleSwapById = async (id) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let swapSchedule = await db.SwapSchedules.findOne({
+                where: { id: id },
+                attributes: ['id', 'doctorId', 'doctorSwapId', 'dateASwap', 'dateBSwap', 'reason', 'type', 'statusId'],
+                include: [
+                    {
+                        model: db.User,
+                        as: 'Doctor',
+                        attributes: ['id', 'name'],
+                    },
+                    {
+                        model: db.User,
+                        as: 'DoctorSwap',
+                        attributes: ['id', 'name'],
+                    },
+                ],
+            });
+            if (!swapSchedule) {
+                return resolve({ success: false, message: 'Không tìm thấy yêu cầu đổi ca.' });
+            }
+            swapSchedule = {
+                id: swapSchedule.id,
+                doctorId: swapSchedule.doctorId,
+                doctorName: swapSchedule.Doctor?.name || null,
+                doctorSwapId: swapSchedule.doctorSwapId,
+                doctorSwapName: swapSchedule.DoctorSwap?.name || null,
+                dateASwap: swapSchedule.dateASwap,
+                dateBSwap: swapSchedule.dateBSwap,
+                reason: swapSchedule.reason,
+                type: swapSchedule.type,
+                statusId: swapSchedule.statusId,
+            };
+            resolve(swapSchedule);
+        } catch (error) {
+            console.error('Error fetching swap schedule:', error);
+            reject(error);
+        }
+    });
+};
 module.exports = {
     generateMonthlySchedule: generateMonthlySchedule,
     generateScheduleForAllSpecializations: generateScheduleForAllSpecializations,
@@ -797,4 +999,9 @@ module.exports = {
     findSwapOptions: findSwapOptions,
     updateTimeOffById: updateTimeOffById,
     updateScheduleByDoctorIdAndDate: updateScheduleByDoctorIdAndDate,
+    createSwapSchedule: createSwapSchedule,
+    getSwapScheduleByDoctorIdAndDate: getSwapScheduleByDoctorIdAndDate,
+    getAllScheduleSwapByDoctocSwapId: getAllScheduleSwapByDoctocSwapId,
+    updateScheduleSwapById: updateScheduleSwapById,
+    getScheduleSwapById: getScheduleSwapById,
 };

@@ -22,22 +22,17 @@
                 <div class="mb-4">
                     <span>Chọn khung thời gian:</span>
                     <div id="lsBtnSchedule">
-
-                        <% for(let i=0; i < listTime.length; i++) { %>
-                            <% let isConflict=false; %>
-                                <% schedules.forEach(function(schedule) { %>
-                                    <% if (schedule.date===selectedDate && schedule.time===listTime[i].valueVi) { %>
-                                        <% isConflict=true; %>
-                                            <% } %>
-                                                <% }); %>
-                                                    <button id="<%= listTime[i].key %>" type="button"
-                                                        class="btn btn-light mr-3 my-3 btn-schedule <%= isConflict ? 'btn-danger' : '' %>"
-                                                        value="<%= listTime[i].valueVi %>" <%=isConflict ? 'disabled'
-                                                        : '' %>>
-                                                        <%= listTime[i].valueVi %>
-                                                    </button>
-                                                    <% } %>
+                        <% for(let i=0; i < listTime.length; i++) { let isConflict=false;
+                            schedules.forEach(function(schedule) { if (schedule.date===selectedDate &&
+                            schedule.time===listTime[i].valueVi) { isConflict=true; } }); %>
+                            <button id="<%= listTime[i].key %>" type="button"
+                                class="btn btn-light mr-3 my-3 btn-schedule <%= isConflict ? 'btn-danger-schedule' : '' %>"
+                                value="<%= listTime[i].valueVi %>" <%=isConflict ? 'disabled' : '' %>>
+                                <%= listTime[i].valueVi %>
+                            </button>
+                            <% } %>
                     </div>
+
                 </div>
                 <button type="button" class="btn btn-primary mb-3" id="createNewScheduleDoctor"
                     value="<%=doctor_id  %>">Lưu</button>
@@ -56,7 +51,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <!-- Selected slots will be appended here -->
+
                         </tbody>
                     </table>
                 </div>
@@ -78,7 +73,7 @@
         });
         $(document).ready(function () {
             $("div #featureManage").addClass('show');
-            $("div #featureManage").find($("#aManageCalendar")).addClass("active");
+            $("div #featureManage").find($("#aManageDoctor")).addClass("active");
             $(".admin-list-posts").removeClass("active");
         })
     </script>

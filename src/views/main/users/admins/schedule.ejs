@@ -31,36 +31,29 @@
                                         <input type="text" name="dayTime" value="<%= day %>" style="display: none;">
                                 </td>
                                 <td>
-                                    <% const allTimeSlots=[ "8:00 - 8:15" , "8:20 - 8:35" , "8:40 - 8:55"
-                                        , "9:00 - 9:15" , "9:20 - 9:35" , "9:40 - 9:55" , "10:00 - 10:15"
-                                        , "10:20 - 10:35" , "10:40 - 10:55" , "13:00 - 13:15" , "13:20 - 13:35"
-                                        , "13:40 - 13:55" , "14:00 - 14:15" , "14:20 - 14:35" , "14:40 - 14:55"
-                                        , "15:00 - 15:15" , "15:20 - 15:35" , "15:40 - 15:55" , "16:00 - 16:15"
-                                        , "16:20 - 16:35" , "16:40 - 16:55" ]; %>
-                                        <% allTimeSlots.forEach(function(timeSlot) { %>
-                                            <% let booked=false; %>
-                                                <% schedules.forEach(function(schedule) { %>
-                                                    <% if (schedule.date===day && schedule.time===timeSlot) { %>
-                                                        <% booked=true; %>
-                                                            <% if(schedule.sumBooking !=="0" ) { %>
-                                                                <button class="btn btn-primary mr-3 mt-1 mb-3">
+                                    <% listTime.forEach(function(timeSlot) { %>
+                                        <% let booked=false; %>
+                                            <% schedules.forEach(function(schedule) { %>
+                                                <% if (schedule.date===day && schedule.time===timeSlot) { %>
+                                                    <% booked=true; %>
+                                                        <% if(schedule.sumBooking !=="0" ) { %>
+                                                            <button class="btn btn-primary mr-3 mt-1 mb-3">
+                                                                <%= timeSlot %>
+                                                            </button>
+                                                            <% } else { %>
+                                                                <button class="btn btn-outline-warning mr-3 mt-1 mb-3">
                                                                     <%= timeSlot %>
                                                                 </button>
-                                                                <% } else { %>
-                                                                    <button
-                                                                        class="btn btn-outline-warning mr-3 mt-1 mb-3">
-                                                                        <%= timeSlot %>
-                                                                    </button>
+                                                                <% } %>
                                                                     <% } %>
-                                                                        <% } %>
-                                                                            <% }); %>
-                                                                                <% if (!booked) { %>
-                                                                                    <button
-                                                                                        class="btn btn-light mr-3 mt-1 mb-3">
-                                                                                        <%= timeSlot %>
-                                                                                    </button>
-                                                                                    <% } %>
-                                                                                        <% }) %>
+                                                                        <% }); %>
+                                                                            <% if (!booked) { %>
+                                                                                <button
+                                                                                    class="btn btn-light mr-3 mt-1 mb-3">
+                                                                                    <%= timeSlot %>
+                                                                                </button>
+                                                                                <% } %>
+                                                                                    <% }) %>
                                 </td>
                                 <td class="">
                                     <a class="delete-schedule-info" href="#" title="Delete" id="deleteSchedule"

@@ -1434,7 +1434,7 @@ h3.show-title-post {
     width: 300px;
 }
 
-.btn.btn-danger {
+.btn.btn-danger-schedule {
     background-color: rgb(89, 18, 255);
     color: white;
     /* Các thuộc tính CSS khác tùy chỉnh */
@@ -1484,7 +1484,7 @@ h3.show-title-post {
     justify-content: space-evenly;
 }
 
-.curor-pointer {
+.cursor-pointer {
     cursor: pointer;
 }
 

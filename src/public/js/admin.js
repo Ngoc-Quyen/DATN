@@ -429,6 +429,7 @@ function showModalInfoDoctor() {
                 $('#imageDoctor').empty();
 
                 $('#nameDoctor').val(data.doctor.name);
+                $('#emailDoctor').val(data.doctor.email);
                 if (data.doctor.phone) {
                     $('#phoneDoctor').val(data.doctor.phone);
                 } else {
@@ -1908,10 +1909,6 @@ function showCalendarDoctor() {
                             dayCell
                                 .addClass('bg-secondary text-white')
                                 .attr('title', timeOffDay.reason || 'No reason provided');
-                        } else {
-                            dayCell
-                                .addClass('bg-danger text-white')
-                                .attr('title', timeOffDay.reason || 'No reason provided');
                         }
                     }
                 });
@@ -2029,26 +2026,85 @@ function RefuseTimeOff() {
 }
 
 function SwapScheduleAccept() {
-    $('#btnSwapScheduleAccept').on('click', function (e) {
+    $(document).on('click', '#btnSwapScheduleAccept', function (e) {
         e.preventDefault();
+        let scheduleSwapId = $(this).data('schedule-swap-id');
         let doctorId = $(this).data('doctor-id');
         let doctorSwapId = $(this).data('doctor-swap-id');
-        let swapDate = $(this).data('swap-date');
-        let doctorASwapDate = $(this).data('doctora-swap-date');
-
+        let dateASwap = $(this).data('date-a-swap');
+        let dateBSwap = $(this).data('date-b-swap');
+        let type = $(this).data('type');
+        console.log('Hàm này được gọi');
         let dataRequest = {
+            scheduleSwapId: scheduleSwapId,
             doctorId: doctorId,
             doctorSwapId: doctorSwapId,
-            swapDate: swapDate,
-            doctorASwapDate: doctorASwapDate,
+            dateASwap: dateASwap,
+            dateBSwap: dateBSwap,
+            type: type,
+            statusId: 1,
         };
-        console.log('dataRequest: ', dataRequest);
         $.ajax({
             method: 'POST',
             url: `${window.location.origin}/users/manage/reschedule/time-off/option/swap-schedule`,
             data: dataRequest,
             success: function (data) {
-                alertify.success('Đã hoán đổi lịch thành công!');
+                alertify.success(data.message);
+                setTimeout(function () {
+                    window.location.reload();
+                }, 2000);
+            },
+            error: function (error) {
+                console.log(error);
+                alertify.error('Đã xảy ra lỗi, vui lòng thử lại sau!');
+            },
+        });
+    });
+    $(document).on('click', '#btnSaveOptionSwapSchedule', function (e) {
+        e.preventDefault();
+        let doctorId = $(this).data('doctor-id');
+        let doctorSwapId = $(this).data('doctor-swap-id');
+        let dateASwap = $(this).data('date-a-swap');
+        let dateBSwap = $(this).data('date-b-swap');
+        let type = $(this).data('type');
+        let statusId = $(this).data('status-id');
+        let dataRequest = {
+            doctorId: doctorId,
+            doctorSwapId: doctorSwapId,
+            dateASwap: dateASwap,
+            dateBSwap: dateBSwap,
+            type: type,
+            statusId: statusId,
+        };
+        $.ajax({
+            method: 'POST',
+            url: `${window.location.origin}/users/manage/reschedule/time-off/option/save-swap-schedule`,
+            data: dataRequest,
+            success: function (data) {
+                alertify.success('Đã gửi lịch đến bác sĩ kia thành công!');
+                setTimeout(function () {
+                    window.location.reload();
+                }, 2000);
+            },
+            error: function (error) {
+                console.log(error);
+                alertify.error('Đã xảy ra lỗi, vui lòng thử lại sau!');
+            },
+        });
+    });
+    $(document).on('click', '#btnSwapScheduleCancel', function (e) {
+        e.preventDefault();
+        let scheduleSwapId = $(this).data('schedule-swap-id');
+        let dataRequest = {
+            scheduleSwapId: scheduleSwapId,
+            statusId: 2,
+        };
+        $.ajax({
+            method: 'POST',
+            url: `${window.location.origin}/users/manage/reschedule/time-off/option/cancel-swap-schedule`,
+            data: dataRequest,
+            success: function (data) {
+                alertify.success(data.message);
                 setTimeout(function () {
                     window.location.reload();
                 }, 2000);

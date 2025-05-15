@@ -144,3 +144,58 @@ export const mailChangePass = {
         `;
     },
 };
+
+export const mailNotificationTimeOffFail = {
+    subject: 'Email thông báo lịch xin nghỉ không được duyệt',
+    template: (data) => {
+        return `
+            <h3>Chào BS. ${data.name},</h3>
+            <p>Chúng tôi đã nhận được yêu cầu xin nghỉ từ <strong>${data.startDate}</strong> đến <strong>${data.endDate}</strong>, tuy nhiên rất tiếc yêu cầu này <strong>không được duyệt</strong>.</p>
+            <p><strong>Lý do:</strong> Không có bác sĩ thay thế ca làm trong khoảng thời gian này.</p>
+            <p>Rất mong bác sĩ thông cảm và tiếp tục thực hiện công việc theo lịch đã được phân công.</p>
+            <p>Nếu bác sĩ có nhu cầu thay đổi lịch trong các thời điểm khác, vui lòng thông báo sớm để chúng tôi có thể hỗ trợ sắp xếp hợp lý hơn.</p>
+            <p>Trân trọng,</p>
+            <p>Phòng Hành chính / Điều phối lịch làm việc</p>
+        `;
+    },
+};
+
+export const mailNotificationTimeOffSuccess = {
+    subject: 'Email thông báo lịch xin nghỉ đã được duyệt',
+    template: (data) => {
+        const reassignedFromDoctorHtml = data.listSwapSchedule?.length
+            ? `
+            <p>Trong thời gian nghỉ, một số ca làm của bạn đã được chuyển cho Bác sĩ khác:</p>
+            <ul>
+            ${data.listSwapSchedule
+                .map(
+                    (shift) => `
+                <li>
+                Ngày <strong>${shift.dateASwap}</strong> - (${
+                        shift.type === 'oncall' ? 'Ca trực' : 'Ca thường'
+                    }) được chuyển cho BS. <strong>${shift.doctorSwapName}</strong>
+                </li>
+                <li>
+                Ngày <strong>${shift.dateBSwap}</strong> - (${
+                        shift.type === 'oncall' ? 'Ca trực' : 'Ca thường'
+                    }) được đổi từ BS. <strong>${shift.doctorSwapName}</strong> sang cho bạn.
+                </li>
+            </ul>
+            `
+                )
+                .join('')}
+            </ul>
+            `
+            : '';
+
+        return `
+            <h3>Chào BS. ${data.name},</h3>
+            <p>Yêu cầu xin nghỉ/đổi ca từ <strong>${data.startDate}</strong> đến <strong>${data.endDate}</strong> của bác sĩ đã được <strong>duyệt</strong>.</p>
+            <p>Chúng tôi đã cập nhật lại lịch làm việc theo yêu cầu.</p>
+            ${reassignedFromDoctorHtml}
+            <p>Chúc bác sĩ có thời gian nghỉ ngơi thoải mái và hợp lý.</p>
+            <p>Trân trọng,</p>
+            <p>Phòng Hành chính / Điều phối lịch làm việc</p>
+        `;
+    },
+};

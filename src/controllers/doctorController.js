@@ -47,11 +47,13 @@ let getSchedule = async (req, res) => {
         schedules.forEach((x) => {
             x.date = moment(x.date).format('DD/MM/YYYY');
         });
-
+        let listTimeResult = await userService.getAllCodeService('TIME');
+        let listTime = listTimeResult.data.map((item) => item.valueVi);
         return res.render('main/users/admins/schedule.ejs', {
             user: req.user,
             schedules: schedules,
             sevenDaySchedule: sevenDaySchedule,
+            listTime: listTime,
         });
     } catch (e) {
         console.log(e);
@@ -394,6 +396,18 @@ let getScheduleTimeOff = async (req, res) => {
     }
 };
 
+let getScheduleSwap = async (req, res) => {
+    let doctorId = req.user.id;
+    let listScheduleSwap = await scheduleService.getAllScheduleSwapByDoctocSwapId(doctorId);
+    if (!listScheduleSwap || listScheduleSwap.length === 0) {
+        listScheduleSwap = [];
+    }
+
+    return res.render('main/users/admins/manageScheduleSwapForDoctor.ejs', {
+        user: req.user,
+        listScheduleSwap: listScheduleSwap,
+    });
+};
 module.exports = {
     getSchedule: getSchedule,
     getCreateSchedule: getCreateSchedule,
@@ -411,4 +425,5 @@ module.exports = {
     getNewTimeOff: getNewTimeOff,
     postNewTimeOff: postNewTimeOff,
     getScheduleTimeOff: getScheduleTimeOff,
+    getScheduleSwap: getScheduleSwap,
 };

@@ -10,6 +10,8 @@ import chatFBServie from './../services/chatFBService';
 import scheduleService from './../services/scheduleService';
 import uploadImg from '../services/imgLoadFirebase';
 import helper from '../helper/client';
+import mailer from './../config/mailer';
+import { mailNotificationTimeOffSuccess, mailNotificationTimeOffFail } from '../../lang/en';
 
 import multer from 'multer';
 import moment from 'moment';
@@ -948,11 +950,20 @@ let getRescheduleOption = async (req, res) => {
         timeOff.startDate,
         timeOff.endDate
     );
-    let listReschedule = [];
+    let listReschedule = await scheduleService.getSwapScheduleByDoctorIdAndDate(
+        timeOff.doctorId,
+        timeOff.startDate,
+        timeOff.endDate
+    );
     let message = '';
 
     if (result.success) {
-        listReschedule = result.options;
+        // Chỉ thêm các option chưa có trong listReschedule (so sánh doctorSwapId và dateBSwap)
+        const existingSet = new Set(listReschedule.map((item) => `${item.doctorSwapId}_${item.dateBSwap}`));
+        const newOptions = result.options.filter(
+            (option) => !existingSet.has(`${option.doctorSwapId}_${option.dateBSwap}`)
+        );
+        listReschedule = [...listReschedule, ...newOptions];
     } else {
         message = result.message;
     }
@@ -969,8 +980,41 @@ let postUpdateReschedule = async (req, res) => {
         statusId: req.body.statusId,
         approverId: req.user.id,
     };
+    let timeOff = await scheduleService.getScheduleTimeOffById(timeOffId);
     let result = await scheduleService.updateTimeOffById(timeOffId, data);
-    if (result.success) {
+    let dataSendFail = {
+        name: timeOff.doctorName,
+        startDate: timeOff.startDate,
+        endDate: timeOff.endDate,
+    };
+    let listSwapSchedule = await scheduleService.getSwapScheduleByDoctorIdAndDate(
+        timeOff.doctorId,
+        timeOff.startDate,
+        timeOff.endDate
+    );
+    // Lọc chỉ lấy các swap schedule có statusId = 1
+    listSwapSchedule = listSwapSchedule.filter((item) => item.statusId === 1);
+    let dataSendSuccess = {
+        name: timeOff.doctorName,
+        startDate: timeOff.startDate,
+        endDate: timeOff.endDate,
+        listSwapSchedule: listSwapSchedule,
+    };
+    if (result?.success) {
+        if (Number(data.statusId) === 2) {
+            await mailer.sendEmailNormal(
+                timeOff.doctorEmail,
+                mailNotificationTimeOffFail.subject,
+                mailNotificationTimeOffFail.template(dataSendFail)
+            );
+        }
+        if (Number(data.statusId) === 1) {
+            await mailer.sendEmailNormal(
+                timeOff.doctorEmail,
+                mailNotificationTimeOffSuccess.subject,
+                mailNotificationTimeOffSuccess.template(dataSendSuccess)
+            );
+        }
         return res.status(200).json({
             message: 'Cập nhật lịch nghỉ thành công',
         });
@@ -981,27 +1025,80 @@ let postUpdateReschedule = async (req, res) => {
     }
 };
 let postSwapSchedule = async (req, res) => {
-    let { doctorId, doctorSwapId, swapDate, doctorASwapDate } = req.body;
-    let doctorSwap = await doctorService.getDoctorById(doctorSwapId);
+    let { scheduleSwapId, statusId } = req.body;
+    let scheduleSwap = await scheduleService.getScheduleSwapById(scheduleSwapId);
+    let doctorSwap = await doctorService.getDoctorById(scheduleSwap.doctorSwapId);
     if (!doctorSwap) {
         return res.status(404).json({
             message: 'Bác sĩ cần đổi lịch không tồn tại',
         });
     }
 
-    let result1 = await scheduleService.updateScheduleByDoctorIdAndDate(doctorId, swapDate, {
-        doctorId: doctorSwapId,
+    let result1 = await scheduleService.updateScheduleByDoctorIdAndDate(scheduleSwap.doctorId, scheduleSwap.dateASwap, {
+        doctorId: scheduleSwap.doctorSwapId,
     });
-    let result2 = await scheduleService.updateScheduleByDoctorIdAndDate(doctorSwapId, doctorASwapDate, {
-        doctorId: doctorId,
-    });
+    let result2 = await scheduleService.updateScheduleByDoctorIdAndDate(
+        scheduleSwap.doctorSwapId,
+        scheduleSwap.dateBSwap,
+        {
+            doctorId: scheduleSwap.doctorId,
+        }
+    );
+
     if (result1.success && result2.success) {
+        let result3 = await scheduleService.updateScheduleSwapById(scheduleSwapId, {
+            statusId,
+        });
+        if (result3.success) {
+            return res.status(200).json({
+                message: 'Chấp nhận đổi lịch thành công.',
+            });
+        } else {
+            return res.status(500).json({ message: 'Cập nhật đổi lịch thất bại.' });
+        }
+    } else {
+        return res.status(500).json({
+            message: result1.message || result2.message,
+        });
+    }
+};
+
+let postSaveSwapSchedule = async (req, res) => {
+    let { doctorId, doctorSwapId, dateASwap, dateBSwap, type, statusId } = req.body;
+    let data = {
+        doctorId: doctorId,
+        doctorSwapId: doctorSwapId,
+        dateASwap: dateASwap,
+        dateBSwap: dateBSwap,
+        reason: 'Đổi để duyệt lịch nghỉ',
+        type: type,
+        statusId: statusId,
+    };
+
+    let result = await scheduleService.createSwapSchedule(data);
+    if (result.success) {
         return res.status(200).json({
-            message: 'Đổi lịch thành công',
+            message: 'Lịch đổi đã được lưu thành công',
+            data: result.data,
         });
     } else {
         return res.status(500).json({
-            message: 'Đổi lịch thất bại',
+            message: 'Lưu lịch đổi thất bại',
+        });
+    }
+};
+let postUpdateSwapSchedule = async (req, res) => {
+    let { scheduleSwapId, statusId } = req.body;
+    let result = await scheduleService.updateScheduleSwapById(scheduleSwapId, {
+        statusId: statusId,
+    });
+    if (result.success) {
+        return res.status(200).json({
+            message: 'Từ chối đổi lịch thành công',
+        });
+    } else {
+        return res.status(500).json({
+            message: 'Từ chối đổi lịch thất bại',
         });
     }
 };
@@ -1066,4 +1163,6 @@ module.exports = {
     getRescheduleOption: getRescheduleOption,
     postUpdateReschedule: postUpdateReschedule,
     postSwapSchedule: postSwapSchedule,
+    postSaveSwapSchedule: postSaveSwapSchedule,
+    postUpdateSwapSchedule: postUpdateSwapSchedule,
 };

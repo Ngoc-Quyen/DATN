@@ -276,7 +276,7 @@ let getInfoDoctorById = (id) => {
         try {
             let doctor = await db.User.findOne({
                 where: { id: id },
-                attributes: ['id', 'name', 'avatar', 'address', 'phone', 'description'],
+                attributes: ['id', 'email', 'name', 'avatar', 'address', 'phone', 'description'],
                 include: {
                     model: db.Doctor_User,
                     attributes: ['specializationId'],
