@@ -942,15 +942,69 @@ let getReschedule = async (req, res) => {
 let getRescheduleOption = async (req, res) => {
     let timeOffId = req.params.id;
     let timeOff = await scheduleService.getScheduleTimeOffById(timeOffId);
-    console.log('timeOff: ', timeOff);
-    return;
-    // return res.render('main/users/admins/manageScheduleTimeOffOption.ejs', {
-    //     user: req.user,
-    //     date: date,
-    //     timeOff: timeOff,
-    // });
-};
+    let result = await scheduleService.findSwapOptions(
+        timeOff.doctorId,
+        timeOff.specializationId,
+        timeOff.startDate,
+        timeOff.endDate
+    );
+    let listReschedule = [];
+    let message = '';
 
+    if (result.success) {
+        listReschedule = result.options;
+    } else {
+        message = result.message;
+    }
+    return res.render('main/users/admins/editTimeOff.ejs', {
+        user: req.user,
+        timeOff: timeOff,
+        listReschedule: listReschedule,
+        message: message,
+    });
+};
+let postUpdateReschedule = async (req, res) => {
+    let timeOffId = req.params.id;
+    let data = {
+        statusId: req.body.statusId,
+        approverId: req.user.id,
+    };
+    let result = await scheduleService.updateTimeOffById(timeOffId, data);
+    if (result.success) {
+        return res.status(200).json({
+            message: 'Cập nhật lịch nghỉ thành công',
+        });
+    } else {
+        return res.status(500).json({
+            message: 'Cập nhật lịch nghỉ thất bại',
+        });
+    }
+};
+let postSwapSchedule = async (req, res) => {
+    let { doctorId, doctorSwapId, swapDate, doctorASwapDate } = req.body;
+    let doctorSwap = await doctorService.getDoctorById(doctorSwapId);
+    if (!doctorSwap) {
+        return res.status(404).json({
+            message: 'Bác sĩ cần đổi lịch không tồn tại',
+        });
+    }
+
+    let result1 = await scheduleService.updateScheduleByDoctorIdAndDate(doctorId, swapDate, {
+        doctorId: doctorSwapId,
+    });
+    let result2 = await scheduleService.updateScheduleByDoctorIdAndDate(doctorSwapId, doctorASwapDate, {
+        doctorId: doctorId,
+    });
+    if (result1.success && result2.success) {
+        return res.status(200).json({
+            message: 'Đổi lịch thành công',
+        });
+    } else {
+        return res.status(500).json({
+            message: 'Đổi lịch thất bại',
+        });
+    }
+};
 module.exports = {
     getManageDoctor: getManageDoctor,
     getManageDoctorPaging: getManageDoctorPaging,
@@ -1010,4 +1064,6 @@ module.exports = {
 
     getReschedule: getReschedule,
     getRescheduleOption: getRescheduleOption,
+    postUpdateReschedule: postUpdateReschedule,
+    postSwapSchedule: postSwapSchedule,
 };

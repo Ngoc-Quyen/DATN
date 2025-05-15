@@ -1979,6 +1979,88 @@ function createScheduleAll() {
     });
 }
 
+function RefuseTimeOff() {
+    $(document).on('click', '#btnRefuseTimeOff', function (e) {
+        e.preventDefault();
+        let timeOffId = $(this).data('time-off-id');
+        dataRequest = {
+            timeOffId: timeOffId,
+            statusId: 2,
+        };
+        $.ajax({
+            method: 'POST',
+            url: `${window.location.origin}/users/manage/reschedule/time-off/update/${timeOffId}`,
+            data: dataRequest,
+            success: function (data) {
+                alertify.success('Đã từ chối yêu cầu nghỉ phép thành công!');
+                setTimeout(function () {
+                    window.location.reload();
+                }, 2000);
+            },
+            error: function (error) {
+                console.log(error);
+                alertify.error('Đã xảy ra lỗi, vui lòng thử lại sau!');
+            },
+        });
+    });
+    $(document).on('click', '#btnAcceptTimeOff', function (e) {
+        e.preventDefault();
+        let timeOffId = $(this).data('time-off-id');
+        dataRequest = {
+            timeOffId: timeOffId,
+            statusId: 1,
+        };
+        $.ajax({
+            method: 'POST',
+            url: `${window.location.origin}/users/manage/reschedule/time-off/update/${timeOffId}`,
+            data: dataRequest,
+            success: function (data) {
+                alertify.success('Đã chấp nhận yêu cầu nghỉ phép thành công!');
+                setTimeout(function () {
+                    window.location.reload();
+                }, 2000);
+            },
+            error: function (error) {
+                console.log(error);
+                alertify.error('Đã xảy ra lỗi, vui lòng thử lại sau!');
+            },
+        });
+    });
+}
+
+function SwapScheduleAccept() {
+    $('#btnSwapScheduleAccept').on('click', function (e) {
+        e.preventDefault();
+        let doctorId = $(this).data('doctor-id');
+        let doctorSwapId = $(this).data('doctor-swap-id');
+        let swapDate = $(this).data('swap-date');
+        let doctorASwapDate = $(this).data('doctora-swap-date');
+
+        let dataRequest = {
+            doctorId: doctorId,
+            doctorSwapId: doctorSwapId,
+            swapDate: swapDate,
+            doctorASwapDate: doctorASwapDate,
+        };
+        console.log('dataRequest: ', dataRequest);
+        $.ajax({
+            method: 'POST',
+            url: `${window.location.origin}/users/manage/reschedule/time-off/option/swap-schedule`,
+            data: dataRequest,
+            success: function (data) {
+                alertify.success('Đã hoán đổi lịch thành công!');
+                setTimeout(function () {
+                    window.location.reload();
+                }, 2000);
+            },
+            error: function (error) {
+                console.log(error);
+                alertify.error('Đã xảy ra lỗi, vui lòng thử lại sau!');
+            },
+        });
+    });
+}
+
 // hàm show speciality item
 $(document).ready(function () {
     // Event delegation to handle click events for dynamically added elements
@@ -2117,4 +2199,6 @@ $(document).ready(function (e) {
     postBookingTimeOff();
     showCalendarDoctor();
     createScheduleAll();
+    RefuseTimeOff();
+    SwapScheduleAccept();
 });

@@ -1,7 +1,10 @@
 import db from './../models';
+import moment from 'moment';
 
 const Sequelize = require('sequelize');
 const Op = Sequelize.Op;
+
+import doctorService from './doctorService.js';
 
 import { TIME_ZONE, ShiftType, getShiftStartDateTime, getShiftEndDateTime } from '../helper/dateUtils.js';
 import * as dateFns from 'date-fns';
@@ -473,7 +476,7 @@ let getAllScheduleTimeOffs = async () => {
         try {
             let timeOffs = await db.TimeOffs.findAll({
                 attributes: ['id', 'doctorId', 'startDate', 'endDate', 'reason', 'statusId'],
-                order: [['startDate', 'ASC']],
+                order: [['updatedAt', 'ASC']],
                 include: [
                     {
                         model: db.User,
@@ -584,6 +587,204 @@ let getScheduleTimeOffById = async (id) => {
         }
     });
 };
+
+let getScheduleByDateAndDoctorId = async (doctorId, startDate, endDate) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let schedules = await db.AllSchedule.findAll({
+                where: {
+                    doctorId: doctorId,
+                    date: {
+                        [Op.gte]: startDate,
+                        [Op.lte]: endDate,
+                    },
+                },
+                attributes: ['id', 'doctorId', 'specializationId', 'statusId', 'type', 'date', 'startTime', 'endTime'],
+                include: [
+                    {
+                        model: db.User,
+                        attributes: ['id', 'name', 'avatar'],
+                    },
+                    {
+                        model: db.Specialization,
+                        attributes: ['id', 'name'],
+                    },
+                    {
+                        model: db.Status,
+                        attributes: ['id', 'name'],
+                    },
+                ],
+            });
+
+            if (!schedules || schedules.length === 0) {
+                schedules = [];
+            }
+            schedules = schedules.map((s) => s.dataValues);
+            resolve(schedules);
+        } catch (error) {
+            console.error('Error fetching schedule:', error);
+            reject(error);
+        }
+    });
+};
+
+let getOnCallScheduleByDoctorAndDate = async (doctorId, date) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let schedule = await db.AllSchedule.findOne({
+                where: {
+                    doctorId: doctorId,
+                    date: date,
+                    type: ShiftType.ON_CALL,
+                },
+                attributes: ['id', 'doctorId', 'specializationId', 'statusId', 'type', 'date', 'startTime', 'endTime'],
+                include: [
+                    {
+                        model: db.User,
+                        attributes: ['id', 'name', 'avatar'],
+                    },
+                    {
+                        model: db.Specialization,
+                        attributes: ['id', 'name'],
+                    },
+                    {
+                        model: db.Status,
+                        attributes: ['id', 'name'],
+                    },
+                ],
+            });
+            if (!schedule) {
+                schedule = null;
+            } else {
+                schedule = schedule.dataValues;
+            }
+            resolve(schedule);
+        } catch (error) {
+            console.error('Error fetching on-call schedule:', error);
+            reject(error);
+        }
+    });
+};
+let findSwapOptions = async (doctorId, specializationId, startDate, endDate) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let doctorA = await db.User.findOne({
+                where: {
+                    id: doctorId,
+                },
+            });
+            let doctors = await doctorService.getDoctorsBySpecializationId(specializationId);
+            if (!Array.isArray(doctors)) {
+                throw new Error('Expected an array of doctors but received something else.');
+            }
+            let otherDoctors = doctors.filter((doc) => doc.doctorId !== doctorId);
+            let doctorASchedule = await getScheduleByDateAndDoctorId(doctorId, startDate, endDate);
+
+            if (!doctorASchedule || doctorASchedule.length === 0) {
+                return resolve({
+                    success: false,
+                    message: `Bác sĩ ${doctorA.name} không có lịch làm việc trong khoảng thời gian này.`,
+                });
+            }
+
+            // Lấy danh sách các bác sĩ có thể thay thế
+            let swapOptions = [];
+            for (const shiftA of doctorASchedule) {
+                for (const doctor of otherDoctors) {
+                    // Lấy lịch làm việc của bác sĩ B trong khoảng thời gian xin nghỉ của bác sĩ A
+                    let doctorBSchedule = await getScheduleByDateAndDoctorId(doctor.doctorId, startDate, endDate);
+                    // Kiểm tra bác sĩ B có lịch trống vào ngày của ca làm việc của bác sĩ A
+                    const isDoctorBAvailable = !doctorBSchedule.some((shiftB) => shiftB.date === shiftA.date);
+                    // Kiểm tra bác sĩ B không có lịch "on-call" vào ngày trước đó
+                    const doctorBOnCallPreviousDay = await getOnCallScheduleByDoctorAndDate(
+                        doctor.doctorId,
+                        moment(shiftA.date, 'YYYY-MM-DD').subtract(1, 'days').format('YYYY-MM-DD')
+                    );
+                    if (isDoctorBAvailable && (!doctorBOnCallPreviousDay || doctorBOnCallPreviousDay.length === 0)) {
+                        // Tìm ngày bác sĩ A có thể làm lại cho bác sĩ B
+                        let doctorAFutureSchedule = await getAllScheduleByDoctorId(doctorId);
+                        let doctorBFutureSchedule = await getAllScheduleByDoctorId(doctor.doctorId);
+
+                        // Tìm ngày bác sĩ B có lịch làm việc cùng loại ca làm việc đã đổi với bác sĩ A
+                        let doctorAFutureAvailableDate = doctorBFutureSchedule.find((shiftB) => {
+                            return (
+                                shiftB.type === shiftA.type && // Cùng loại ca làm việc
+                                shiftB.date > endDate && // Ngày phải sau ngày bác sĩ A xin nghỉ
+                                !doctorAFutureSchedule.some((shiftA) => shiftA.date === shiftB.date) && // Ngày đó phải là ngày nghỉ của bác sĩ A
+                                !doctorAFutureSchedule.some(
+                                    (shiftA) =>
+                                        moment(shiftA.date, 'YYYY-MM-DD').add(1, 'days').format('YYYY-MM-DD') ===
+                                            shiftB.date ||
+                                        moment(shiftA.date, 'YYYY-MM-DD').subtract(1, 'days').format('YYYY-MM-DD') ===
+                                            shiftB.date
+                                ) // Ngày không vi phạm điều kiện nghỉ ngơi của bác sĩ A
+                            );
+                        });
+
+                        if (doctorAFutureAvailableDate) {
+                            swapOptions.push({
+                                doctorBId: doctor.doctorId,
+                                doctorBName: doctor.doctorName,
+                                swapDate: shiftA.date, // Ngày bác sĩ B làm thay cho bác sĩ A
+                                swapType: shiftA.type, // Loại ca làm việc
+                                doctorASwapDate: doctorAFutureAvailableDate.date, // Ngày bác sĩ A làm lại cho bác sĩ B
+                            });
+                        }
+                    }
+                }
+            }
+
+            if (swapOptions.length === 0) {
+                return resolve({ success: false, message: 'Không tìm thấy bác sĩ phù hợp để đổi ca.' });
+            }
+
+            return resolve({ success: true, options: swapOptions });
+        } catch (error) {
+            console.error('Error fetching swap options:', error);
+            reject(error);
+        }
+    });
+};
+
+let updateTimeOffById = async (id, data) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let timeOff = await db.TimeOffs.findOne({
+                where: { id: id },
+            });
+            if (!timeOff) {
+                return resolve({ success: false, message: 'Không tìm thấy yêu cầu nghỉ phép.' });
+            }
+
+            await timeOff.update(data);
+            resolve({ success: true, message: 'Cập nhật yêu cầu nghỉ phép thành công.' });
+        } catch (error) {
+            console.error('Error updating time off:', error);
+            reject(error);
+        }
+    });
+};
+let updateScheduleByDoctorIdAndDate = async (doctorId, date, data) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let schedule = await db.AllSchedule.findOne({
+                where: {
+                    doctorId: doctorId,
+                    date: date,
+                },
+            });
+            if (!schedule) {
+                return resolve({ success: false, message: 'Không tìm thấy lịch làm việc.' });
+            }
+
+            await schedule.update(data);
+            resolve({ success: true, message: 'Cập nhật lịch làm việc thành công.' });
+        } catch (error) {
+            console.error('Error updating schedule:', error);
+            reject(error);
+        }
+    });
+};
 module.exports = {
     generateMonthlySchedule: generateMonthlySchedule,
     generateScheduleForAllSpecializations: generateScheduleForAllSpecializations,
@@ -591,4 +792,9 @@ module.exports = {
     getAllScheduleByDoctorId: getAllScheduleByDoctorId,
     getAllScheduleTimeOffs: getAllScheduleTimeOffs,
     getScheduleTimeOffById: getScheduleTimeOffById,
+    getScheduleByDateAndDoctorId: getScheduleByDateAndDoctorId,
+    getOnCallScheduleByDoctorAndDate: getOnCallScheduleByDoctorAndDate,
+    findSwapOptions: findSwapOptions,
+    updateTimeOffById: updateTimeOffById,
+    updateScheduleByDoctorIdAndDate: updateScheduleByDoctorIdAndDate,
 };

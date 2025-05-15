@@ -1,144 +1,154 @@
 <% extend("../app.ejs") %>
-<section class="mt-0" style="background-color: #ABF3FD; height: 60px; display: flex; align-items: center;">
-    <div class="container-fluid">
-        <div class="row align-items-center">
-            
-            <div class="col-md-2">
-                <div class="homepage-logo mt-2">
-                    <img class="menu-nav" src="/images/background/DC.png" alt="img logo">
-                </div>
-            </div>
-            
-            <div class="col-md-7 d-none d-md-flex justify-content-between">
-                <div class="d-flex flex-column">
-                    <button class="btn btn-design" onclick="redirectToHome()">Trang chủ</button>
-                </div>
-                <div class="d-flex flex-column">
-                    <button class="btn btn-design" onclick="redirectToSpecializations()">Chuyên khoa</button>
-                </div>
-                <div class="d-flex flex-column">
-                    <button class="btn btn-design" onclick="redirectToDoctors()">Bác sĩ</button>
-                </div>
-                <div class="header-search align-self-center justify-content-center">
-                    <i class="fa fa-search"></i>
-                    <label for="input-search"></label>
-                    <input id="input-search" placeholder="Tìm kiếm...">
-                    <div id="show-info-search" class="show-info-search"></div>
-                </div>
-                <script>
-                    function redirectToHome() {
-                        window.location.href = "/";
-                    }
-                    function redirectToSpecializations() {
-                        window.location.href = "/all-specializations";
-                    }
-                    function redirectToDoctors() {
-                        window.location.href = "/all-doctors %>" ;
-                    }
-                </script>
-            </div>
-            
-            <% if (user) { %>
-                <div class="col-md-3 d-none d-md-flex justify-content-around align-self-center" id="loggedIn">
-                    <a href="/InfoUser" >
-                        <img src="/images/background/User.png" alt="User logo" class="logo">
-                    </a>
-                    <a href="https://www.facebook.com/profile.php?id=100011010698678" target="_blank">
-                        <img src="/images/background/Vector.png" alt="Contact logo" class="logo">
-                    </a>
-                    <a href="/logout" >
-                        <img src="/images/background/logout.png" alt="Contact logo" class="logo">
-                    </a>
-                </div>
-            <% } else { %>
-                <div class="col-md-3 mt-3 d-none d-md-flex justify-content-around align-self-center" id="notLoggedIn">
-                    <div class="d-flex flex-column">
-                        <a href="/login" class="btn btn-design1 ">Đăng nhập</a>
-                    </div>
-                    <div class="d-flex flex-column">
-                        <a href="/register" class="btn btn-design2 ">Đăng ký</a>
-                    </div>
-                    <a href="https://www.facebook.com/profile.php?id=100011010698678" target="_blank">
-                        <img src="/images/background/Vector.png" alt="Contact logo" class="logo">
-                    </a>
-                </div>
-            <% } %>
-            
-        </div>
-    </div>
-</section>
-<section class="detail-info-specialization">
-    <div class="container">
-        <div class="container">
-            <div class="row">
-                <div class="col-12 mt-3">
-                    <a class="text-decoration-none" href="/">Trang chủ </a><span aria-hidden="true">&raquo;</span>
-                    <span style="text-transform: uppercase">
-                    <a href="/all-posts" class="text-decoration-none">Danh sách bài đăng</a> <span aria-hidden="true">&raquo;</span>
-                    </span>
-                    <span style="text-transform: uppercase">Tìm</span>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-<section class="detail-all-posts mt-3">
-    <div class="container">
-        <div class="container">
-            <div class="row">
-                <div class="col-8 ">
-                    <h2></h2>
-                    <hr>
-                    <div id="list-posts-client-search-page">
-                        <span class="d-block m-3">Hiển thị kết quả cho <b>"<%= search %>" :</b> </span>
-                        <% if(posts.length === 0){%>
-                            <div class="m-3" style="font-weight: 600">Không tìm thây kêt quả</div>
-                        <%}%>
-                        <% posts.forEach(function(post) { %>
-                            <a class="text-decoration-none" href="/detail/post/<%= post._source.postId %>">
-                                <div class=" mb-5 d-flex flex-row">
-                                    <div class="img-post col-4">
-                                        <img src="https://cdn.bookingcare.vn/fr/w500/2018/06/18/113541benh-vien-bao-son.jpg">
-                                    </div>
-                                    <div class="col-8 d-flex flex-column">
-                                        <h3 class="show-title-post"><%= post._source.title %></h3>
-                                        <div class="show-content-post" style="color: black">
-                                            <%- post.highlight.content %>
-                                        </div>
-                                    </div>
-                                </div>
-                            </a>
-                        <% }) %>
-                    </div>
+    <section class="mt-0" style="background-color: #edfef9; height: 80px; display: flex; align-items: center;">
+        <div class="container-fluid">
+            <div class="row align-items-center">
 
+                <div class="col-md-2 d-flex justify-content-center align-items-center">
+                    <div class="homepage-logo mt-2">
+                        <img class="menu-nav" src="/images/background/DC.png" alt="img logo">
+                    </div>
                 </div>
-                <div class="col-4 mt-3">
-                    <input type="text" class="form-control" id="searchPostInSearchPageClient"
-                           placeholder="Tìm kiếm bài viết...">
+
+                <div class="col-md-7 d-none d-md-flex justify-content-between">
+                    <div class="d-flex flex-column">
+                        <button class="btn btn-design br-20 p-7-15" onclick="redirectToHome()">Trang chủ</button>
+                    </div>
+                    <div class="d-flex flex-column">
+                        <button class="btn btn-design br-20 p-7-15" onclick="redirectToSpecializations()">Chuyên
+                            khoa</button>
+                    </div>
+                    <div class="d-flex flex-column">
+                        <button class="btn btn-design br-20 p-7-15" onclick="redirectToDoctors()">Bác sĩ</button>
+                    </div>
+                    <div class="d-flex flex-column">
+                        <button class="btn btn-design br-20 p-7-15" onclick="redirectToBooking()">Đặt
+                            lịch</button>
+                    </div>
+                    <div class="header-search align-self-center justify-content-center">
+                        <i class="fa fa-search"></i>
+                        <label for="input-search"></label>
+                        <input id="input-search" placeholder="Tìm kiếm...">
+                        <div id="show-info-search" class="show-info-search"></div>
+                    </div>
+                    <script>
+                        function redirectToHome() {
+                            window.location.href = "/";
+                        }
+                        function redirectToSpecializations() {
+                            window.location.href = "/all-specializations";
+                        }
+                        function redirectToDoctors() {
+                            window.location.href = "/all-doctors %>";
+                        }
+                    </script>
+                </div>
+
+                <% if (user) { %>
+                    <div class="col-md-3 d-none d-md-flex justify-content-around align-self-center" id="loggedIn">
+                        <a href="/InfoUser">
+                            <img src="/images/background/User.png" alt="User logo" class="logo">
+                        </a>
+                        <a href="https://www.facebook.com/quinquin262/" target="_blank">
+                            <img src="/images/background/Vector.png" alt="Contact logo" class="logo">
+                        </a>
+                        <a href="/logout">
+                            <img src="/images/background/logout.png" alt="Contact logo" class="logo">
+                        </a>
+                    </div>
+                    <% } else { %>
+                        <div class="col-md-3 mt-3 d-none d-md-flex justify-content-around align-self-center"
+                            id="notLoggedIn">
+                            <div class="d-flex flex-column">
+                                <a href="/login" class="btn btn-design br-20 p-7-151 ">Đăng nhập</a>
+                            </div>
+                            <div class="d-flex flex-column">
+                                <a href="/register" class="btn btn-design br-20 p-7-152 ">Đăng ký</a>
+                            </div>
+                            <a href="https://www.facebook.com/quinquin262/" target="_blank">
+                                <img src="/images/background/Vector.png" alt="Contact logo" class="logo">
+                            </a>
+                        </div>
+                        <% } %>
+
+            </div>
+        </div>
+    </section>
+    <section class="detail-info-specialization">
+        <div class="container">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12 mt-3">
+                        <a class="text-decoration-none" href="/">Trang chủ </a><span aria-hidden="true">&raquo;</span>
+                        <span style="text-transform: uppercase">
+                            <a href="/all-posts" class="text-decoration-none">Danh sách bài đăng</a> <span
+                                aria-hidden="true">&raquo;</span>
+                        </span>
+                        <span style="text-transform: uppercase">Tìm</span>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-</section>
-<footer class="sec-foot">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-6">
-                <h4>Liên kết</h6>
-                <ul class="footer-links">
-                    <li><a href="/">Trang chủ</a></li>
-                    <li><a href="/all-specializations">Chuyên khoa</a></li>
-                    <li><a href="/all-doctors %>">Bác sĩ</a></li>
-                    <li><a href="/all-posts">Bài đăng</a></li>
-                </ul>
-            </div>
-            <div class="col-md-6">
-                <h4>Thông tin liên hệ</h6>
-                <p>Địa chỉ: 64 Nguyễn Lương Bằng, Hòa Khánh, Liên Chiểu, Đà Nẵng</p>
-                <p>Website: <a href="http://DoctorCare.com">http://DoctorCare.com</a></p>
-                <p>Email: <a href="mailto:Doctorcare@gmail.com">Doctorcare@gmail.com</a></p>
-                <p>Số điện thoại: 0123 456 789</p>
+    </section>
+    <section class="detail-all-posts mt-3">
+        <div class="container">
+            <div class="container">
+                <div class="row">
+                    <div class="col-8 ">
+                        <h2></h2>
+                        <hr>
+                        <div id="list-posts-client-search-page">
+                            <span class="d-block m-3">Hiển thị kết quả cho <b>"<%= search %>" :</b> </span>
+                            <% if(posts.length===0){%>
+                                <div class="m-3" style="font-weight: 600">Không tìm thây kêt quả</div>
+                                <%}%>
+                                    <% posts.forEach(function(post) { %>
+                                        <a class="text-decoration-none" href="/detail/post/<%= post._source.postId %>">
+                                            <div class=" mb-5 d-flex flex-row">
+                                                <div class="img-post col-4">
+                                                    <img
+                                                        src="https://cdn.bookingcare.vn/fr/w500/2018/06/18/113541benh-vien-bao-son.jpg">
+                                                </div>
+                                                <div class="col-8 d-flex flex-column">
+                                                    <h3 class="show-title-post">
+                                                        <%= post._source.title %>
+                                                    </h3>
+                                                    <div class="show-content-post" style="color: black">
+                                                        <%- post.highlight.content %>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </a>
+                                        <% }) %>
+                        </div>
+
+                    </div>
+                    <div class="col-4 mt-3">
+                        <input type="text" class="form-control" id="searchPostInSearchPageClient"
+                            placeholder="Tìm kiếm bài viết...">
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
-</footer>
+    </section>
+    <footer class="sec-foot">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h4>Liên kết</h6>
+                        <ul class="footer-links">
+                            <li><a href="/">Trang chủ</a></li>
+                            <li><a href="/all-specializations">Chuyên khoa</a></li>
+                            <li><a href="/all-doctors %>">Bác sĩ</a></li>
+                            <li><a href="/all-posts">Bài đăng</a></li>
+                        </ul>
+                </div>
+                <div class="col-md-6">
+                    <h4>Thông tin liên hệ</h6>
+                        <p>Địa chỉ: 64 Nguyễn Lương Bằng, Hòa Khánh, Liên Chiểu, Đà Nẵng</p>
+                        <p>Website: <a href="http://DoctorCare.com">http://DoctorCare.com</a></p>
+                        <p>Email: <a href="mailto:Doctorcare@gmail.com">Doctorcare@gmail.com</a></p>
+                        <p>Số điện thoại: 0123 456 789</p>
+                </div>
+            </div>
+        </div>
+    </footer>

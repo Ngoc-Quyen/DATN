@@ -1,9 +1,9 @@
 <% extend("../app.ejs") %>
-    <section class="mt-0" style="background-color: #ABF3FD; height: 60px; display: flex; align-items: center;">
+    <section class="mt-0" style="background-color: #edfef9; height: 80px; display: flex; align-items: center;">
         <div class="container-fluid">
             <div class="row align-items-center">
 
-                <div class="col-md-2">
+                <div class="col-md-2 d-flex justify-content-center align-items-center">
                     <div class="homepage-logo mt-2">
                         <img class="menu-nav" src="/images/background/DC.png" alt="img logo">
                     </div>
@@ -11,13 +11,18 @@
 
                 <div class="col-md-7 d-none d-md-flex justify-content-between">
                     <div class="d-flex flex-column">
-                        <button class="btn btn-design" onclick="redirectToHome()">Trang chủ</button>
+                        <button class="btn btn-design br-20 p-7-15" onclick="redirectToHome()">Trang chủ</button>
                     </div>
                     <div class="d-flex flex-column">
-                        <button class="btn btn-design" onclick="redirectToSpecializations()">Chuyên khoa</button>
+                        <button class="btn btn-design br-20 p-7-15" onclick="redirectToSpecializations()">Chuyên
+                            khoa</button>
                     </div>
                     <div class="d-flex flex-column">
-                        <button class="btn btn-design" onclick="redirectToDoctors()">Bác sĩ</button>
+                        <button class="btn btn-design br-20 p-7-15" onclick="redirectToDoctors()">Bác sĩ</button>
+                    </div>
+                    <div class="d-flex flex-column">
+                        <button class="btn btn-design br-20 p-7-15" onclick="redirectToBooking()">Đặt
+                            lịch</button>
                     </div>
                     <div class="header-search align-self-center justify-content-center">
                         <i class="fa fa-search"></i>
@@ -49,7 +54,7 @@
                             <img src="../images/background/Lichhen.png" alt="Lichhen logo" class="logo">
                         </a> -->
 
-                        <a href="https://www.facebook.com/profile.php?id=100011010698678" target="_blank">
+                        <a href="https://www.facebook.com/quinquin262/" target="_blank">
                             <img src="../images/background/Vector.png" alt="Contact logo" class="logo">
                         </a>
                         <a href="/logout">
@@ -57,14 +62,15 @@
                         </a>
                     </div>
                     <% } else { %>
-                        <div class="col-md-3 mt-3 d-none d-md-flex justify-content-around align-self-center" id="notLoggedIn">
+                        <div class="col-md-3 mt-3 d-none d-md-flex justify-content-around align-self-center"
+                            id="notLoggedIn">
                             <div class="d-flex flex-column">
-                                <a href="/login" class="btn btn-design1 ">Đăng nhập</a>
+                                <a href="/login" class="btn btn-design br-20 p-7-151 ">Đăng nhập</a>
                             </div>
                             <div class="d-flex flex-column">
-                                <a href="/register" class="btn btn-design2 ">Đăng ký</a>
+                                <a href="/register" class="btn btn-design br-20 p-7-152 ">Đăng ký</a>
                             </div>
-                            <a href="https://www.facebook.com/profile.php?id=100011010698678" target="_blank">
+                            <a href="https://www.facebook.com/quinquin262/" target="_blank">
                                 <img src="../images/background/Vector.png" alt="Contact logo" class="logo">
                             </a>
                         </div>
@@ -78,7 +84,8 @@
             <div class="container">
                 <div class="row">
                     <div class="col-12 mt-3">
-                        <a class="text-decoration-none" href="/"><i class="fa fa-home" aria-hidden="true"></i></a><span aria-hidden="true">&raquo;</span>
+                        <a class="text-decoration-none" href="/"><i class="fa fa-home" aria-hidden="true"></i></a><span
+                            aria-hidden="true">&raquo;</span>
                         <span style="text-transform: uppercase">
                             Thông tin đặt khám
                         </span>
@@ -110,12 +117,14 @@
                                 </div>
                             </div>
                             <div class="left-booking col-9 mt-3">
-                                <div> Cảm ơn bạn đã đặt chuyến thăm khám từ DoctorCare. Hệ thống đã ghi lại cuộc hẹn. Nhân viên hỗ trợ sẽ gọi điện xác nhận trong vòng 24h sau khi đặt vé.</div>
+                                <div> Cảm ơn bạn đã đặt chuyến thăm khám từ DoctorCare. Hệ thống đã ghi lại cuộc hẹn.
+                                    Nhân viên hỗ trợ sẽ gọi điện xác nhận trong vòng 24h sau khi đặt vé.</div>
                                 <div class="mt-2">Cần hỗ trợ vui lòng liên hệ hotline: 0123 456 789 </div>
                                 <div class="col-md-12 d-none d-md-flex justify-content-between">
 
                                     <div style="text-align: center; color: #970756;">
-                                        <button class="btn btn-design" onclick="redirectToHome()" style="margin-left: auto; font-size: 16px; ">Quay lại trang chủ</button>
+                                        <button class="btn btn-design br-20 p-7-15" onclick="redirectToHome()"
+                                            style="margin-left: auto; font-size: 16px; ">Quay lại trang chủ</button>
                                     </div>
 
 
@@ -129,8 +138,8 @@
         </div>
     </section>
     <script>
-        $(document).ready(function() {
-            $('#input-search').on('input', function() {
+        $(document).ready(function () {
+            $('#input-search').on('input', function () {
                 let query = $(this).val();
                 if (query.length > 0) {
                     $.ajax({
@@ -139,7 +148,7 @@
                         data: {
                             query: query
                         },
-                        success: function(data) {
+                        success: function (data) {
                             let results = data.results;
                             let htmlContent = '';
                             results.forEach(result => {
@@ -147,7 +156,7 @@
                             });
                             $('#show-info-search').html(htmlContent);
                         },
-                        error: function(err) {
+                        error: function (err) {
                             console.log(err);
                             $('#show-info-search').html('<div class="search-result-item">Không tìm thấy kết quả</div>');
                         }

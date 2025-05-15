@@ -804,7 +804,39 @@ let getTimeOffByDoctorId = async (doctorId) => {
     });
 };
 
+let getDoctorsBySpecializationId = async (specializationId) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let doctors = await db.Doctor_User.findAll({
+                where: { specializationId: specializationId },
+                attributes: ['doctorId', 'specializationId'],
+                include: [
+                    {
+                        model: db.User,
+                        attributes: ['id', 'name', 'avatar'],
+                    },
+                ],
+            });
+            doctors = doctors.map((doctor) => {
+                return {
+                    doctorId: doctor.User.id,
+                    doctorName: doctor.User.name,
+                    doctorAvatar: doctor.User.avatar,
+                    specializationId: doctor.specializationId,
+                };
+            });
+            if (!doctors || doctors.length === 0) {
+                doctors = [];
+            }
+            resolve(doctors);
+        } catch (error) {
+            reject(error);
+        }
+    });
+};
+
 module.exports = {
+    getDoctorById: getDoctorById,
     getDoctorForFeedbackPage: getDoctorForFeedbackPage,
     getDoctorWithSchedule: getDoctorWithSchedule,
     postCreateSchedule: postCreateSchedule,
@@ -831,4 +863,5 @@ module.exports = {
     updateProfile: updateProfile,
     createTimeOff: createTimeOff,
     getTimeOffByDoctorId: getTimeOffByDoctorId,
+    getDoctorsBySpecializationId: getDoctorsBySpecializationId,
 };

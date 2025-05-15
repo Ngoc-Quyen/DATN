@@ -1,9 +1,9 @@
 <% extend("../app.ejs") %>
-    <section class="mt-0" style="background-color: #ABF3FD; height: 60px; display: flex; align-items: center;">
+    <section class="mt-0" style="background-color: #edfef9; height: 80px; display: flex; align-items: center;">
         <div class="container-fluid">
             <div class="row align-items-center">
 
-                <div class="col-md-2">
+                <div class="col-md-2 d-flex justify-content-center align-items-center">
                     <div class="homepage-logo mt-2">
                         <img class="menu-nav" src="/images/background/DC.png" alt="img logo">
                     </div>
@@ -11,14 +11,19 @@
 
                 <div class="col-md-7 d-none d-md-flex justify-content-between">
                     <div class="d-flex flex-column">
-                        <button class="btn btn-design" onclick="redirectToHome()">Trang chủ</button>
+                        <button class="btn btn-design br-20 p-7-15" onclick="redirectToHome()">Trang chủ</button>
                     </div>
                     <div class="d-flex flex-column">
-                        <button class="btn btn-warning text-black" onclick="redirectToSpecializations()">Chuyên
+                        <button class="btn btn-warning text-black br-20 p-7-15"
+                            onclick="redirectToSpecializations()">Chuyên
                             khoa</button>
                     </div>
                     <div class="d-flex flex-column">
-                        <button class="btn btn-design" onclick="redirectToDoctors()">Bác sĩ</button>
+                        <button class="btn btn-design br-20 p-7-15" onclick="redirectToDoctors()">Bác sĩ</button>
+                    </div>
+                    <div class="d-flex flex-column">
+                        <button class="btn btn-design br-20 p-7-15" onclick="redirectToBooking()">Đặt
+                            lịch</button>
                     </div>
                     <div class="header-search align-self-center justify-content-center">
                         <i class="fa fa-search"></i>
@@ -49,7 +54,7 @@
                         <!-- <a href="/InfoBooked" >
                             <img src="/images/background/Lichhen.png" alt="Lichhen logo" class="logo">
                         </a> -->
-                        <a href="https://www.facebook.com/profile.php?id=100011010698678" target="_blank">
+                        <a href="https://www.facebook.com/quinquin262/" target="_blank">
                             <img src="/images/background/Vector.png" alt="Contact logo" class="logo">
                         </a>
                         <a href="/logout">
@@ -57,15 +62,16 @@
                         </a>
                     </div>
                     <% } else { %>
-                        <div class="col-md-3 mt-3 d-none d-md-flex justify-content-around align-self-center" id="notLoggedIn">
+                        <div class="col-md-3 mt-3 d-none d-md-flex justify-content-around align-self-center"
+                            id="notLoggedIn">
 
                             <div class="d-flex flex-column">
-                                <a href="/login" class="btn btn-design1 ">Đăng nhập</a>
+                                <a href="/login" class="btn btn-design br-20 p-7-151 ">Đăng nhập</a>
                             </div>
                             <div class="d-flex flex-column">
-                                <a href="/register" class="btn btn-design2 ">Đăng ký</a>
+                                <a href="/register" class="btn btn-design br-20 p-7-152 ">Đăng ký</a>
                             </div>
-                            <a href="https://www.facebook.com/profile.php?id=100011010698678" target="_blank">
+                            <a href="https://www.facebook.com/quinquin262/" target="_blank">
                                 <img src="/images/background/Vector.png" alt="Contact logo" class="logo">
                             </a>
                         </div>
@@ -113,7 +119,8 @@
                                         <div class="row header-booking">
                                             <label for="day-book-spe" class="label-booking">LỊCH HẸN</label>
                                         </div>
-                                        <select id="day-book-spe" class="form-control doctor-schedule-spe" data-doctor="<%= doctor.User.id %>">
+                                        <select id="day-book-spe" class="form-control doctor-schedule-spe"
+                                            data-doctor="<%= doctor.User.id %>">
                                             <% sevenDaySchedule.forEach(function(day) { %>
                                                 <option value="<%= day %>">
                                                     <%= day %>
@@ -121,7 +128,8 @@
                                                 <% }) %>
                                         </select>
                                     </div>
-                                    <div id="div-schedule-<%= doctor.User.id %>" data-doctor-id="<%= doctor.User.id %>" class=" d-flex flex-row  flex-wrap text-decoration-none">
+                                    <div id="div-schedule-<%= doctor.User.id %>" data-doctor-id="<%= doctor.User.id %>"
+                                        class=" d-flex flex-row  flex-wrap text-decoration-none">
                                         <% if(doctor.getDataValue('schedule').length===0){ %>
                                             <div class="no-schedule">
                                                 Bác sĩ "
@@ -134,7 +142,10 @@
 
                                                 <% doctor.getDataValue('schedule').forEach( function(x, index) { %>
                                                     <% if(x.getDataValue("isDisable")===false) { %>
-                                                        <div id="spe-btn-modal-<%= x.id %>" data-doctor-id="<%= doctor.User.id %>" data-date="<%= x.date %>" data-time="<%= x.time %>" class="text-decoration-none show-modal-at-clinic-page">
+                                                        <div id="spe-btn-modal-<%= x.id %>"
+                                                            data-doctor-id="<%= doctor.User.id %>"
+                                                            data-date="<%= x.date %>" data-time="<%= x.time %>"
+                                                            class="text-decoration-none show-modal-at-clinic-page">
                                                             <div class="doctor-time">
                                                                 <%= x.time %>
                                                             </div>
@@ -144,7 +155,9 @@
                                                             <% if( index===doctor.getDataValue('schedule').length - 1 &&
                                                                 x.getDataValue("isDisable")===true){ %>
                                                                 <div>
-                                                                    Không có lịch khám theo lịch trình trong khung thời gian hiện tại. Vui lòng chọn các lịch khám đã lên lịch tiếp theo.
+                                                                    Không có lịch khám theo lịch trình trong khung thời
+                                                                    gian hiện tại. Vui lòng chọn các lịch khám đã lên
+                                                                    lịch tiếp theo.
 
                                                                 </div>
                                                                 <% } %>
@@ -183,7 +196,8 @@
                                         <% listSpecializations.forEach(function(spe) { %>
                                             <% if(spe.id !==specialization.id ){ %>
                                                 <li class="text-decoration-none mt-2">
-                                                    <a class="text-decoration-none" href="/detail/specialization/<%= spe.id %>">
+                                                    <a class="text-decoration-none"
+                                                        href="/detail/specialization/<%= spe.id %>">
                                                         <%= spe.name %>
                                                     </a>
                                                 </li>
@@ -198,7 +212,8 @@
         </div>
     </section>
 
-    <div class="modal fade " tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" id="modalBookingSpe">
+    <div class="modal fade " tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true"
+        id="modalBookingSpe">
         <div class="modal-dialog mw-100 w-75" role="document">
             <div class="modal-content">
                 <% if (user) { %>
@@ -239,22 +254,26 @@
                                     </div>
                                     <div class="form-group">
                                         <div class="form-check form-check-inline">
-                                            <input class="form-check-input" type="radio" name="gender" id="selectMale" value="male" checked>
+                                            <input class="form-check-input" type="radio" name="gender" id="selectMale"
+                                                value="male" checked>
                                             <label class="form-check-label" for="selectMale">Nam</label>
                                         </div>
                                         <div class="form-check form-check-inline">
-                                            <input class="form-check-input" type="radio" name="gender" id="selectFemale" value="female">
+                                            <input class="form-check-input" type="radio" name="gender" id="selectFemale"
+                                                value="female">
                                             <label class="form-check-label" for="selectFemale">Nữ</label>
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <label for="phone" class="col-form-label">Số điện thoại :</label>
-                                        <input type="text" class="form-control" id="phone" name="phone" placeholder="Số điện thoại">
+                                        <input type="text" class="form-control" id="phone" name="phone"
+                                            placeholder="Số điện thoại">
                                         <div class="invalid-feedback"> Số điện thoại không hợp lệ</div>
                                     </div>
                                     <div class="form-group">
                                         <label for="email" class="col-form-label">Email :</label>
-                                        <input type="text" class="form-control" id="email" name="email" placeholder="Email">
+                                        <input type="text" class="form-control" id="email" name="email"
+                                            placeholder="Email">
                                         <div class="invalid-feedback">Email không hợp lệ</div>
                                     </div>
                                     <div class="form-group">
@@ -263,7 +282,8 @@
                                     </div>
                                     <div class="form-group">
                                         <label for="address" class="col-form-label">Địa chỉ :</label>
-                                        <input type="text" class="form-control" id="address" name="address" placeholder="Địa chỉ">
+                                        <input type="text" class="form-control" id="address" name="address"
+                                            placeholder="Địa chỉ">
                                     </div>
                                     <div class="form-group">
                                         <label for="description" class="col-form-label">Lý do khám:</label>
@@ -273,7 +293,8 @@
                                         <label for="extraInfo" class="col-form-label">Thông tin bổ sung (tùy chọn)
                                             <span id="viewExtraInfo" class="view viewExtraInfo">(Xem): </span> </label>
                                         <div class="extraInfo d-none" id="divExtraInfo">
-                                            <textarea class="form-control" id="breath" placeholder="Ghi chú lịch sử bệnh án (nếu có)" name="breath"></textarea>
+                                            <textarea class="form-control" id="breath"
+                                                placeholder="Ghi chú lịch sử bệnh án (nếu có)" name="breath"></textarea>
                                             <div class="form-group">
                                                 <label class="mt-2 col-form-label w-100">Đã từng đặt khám tại (kể từ 15
                                                     ngày
@@ -281,14 +302,17 @@
 
                                                 <% places.forEach(function(place) { %>
                                                     <div class="form-check form-check-inline">
-                                                        <input class="form-check-input" type="radio" name="places" id="selectPlace<%= place.id %>" value="<%= place.id %>">
-                                                        <label class="form-check-label" for="selectPlace<%= place.id %>">
+                                                        <input class="form-check-input" type="radio" name="places"
+                                                            id="selectPlace<%= place.id %>" value="<%= place.id %>">
+                                                        <label class="form-check-label"
+                                                            for="selectPlace<%= place.id %>">
                                                             <%= place.name %>
                                                         </label>
                                                     </div>
                                                     <% }) %>
                                                         <div class="form-check form-check-inline">
-                                                            <input class="form-check-input" type="radio" name="places" id="selectNone" value="none" checked>
+                                                            <input class="form-check-input" type="radio" name="places"
+                                                                id="selectNone" value="none" checked>
                                                             <label class="form-check-label" for="selectNone">Chưa từng
                                                                 đặt
                                                                 khám</label>
@@ -299,9 +323,12 @@
                                                             <div class="d-flex ">
                                                                 <label class="mr-2" for="oldForms">Đăng tải hình ảnh:
                                                                 </label>
-                                                                <input name="oldForms" id="oldForms" type="file" accept="image/*" multiple>
+                                                                <input name="oldForms" id="oldForms" type="file"
+                                                                    accept="image/*" multiple>
                                                             </div>
-                                                            <textarea class="form-control mt-2" id="extraOldForms" placeholder="Thông tin bổ sung, nếu có " name="extraOldForms"></textarea>
+                                                            <textarea class="form-control mt-2" id="extraOldForms"
+                                                                placeholder="Thông tin bổ sung, nếu có "
+                                                                name="extraOldForms"></textarea>
                                                         </div>
                                             </div>
 
@@ -318,7 +345,8 @@
                             <div class="loader"></div>
                         </div>
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
-                        <button type="button" class="btn btn-primary" id="btn-confirm-booking-spe">Xác nhận cuộc hẹn khám bệnh</button>
+                        <button type="button" class="btn btn-primary" id="btn-confirm-booking-spe">Xác nhận cuộc hẹn
+                            khám bệnh</button>
                     </div>
                     <% } else { %>
                         <div class="modal-header text-center align-items-center">
@@ -328,7 +356,8 @@
                             </button>
                         </div>
                         <div class="modal-body text-center align-items-center">
-                            <h5 class="modal-title mx-auto" id="exampleModalLabel">Bạn chưa đăng nhập. Vui lòng đăng nhập..
+                            <h5 class="modal-title mx-auto" id="exampleModalLabel">Bạn chưa đăng nhập. Vui lòng đăng
+                                nhập..
                             </h5>
 
                         </div>

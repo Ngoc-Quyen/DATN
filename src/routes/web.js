@@ -254,6 +254,8 @@ let initRoutes = (app) => {
 
     router.get('/users/manage/reschedule/time-off', auth.checkLoggedIn, admin.getReschedule);
     router.get('/users/manage/reschedule/time-off/option/:id', auth.checkLoggedIn, admin.getRescheduleOption);
+    router.post('/users/manage/reschedule/time-off/update/:id', auth.checkLoggedIn, admin.postUpdateReschedule);
+    router.post('/users/manage/reschedule/time-off/option/swap-schedule', auth.checkLoggedIn, admin.postSwapSchedule);
 
     return app.use('/', router);
 };

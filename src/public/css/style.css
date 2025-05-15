@@ -22,9 +22,14 @@ body a {
     text-decoration: none;
 }
 
+.homepage-logo {
+    width: 200px;
+    height: 100px;
+}
+
 .homepage-logo .menu-nav {
-    width: 225px;
-    height: 55px;
+    width: 100%;
+    height: 100%;
     margin-top: -5px;
     margin-right: 10px;
     cursor: pointer;
@@ -983,13 +988,21 @@ h3.show-title-post {
 
 .btn-design {
     color: black;
-    background-color: #ABF3FD;
+    background-color: #edfef9;
     /* Thiết lập màu nền là màu vàng */
 }
 
 .btn-design:hover,
 .btn-design:focus {
     background-color: #F9E42B;
+}
+
+.br-20 {
+    border-radius: 20px;
+}
+
+.p-7-15 {
+    padding: 7px 15px;
 }
 
 .btn-design1 {

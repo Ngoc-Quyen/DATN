@@ -56,13 +56,13 @@
                 </td>
                 <td class="d-flex custom-evenly">
                   <a class="btn <%= timeOff.statusId === 3 ? 'btn-primary ' : 'btn-secondary disabled' %>"
-                    href="/users/manage/reschedule/time-off/option/<%= timeOff.id %>" title="Chấp nhận"
-                    id="btnAcceptTimeOff">
-                    <i class="fas fa-check-circle fs-5"></i>
+                    href="/users/manage/reschedule/time-off/option/<%= timeOff.id %>" title="Chấp nhận">
+                    <i class=" fas fa-check-circle fs-5"></i>
                   </a>
                   <button
-                    class="btn <%= timeOff.statusId === 3 ? 'btn-danger bg-danger curor-pointer' : 'btn-secondary disabled' %>"
-                    data-time-off-id="<%= timeOff.id %>" href="#" title="Từ chối" id="btnRefuseTimeOff">
+                    class="btn <%= timeOff.statusId === 3 ? 'btn-danger bg-danger curor-pointer' : 'btn-secondary' %>"
+                    data-time-off-id="<%= timeOff.id %>" title="Từ chối" id="btnRefuseTimeOff" <%=timeOff.statusId !==3
+                    ? 'disabled' : '' %>>
                     <i class="fas fa-times-circle fs-5"></i>
                   </button>
                 </td>
