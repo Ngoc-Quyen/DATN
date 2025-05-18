@@ -88,10 +88,8 @@
                                 <%= doctor.name %>
                             </span></div>
                         <div>Chuyên khoa: <span>
-                                <%= specialization.name %>
+                                <%= doctor.specializationName %>
                             </span></div>
-
-
                     </div>
 
                 </div>
@@ -140,9 +138,10 @@
                         <div class="d-flex flex-column h-100">
                             <div class="doctor-text-book">
                                 <div class="row header-booking">
-                                    <label for="day-book" class="label-booking">LỊCH KHÁM</label>
+                                    <label for="day-book-<%= doctor.id %>" class="label-booking">LỊCH KHÁM</label>
                                 </div>
-                                <select id="day-book" class="form-control" data-doctor="<%= doctor.id %>">
+                                <select id="day-book-<%= doctor.id %>" class="form-control"
+                                    data-doctor="<%= doctor.id %>">
                                     <% sevenDaySchedule.forEach(function(day) { %>
                                         <option value="<%= day %>">
                                             <%= day %>
@@ -151,41 +150,35 @@
 
                                 </select>
                             </div>
-                            <div id="div-schedule-id"
+                            <div id="div-schedule-<%= doctor.id %>"
                                 class="doctor-schedule d-flex flex-row  flex-wrap text-decoration-none"
                                 style="overflow: auto;">
-                                <% if(doctor.Schedules.length===0){ %>
+                                <% if(schedule===null){ %>
                                     <div>
                                         Bác sĩ "
-                                        <%= doctor.name %>" không có lịch hẹn vào ngày
+                                        <%= doctor.name %>" không có lịch làm việc vào ngày
                                             <b>
                                                 <%= sevenDaySchedule[0] %>
                                             </b>. Vui lòng chọn ngày hẹn khác.
                                     </div>
-                                    <% } %>
-                                        <% doctor.Schedules.forEach( function(x, index) { %>
-                                            <% if(x.getDataValue("isDisable")===false) { %>
-                                                <div id="btn-modal-<%= x.id %>" data-doctorId="<%= doctor.id %>"
-                                                    data-date="<%= x.date %>" data-time="<%= x.time %>"
+                                    <% } else { %>
+                                        <% listTime.forEach(function(x, index) { %>
+                                            <% if(x.isDisable===false || x.isDisable===undefined) { %>
+                                                <div id="btn-modal-<%= x.key %>-<%= doctor.id  %>"
+                                                    data-doctor-id="<%= doctor.id %>" data-date="<%= schedule.date %>"
+                                                    data-time="<%= x.valueVi %>" data-doctor-name="<%= doctor.name %>"
+                                                    data-avatar-doctor="<%= doctor.avatar %>"
                                                     class="text-decoration-none" onclick="openModalBooking(this.id)">
                                                     <div class="doctor-time">
-                                                        <%= x.time %>
+                                                        <%= x.valueVi %>
                                                     </div>
                                                 </div>
                                                 <% } %>
-
-                                                    <% if( index===doctor.Schedules.length - 1 &&
-                                                        x.getDataValue("isDisable")===true){%>
-                                                        <div>
-                                                            Không có lịch khám theo lịch trình trong khung thời gian
-                                                            hiện tại. Vui lòng chọn các lịch khám đã lên lịch tiếp theo.
-                                                        </div>
-                                                        <%}%>
-                                                            <% }) %>
-
+                                                    <% }) %>
+                                                        <% } %>
                             </div>
-                            <div id="div-more-info">
-                                <% if(doctor.Schedules.length> 0){ %>
+                            <div id="div-more-info-<%= doctor.id %>">
+                                <% if(schedule){ %>
                                     <div class="d-flex flex-column">
                                         <div>
                                             <span class="d-block mt-2"> Chọn <i class="fa fa-hand-o-up"
@@ -215,22 +208,18 @@
                     </div>
                     <div class="modal-body">
                         <div class="row">
-                            <div class="col-5" style="border-right: 1px solid #ccc;" id="infoDoctor"
-                                data-doctor-id="<%= doctor.id %>">
+                            <div class="col-5" style="border-right: 1px solid #ccc;" id="infoDoctor">
                                 <label class="text-label" style="padding-top: 7px">Thông tin bác sĩ: </label>
                                 <div class="d-flex flex-row">
-                                    <img class="avatar-doctor-modal" src="<%= doctor.avatar %>">
+                                    <img class="avatar-doctor-modal" id="modal-avatar-doctor">
                                     <div class="ml-3">
-                                        <span class="d-block">
-                                            <%= doctor.name %>
-                                        </span>
+                                        <span class="d-block" id="doctor-name"></span>
                                         <div class="time-booking" id="time-patient-booking"></div>
                                         <div class="time-booking" id="date-patient-booking"></div>
                                     </div>
                                 </div>
 
                                 <div class="mt-3">Hẹn lịch miễn phí</div>
-
                             </div>
                             <div class="col-7">
                                 <form id="form-patient-info">
@@ -349,6 +338,15 @@
         function openModalBooking(id) {
             let time = $(`#${id}`).data('time');
             let date = $(`#${id}`).data('date');
+            let doctorId = $(`#${id}`).data('doctor-id');
+            let avatar = $(`#${id}`).data('avatar-doctor');
+            let name = $(`#${id}`).data('doctor-name');
+
+            console.log("time:", time, "date:", date, "avatar:", avatar, "name:", name);
+
+            $('#infoDoctor').attr('data-doctor-id', doctorId);
+            $('#modal-avatar-doctor').attr('src', avatar);
+            $('#doctor-name').text(name);
             $('#time-patient-booking').text(time);
             $('#date-patient-booking').text(date)
             $('#modalBooking').modal('show');

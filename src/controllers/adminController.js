@@ -771,7 +771,7 @@ let getCreateScheduleDoctor = async (req, res) => {
             x.date = moment(x.date).format('DD/MM/YYYY');
         });
 
-        let listTime = await userService.getAllCodeService('TIME');
+        let listTime = await userService.getAllCodeService('TIMEREGULAR');
 
         return res.render('main/users/admins/createSchedule.ejs', {
             user: req.user,
@@ -848,7 +848,7 @@ let getCreateScheduleDoctorAll = async (req, res) => {
             x.date = moment(x.date).format('DD/MM/YYYY');
         });
 
-        let listTime = await userService.getAllCodeService('TIME');
+        let listTime = await userService.getAllCodeService('TIMEREGULAR');
         // let currentMonth = moment(selectedDate, 'DD/MM/YYYY').month(); // Lấy tháng từ selectedDate (moment().month() trả về từ 0-11)
         // let currentYear = moment(selectedDate, 'DD/MM/YYYY').year(); // Lấy năm từ selectedDate
         let currentMonth = moment().month() + 1; // Tháng hiện tại (moment().month() trả về từ 0-11)

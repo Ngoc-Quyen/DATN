@@ -471,12 +471,48 @@ let getAllScheduleByDoctorId = async (doctorId) => {
     });
 };
 
+let getScheduleByDoctorIdAndDate = async (doctorId, date) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let schedule = await db.AllSchedule.findOne({
+                where: {
+                    doctorId: doctorId,
+                    date: date,
+                },
+                attributes: ['id', 'doctorId', 'specializationId', 'statusId', 'type', 'date', 'startTime', 'endTime'],
+                include: [
+                    {
+                        model: db.User,
+                        attributes: ['id', 'name', 'avatar', 'email', 'phone', 'description'],
+                    },
+                    {
+                        model: db.Specialization,
+                        attributes: ['id', 'name'],
+                    },
+                    {
+                        model: db.Status,
+                        attributes: ['id', 'name'],
+                    },
+                ],
+            });
+
+            resolve(schedule ? schedule.dataValues : null);
+        } catch (error) {
+            console.error('Error fetching schedules:', error);
+            reject(error);
+        }
+    });
+};
+
 let getAllScheduleTimeOffs = async () => {
     return new Promise(async (resolve, reject) => {
         try {
             let timeOffs = await db.TimeOffs.findAll({
                 attributes: ['id', 'doctorId', 'startDate', 'endDate', 'reason', 'statusId'],
-                order: [['updatedAt', 'ASC']],
+                order: [
+                    [db.sequelize.literal('statusId = 3'), 'DESC'],
+                    ['updatedAt', 'ASC'],
+                ],
                 include: [
                     {
                         model: db.User,
@@ -1004,4 +1040,5 @@ module.exports = {
     getAllScheduleSwapByDoctocSwapId: getAllScheduleSwapByDoctocSwapId,
     updateScheduleSwapById: updateScheduleSwapById,
     getScheduleSwapById: getScheduleSwapById,
+    getScheduleByDoctorIdAndDate: getScheduleByDoctorIdAndDate,
 };

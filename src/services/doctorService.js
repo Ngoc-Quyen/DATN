@@ -277,10 +277,18 @@ let getInfoDoctorById = (id) => {
             let doctor = await db.User.findOne({
                 where: { id: id },
                 attributes: ['id', 'email', 'name', 'avatar', 'address', 'phone', 'description'],
-                include: {
-                    model: db.Doctor_User,
-                    attributes: ['specializationId'],
-                },
+                include: [
+                    {
+                        model: db.Doctor_User,
+                        attributes: ['specializationId'],
+                    },
+                    {
+                        model: db.Comment,
+                        where: { status: true },
+                        attributes: ['id', 'timeBooking', 'dateBooking', 'name', 'content', 'createdAt', 'status'],
+                        required: false,
+                    },
+                ],
             });
 
             let specialization = await db.Specialization.findOne({
@@ -766,12 +774,11 @@ let createTimeOff = async (doctorId, dataRequest) => {
                 });
                 return;
             }
-            let startDate = moment(dataRequest.startDate, 'DD/MM/YYYY').format('YYYY-MM-DD');
-            let endDate = moment(dataRequest.endDate, 'DD/MM/YYYY').format('YYYY-MM-DD');
+
             let timeOff = await db.TimeOffs.create({
                 doctorId: doctorId,
-                startDate: startDate,
-                endDate: endDate,
+                startDate: dataRequest.startDate,
+                endDate: dataRequest.endDate,
                 reason: dataRequest.reason,
                 statusId: 3, // Default statusId
                 approverId: null, // ApproverId is empty

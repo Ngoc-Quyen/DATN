@@ -6,6 +6,9 @@ import userService from './../services/userService';
 import postService from '../services/postService';
 import elasticService from './../services/syncsElaticService';
 import patientService from './../services/patientService';
+import scheduleService from './../services/scheduleService';
+import helper from '../helper/client';
+
 import moment from 'moment';
 // striptags to remove HTML
 import striptags from 'striptags';
@@ -60,6 +63,28 @@ let getDetailSpecializationPage = async (req, res) => {
         }
 
         let listSpecializations = await specializationService.getAllSpecializations();
+
+        let dateReq = moment(currentDate, 'DD/MM/YYYY').format('YYYY-MM-DD');
+        // Lấy lịch và listTime cho từng bác sĩ trong specialization
+        let doctorsWithSchedule = [];
+        for (let doctor of doctors) {
+            let schedule = await scheduleService.getScheduleByDoctorIdAndDate(doctor.User.id, dateReq);
+            let listTime = [];
+            if (schedule) {
+                if (schedule.type === 'regular') {
+                    listTime = await userService.getAllCodeService('TIMEREGULAR');
+                } else {
+                    listTime = await userService.getAllCodeService('TIMEONCALL');
+                }
+            }
+            doctorsWithSchedule.push({
+                ...doctor,
+                schedule: schedule,
+                listTime: listTime.data || [],
+            });
+        }
+        doctors = doctorsWithSchedule;
+
         return res.render('main/homepage/specialization.ejs', {
             specialization: object.specialization,
             post: object.post,
@@ -76,6 +101,7 @@ let getDetailSpecializationPage = async (req, res) => {
 
 let getDetailDoctorPage = async (req, res) => {
     try {
+        let doctorId = req.params.id;
         let currentDate = moment().format('DD/MM/YYYY');
         let sevenDaySchedule = [];
         for (let i = 0; i < 7; i++) {
@@ -83,17 +109,45 @@ let getDetailDoctorPage = async (req, res) => {
             sevenDaySchedule.push(date);
         }
 
-        let object = await doctorService.getDoctorWithSchedule(req.params.id, currentDate);
+        let doctorRaw = await doctorService.getInfoDoctorById(doctorId);
+        let doctorData =
+            doctorRaw && doctorRaw.doctor && doctorRaw.doctor.dataValues ? doctorRaw.doctor.dataValues : {};
+
+        // Chỉ lấy các trường cần thiết
+        let doctor = {
+            id: doctorData.id,
+            name: doctorData.name,
+            email: doctorData.email,
+            avatar: doctorData.avatar,
+            address: doctorData.address,
+            phone: doctorData.phone,
+            description: doctorData.description,
+            specializationName: doctorData.specializationName || doctorRaw.specializationName || '',
+            Comments: doctorData.Comments || [],
+        };
+        let object = await doctorService.getDoctorWithSchedule(doctorId, currentDate);
 
         let places = await doctorService.getPlacesForDoctor();
-        let postDoctor = await doctorService.getPostForDoctor(req.params.id);
+        let postDoctor = await doctorService.getPostForDoctor(doctorId);
 
+        let dateReq = moment(currentDate, 'DD/MM/YYYY').format('YYYY-MM-DD');
+        let schedule = await scheduleService.getScheduleByDoctorIdAndDate(doctorId, dateReq);
+        let listTime = [];
+        if (schedule) {
+            if (schedule.type === 'regular') {
+                listTime = await userService.getAllCodeService('TIMEREGULAR');
+            } else {
+                listTime = await userService.getAllCodeService('TIMEONCALL');
+            }
+        }
         return res.render('main/homepage/doctor.ejs', {
-            doctor: object.doctor,
+            doctor: doctor,
             sevenDaySchedule: sevenDaySchedule,
             postDoctor: postDoctor,
             specialization: object.specialization,
             places: places,
+            schedule: schedule,
+            listTime: listTime.data,
         });
     } catch (e) {
         console.log(e);

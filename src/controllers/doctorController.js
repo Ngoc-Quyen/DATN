@@ -47,7 +47,7 @@ let getSchedule = async (req, res) => {
         schedules.forEach((x) => {
             x.date = moment(x.date).format('DD/MM/YYYY');
         });
-        let listTimeResult = await userService.getAllCodeService('TIME');
+        let listTimeResult = await userService.getAllCodeService('TIMEREGULAR');
         let listTime = listTimeResult.data.map((item) => item.valueVi);
         return res.render('main/users/admins/schedule.ejs', {
             user: req.user,
@@ -88,7 +88,7 @@ let getCreateSchedule = async (req, res) => {
             x.date = moment(x.date).format('DD/MM/YYYY');
         });
 
-        let listTime = await userService.getAllCodeService('TIME');
+        let listTime = await userService.getAllCodeService('TIMEREGULAR');
 
         return res.render('main/users/admins/createSchedule.ejs', {
             user: req.user,
@@ -113,13 +113,29 @@ let postCreateSchedule = async (req, res) => {
 
 let getScheduleDoctorByDate = async (req, res) => {
     try {
-        let object = await doctorService.getScheduleDoctorByDate(req.body.doctorId, req.body.date);
+        let { doctorId, date } = req.body;
+        let dateReq = moment(date, 'DD/MM/YYYY').format('YYYY-MM-DD');
+
+        let object = await doctorService.getScheduleDoctorByDate(doctorId, date);
+        let schedule = await scheduleService.getScheduleByDoctorIdAndDate(doctorId, dateReq);
+        let listTime = [];
+        if (schedule) {
+            if (schedule.type === 'regular') {
+                listTime = await userService.getAllCodeService('TIMEREGULAR');
+            } else {
+                listTime = await userService.getAllCodeService('TIMEONCALL');
+            }
+        }
+
         let data = object.schedule;
         let doctor = object.doctor;
         return res.status(200).json({
             status: 1,
             message: data,
+            schedule: schedule,
+            listTime: listTime.data,
             doctor: doctor,
+            date: date,
         });
     } catch (e) {
         console.log(e);
@@ -323,9 +339,14 @@ let postNewTimeOff = async (req, res) => {
     try {
         let doctorId = req.user.id;
         let dataByBody = req.body;
+        // CHUẨN HÓA NGAY Ở ĐÂY
+        if (dataByBody.startDate) {
+            dataByBody.startDate = moment(dataByBody.startDate, 'DD/MM/YYYY').format('YYYY-MM-DD');
+        }
+        if (dataByBody.endDate) {
+            dataByBody.endDate = moment(dataByBody.endDate, 'DD/MM/YYYY').format('YYYY-MM-DD');
+        }
         let result = await doctorService.createTimeOff(doctorId, dataByBody);
-        result.timeOff.startDate = moment(result.timeOff.startDate).format('DD/MM/YYYY');
-        result.timeOff.endDate = moment(result.timeOff.endDate).format('DD/MM/YYYY');
 
         if (result.errCode === 0) {
             return res.status(200).json({
