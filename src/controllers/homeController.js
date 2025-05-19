@@ -255,8 +255,8 @@ let postBookingDoctorPageWithoutFiles = async (req, res) => {
         // if (item.places === 'none') item.placeId = 0;
         // else item.placeId = item.places; // Tránh ghi đè placeId
         item.createdAt = Date.now();
-
         let patient = await patientService.createNewPatient(item);
+
         return res.status(200).json({
             status: 1,
             message: 'success',

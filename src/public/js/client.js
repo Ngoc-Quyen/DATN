@@ -328,6 +328,18 @@ function validateInputPageDoctor() {
             return false;
         }
     }
+    // Check year of birth if exists
+    if ($('#year').length) {
+        const yearVal = $('#year').val();
+        const year = parseInt(yearVal, 10);
+        const currentYear = new Date().getFullYear();
+        if (!yearVal || isNaN(year) || year < 1900 || year > currentYear) {
+            $('#year').addClass('is-invalid');
+            return false;
+        } else {
+            $('#year').removeClass('is-invalid');
+        }
+    }
     return true;
 }
 

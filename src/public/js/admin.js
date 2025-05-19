@@ -969,13 +969,14 @@ function loadNewPatientsForAdmin() {
             data.object.newPatients.forEach((patient) => {
                 htmlNew += `
                 <tr>
-                <td> ${patient.id} - ${patient.name}   </td>
-                <td> ${patient.phone}     </td>
-                <td> ${patient.email}     </td>
-                <td>${patient.dateBooking} (${patient.timeBooking})   </td>
+                    <td> ${patient.name}   </td>
+                    <td> ${patient.year}   </td>
+                    <td> ${patient.phone}     </td>
+                    <td> ${patient.email}     </td>
+                    <td>${patient.dateBooking} (${patient.timeBooking})   </td>
                     <td> 
-                    <button type="button"  data-patient-id="${patient.id}" class="ml-3 btn btn-primary btn-new-patient-ok"> Chấp nhận</button>
-                    <button  type="button" data-patient-id="${patient.id}" class="ml-3 btn btn-danger btn-new-patient-cancel"> Hủy </button>
+                    <button type="button"  data-patient-id="${patient.id}" class="ml-3 btn btn-primary cursor-pointer btn-new-patient-ok"> Chấp nhận</button>
+                    <button  type="button" data-patient-id="${patient.id}" class="ml-3 btn btn-danger cursor-pointer btn-new-patient-cancel"> Hủy </button>
                     </td>
                 </tr>
                 `;
@@ -984,13 +985,14 @@ function loadNewPatientsForAdmin() {
             data.object.pendingPatients.forEach((patient) => {
                 htmlPending += `
                 <tr>
-                    <td> ${patient.id} - ${patient.name}   </td>
+                    <td> ${patient.name}   </td>
+                    <td> ${patient.year}   </td>
                     <td> ${patient.phone}     </td>
                     <td> ${patient.email}     </td>
                     <td>${patient.dateBooking} (${patient.timeBooking})   </td>
                     <td> 
-                    <button  data-patient-id="${patient.id}"  class="ml-3 btn btn-warning btn-pending-patient">Xác nhận</button>
-                    <button  type="button" data-patient-id="${patient.id}" class="ml-3 btn btn-danger btn-pending-patient-cancel"> Hủy </button>
+                    <button  data-patient-id="${patient.id}"  class="ml-3 btn btn-success cursor-pointer btn-pending-patient">Xác nhận</button>
+                    
                     </td>
                 </tr>
                 `;
@@ -999,12 +1001,13 @@ function loadNewPatientsForAdmin() {
             data.object.confirmedPatients.forEach((patient) => {
                 htmlConfirmed += `
                 <tr>
-                    <td> ${patient.id} - ${patient.name}   </td>
+                    <td> ${patient.name}   </td>
+                    <td> ${patient.year}   </td>
                     <td> ${patient.phone}     </td>
                     <td> ${patient.email}     </td>
                     <td>${patient.dateBooking} (${patient.timeBooking})   </td>
                     <td> 
-                    <button  type="button" data-patient-id="${patient.id}"  class="ml-3 btn btn-info btn-confirmed-patient"> Thông tin</button>
+                    <button  type="button" data-patient-id="${patient.id}"  class="ml-3 btn btn-info cursor-pointer btn-confirmed-patient"> Thông tin</button>
                     </td>
                 </tr>
                 `;
@@ -1013,12 +1016,13 @@ function loadNewPatientsForAdmin() {
             data.object.canceledPatients.forEach((patient) => {
                 htmlCanceled += `
                 <tr>
-                    <td> ${patient.id} - ${patient.name}   </td>
+                    <td> ${patient.name}   </td>
+                    <td> ${patient.year}   </td>
                     <td> ${patient.phone}     </td>
                     <td> ${patient.email}     </td>
                     <td>${patient.dateBooking} (${patient.timeBooking})   </td>
                     <td> 
-                    <button   data-patient-id="${patient.id}"  class="ml-3 btn btn-primary btn-history-cancel-patient">Lịch sử</button>
+                    <button data-patient-id="${patient.id}"  class="ml-3 btn btn-primary cursor-pointer btn-history-cancel-patient">Lịch sử</button>
                     </td>
                 </tr>
                 `;
@@ -1066,13 +1070,14 @@ function loadPatientsByDate() {
                 data.object.newPatients.forEach((patient) => {
                     htmlNew += `
                     <tr>
-                        <td> ${patient.id} - ${patient.name}   </td>
+                        <td> ${patient.name}   </td>
+                        <td> ${patient.year}   </td>
                         <td> ${patient.phone}     </td>
                         <td> ${patient.email}     </td>
                         <td>${patient.dateBooking} (${patient.timeBooking})   </td>
                         <td> 
-                        <button type="button"  data-patient-id="${patient.id}" class="ml-3 btn btn-primary btn-new-patient-ok"> Chấp nhận</button>
-                        <button  type="button" data-patient-id="${patient.id}" class="ml-3 btn btn-danger btn-new-patient-cancel"> Hủy </button>
+                        <button type="button"  data-patient-id="${patient.id}" class="ml-3 btn btn-primary cursor-pointer btn-new-patient-ok"> Chấp nhận</button>
+                        <button  type="button" data-patient-id="${patient.id}" class="ml-3 btn btn-danger cursor-pointer btn-new-patient-cancel"> Hủy </button>
                         </td>
                     </tr>
                     `;
@@ -1081,13 +1086,14 @@ function loadPatientsByDate() {
                 data.object.pendingPatients.forEach((patient) => {
                     htmlPending += `
                     <tr>
-                        <td> ${patient.id} - ${patient.name}   </td>
+                        <td> ${patient.name}   </td>
+                        <td> ${patient.year}   </td>
                         <td> ${patient.phone}     </td>
                         <td> ${patient.email}     </td>
                         <td>${patient.dateBooking} (${patient.timeBooking})   </td>
                         <td> 
-                        <button  data-patient-id="${patient.id}"  class="ml-3 btn btn-warning btn-pending-patient">Xác nhận</button>
-                        <button  type="button" data-patient-id="${patient.id}" class="ml-3 btn btn-danger btn-pending-patient-cancel"> Hủy </button>
+                        <button  data-patient-id="${patient.id}"  class="ml-3 btn btn-success cursor-pointer btn-pending-patient">Xác nhận</button>
+                        
                         </td>
                     </tr>
                     `;
@@ -1096,12 +1102,13 @@ function loadPatientsByDate() {
                 data.object.confirmedPatients.forEach((patient) => {
                     htmlConfirmed += `
                     <tr>
-                        <td> ${patient.id} - ${patient.name}   </td>
+                        <td> ${patient.name}   </td>
+                        <td> ${patient.year}   </td>
                         <td> ${patient.phone}     </td>
                         <td> ${patient.email}     </td>
                         <td>${patient.dateBooking} (${patient.timeBooking})   </td>
                         <td> 
-                        <button  type="button" data-patient-id="${patient.id}"  class="ml-3 btn btn-info btn-confirmed-patient"> Thông tin</button>
+                        <button  type="button" data-patient-id="${patient.id}"  class="ml-3 btn btn-info cursor-pointer btn-confirmed-patient"> Thông tin</button>
                         </td>
                     </tr>
                     `;
@@ -1110,12 +1117,13 @@ function loadPatientsByDate() {
                 data.object.canceledPatients.forEach((patient) => {
                     htmlCanceled += `
                     <tr>
-                        <td> ${patient.id} - ${patient.name}   </td>
+                        <td> ${patient.name}   </td>
+                        <td> ${patient.year}   </td>
                         <td> ${patient.phone}     </td>
                         <td> ${patient.email}     </td>
                         <td>${patient.dateBooking} (${patient.timeBooking})   </td>
                         <td> 
-                        <button   data-patient-id="${patient.id}"  class="ml-3 btn btn-primary btn-history-cancel-patient">Lịch sử</button>
+                        <button   data-patient-id="${patient.id}"  class="ml-3 btn btn-primary cursor-pointer btn-history-cancel-patient">Lịch sử</button>
                         </td>
                     </tr>
                     `;
@@ -1136,13 +1144,40 @@ function loadPatientsByDate() {
 
 function handleBtnNewPatientOk() {
     $('#tableNewPatients').on('click', '.btn-new-patient-ok', function (e) {
-        if (!confirm('Bạn có muốn xác nhận lịch hẹn của bệnh nhân này?')) {
-            return;
-        }
+        let patientId = $(e.target).data('patient-id');
+        $.ajax({
+            method: 'POST',
+            url: `${window.location.origin}/api/get-detail-patient-by-id`,
+            data: { patientId: patientId },
+            success: function (data) {
+                $('#newPatientName').val(data.patient.name);
+                $('#newPatientYear').val(data.patient.year);
+                $('#newPatientPhone').val(data.patient.phone);
+                $('#newPatientEmail').val(data.patient.email);
+                $('#newPatientDate').val(data.patient.dateBooking);
+                $('#newPatientTime').val(data.patient.timeBooking);
+                $('#newPatientReason').val(data.patient.description);
+                $('#newPatientAddress').val(data.patient.address);
+                $('#btn-new-patient-ok').attr('data-patient-id', patientId);
+                $('#btn-new-patient-cancel').attr('data-patient-id', patientId);
+                // Hiển thị modal chi tiết bệnh nhân mới
+                $('#modalDetailNewPatient').modal('show');
+                // Bạn có thể truyền patientId vào modal nếu cần
+                $('#modalDetailNewPatient').attr('data-patient-id', patientId);
+            },
+            error: function (err) {
+                console.log(error);
+                alertify.error('Đã xảy ra lỗi, vui lòng thử lại sau!');
+            },
+        });
+    });
+    // Nếu là nút có id btn-new-patient-ok
+    // Chỉ thực hiện khi click đúng vào #btn-new-patient-ok
+    $('#modalDetailNewPatient').on('click', '#btn-new-patient-ok', function (e) {
+        let patientId = $(e.target).data('patient-id');
         let countNew = +$('#count-new').text();
         let countPending = +$('#count-need').text();
-        let patientId = $(this).data('patient-id');
-        this.closest('tr').remove();
+        // Không xóa tr trong bảng, chỉ xử lý khi cần
         countNew--;
         countPending++;
         $('#count-new').text(countNew);
@@ -1157,7 +1192,7 @@ function handleBtnNewPatientOk() {
                 addNewRowTablePending(patient);
                 alertify.success('Đã xác nhận lịch hẹn thành công');
                 setTimeout(function () {
-                    window.location.href = '/doctor/get-new-patients'; //
+                    window.location.href = '/doctor/get-new-patients';
                 }, 2000);
             },
             error: function (error) {
@@ -1169,10 +1204,19 @@ function handleBtnNewPatientOk() {
 }
 
 function handleBtnNewPatientCancel() {
+    // Handle click on .btn-new-patient-cancel (in table row)
     $('#tableNewPatients').on('click', '.btn-new-patient-cancel', function (e) {
         $('#btnCancelBookingPatient').attr('data-patient-id', $(this).data('patient-id'));
         $('#btnCancelBookingPatient').attr('data-type', 'new-patient-cancel');
         $('#modalCancelBooking').modal('show');
+    });
+
+    // Handle click on #btn-new-patient-cancel (in modal)
+    $('#modalDetailNewPatient').on('click', '#btn-new-patient-cancel', function (e) {
+        $('#btnCancelBookingPatient').attr('data-patient-id', $(this).data('patient-id'));
+        $('#btnCancelBookingPatient').attr('data-type', 'new-patient-cancel');
+        $('#modalCancelBooking').modal('show');
+        $('#modalDetailNewPatient').modal('hide');
     });
 }
 
@@ -1182,8 +1226,9 @@ function callAjaxRenderModalInfo(patientId, option) {
         url: `${window.location.origin}/api/get-detail-patient-by-id`,
         data: { patientId: patientId },
         success: function (data) {
-            $('#patientName').val(data.patient.name);
             $('#btn-confirm-patient-done').attr('data-patient-id', data.patient.id);
+            $('#patientName').val(data.patient.name);
+            $('#patientYear').val(data.patient.year);
             $('#patientPhone').val(data.patient.phone);
             $('#patientEmail').val(data.patient.email);
             $('#patientDate').val(data.patient.dateBooking);
@@ -1197,7 +1242,11 @@ function callAjaxRenderModalInfo(patientId, option) {
             if (option) {
                 $('#btn-confirm-patient-done').css('display', 'none');
                 $('#btn-cancel-patient').text('OK');
+            } else {
+                $('#btn-confirm-patient-done').css('display', 'block');
+                $('#btn-cancel-patient').text('Hủy');
             }
+            console.log('option: ', option);
             $('#modalDetailPatient').modal('show');
         },
         error: function (err) {
@@ -1231,8 +1280,8 @@ function addNewRowTablePending(patient) {
                     <td> ${patient.email}     </td>
                     <td> ${patient.dateBooking} (${patient.timeBooking})     </td>
                     <td> 
-                    <button  data-patient-id="${patient.id}"  class="ml-3 btn btn-warning btn-pending-patient">Xác nhận</button>
-                    <button  type="button" data-patient-id="${patient.id}" class="ml-3 btn btn-danger btn-pending-patient-cancel"> Hủy </button>
+                    <button  data-patient-id="${patient.id}"  class="ml-3 btn btn-success cursor-pointer btn-pending-patient">Xác nhận</button>
+                    
                     </td>
                 </tr>
                
@@ -1248,7 +1297,7 @@ function addNewRowTableConfirmed(patient) {
                     <td> ${patient.email}     </td>
                     <td> ${patient.dateBooking} (${patient.timeBooking})     </td>
                     <td> 
-                    <button  type="button" data-patient-id="${patient.id}"  class="ml-3 btn btn-info btn-confirmed-patient"> Thông tin</button>
+                    <button  type="button" data-patient-id="${patient.id}"  class="ml-3 btn btn-info cursor-pointer btn-confirmed-patient"> Thông tin</button>
                     </td>
                 </tr>
                 `;
@@ -1263,7 +1312,7 @@ function addNewRowTableCanceled(patient) {
                     <td> ${patient.email}     </td>
                     <td> ${patient.dateBooking} (${patient.timeBooking}) </td>
                     <td> 
-                    <button   data-patient-id="${patient.id}"  class="ml-3 btn btn-primary btn-history-cancel-patient">Lịch sử</button>
+                    <button   data-patient-id="${patient.id}"  class="ml-3 btn btn-primary cursor-pointer btn-history-cancel-patient">Lịch sử</button>
                     </td>
                 </tr>
                
@@ -1277,9 +1326,6 @@ function convertStringToDateClient(string) {
 
 function handleAfterCallingPatient() {
     $('#btn-confirm-patient-done').on('click', function (e) {
-        if (!confirm('Bạn chắc chắn xác nhận kết thúc lịch hẹn?')) {
-            return;
-        }
         let countPending = +$('#count-need').text();
         let countConfirmed = +$('#count-confirmed').text();
         countPending--;
@@ -1450,6 +1496,7 @@ function handleDoctorViewInfoPatient() {
             success: function (data) {
                 $('#imageOldForms').empty();
                 $('#patientName').val(data.name);
+                $('#patientYear').val(data.year);
                 $('#patientPhone').val(data.phone);
                 $('#patientEmail').val(data.email);
                 $('#patientDate').val(data.dateBooking);

@@ -22,7 +22,7 @@ const statusPendingId = 3;
 const statusFailedId = 2;
 const statusSuccessId = 1;
 
-const MAX_BOOKING = 1;
+const MAX_BOOKING = 3;
 
 let getManageDoctor = async (req, res) => {
     let doctors = await userService.getInfoDoctors();
@@ -503,9 +503,10 @@ let getForPatientsByDateTabs = async (req, res) => {
             date = currentDate;
             canActive = true;
         }
-
+        let formattedDate = moment(date, 'DD/MM/YYYY').format('YYYY-MM-DD');
         let idDoctor = req.user.id;
-        let object = await patientService.getForPatientsByDateTabs(idDoctor, date);
+        let object = await patientService.getForPatientsByDateTabs(idDoctor, formattedDate);
+
         return res.status(200).json({
             message: 'success',
             object: object,
