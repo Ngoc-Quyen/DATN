@@ -527,7 +527,7 @@ let postChangeStatusPatient = async (req, res) => {
         let content = '';
         if (status === 'pending') {
             statusId = statusPendingId;
-            content = 'Đã nhận lịch hẹn mới';
+            content = 'Đã nhận lịch hẹn';
         } else if (status === 'failed') {
             statusId = statusFailedId;
             if (req.body.reason) {

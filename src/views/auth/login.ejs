@@ -17,48 +17,68 @@
 
 <body>
 
-    <div class="login">
-        <div class="container lg-body">
-            <div class="container d-flex flex-row">
-                <div class="col-6 lg-image-background">
+    <div class="min-vh-100 d-flex justify-content-center align-items-center bg-light">
+        <div class="card shadow-lg border-0 rounded-4 p-4" style="max-width: 900px; width: 100%;">
+            <div class="row g-0">
+                <!-- Hình ảnh bên trái -->
+                <div class="col-md-6 d-none d-md-block">
+                    <img src="../images/background/DC.png" alt="Login Image"
+                        class="img-fluid rounded-start-4 object-fit-cover">
                 </div>
-                <div class="col-6 login-form">
-                    <span class="text-login">Đăng nhập vào Doctor Care</span>
+
+                <!-- Form bên phải -->
+                <div class="col-md-6 p-4">
+                    <h3 class="mb-3 fw-bold text-primary">Đăng nhập vào Doctor Care</h3>
+
                     <% if(error !="" ){ %>
                         <div class="alert alert-danger">
                             <%= error %>
                         </div>
                         <% } %>
+
                             <form method="POST" action="/login">
-                                <div class="form-group">
+                                <div class="form-group mb-3">
                                     <label for="email">Địa chỉ email:</label>
-                                    <input type="email" class="form-control" id="email" name="email"
-                                        placeholder="Email">
+                                    <input type="email" class="form-control" id="email" name="email" placeholder="Email"
+                                        required>
                                 </div>
-                                <div class="form-group">
+
+                                <div class="form-group mb-3">
                                     <label for="password">Mật khẩu:</label>
                                     <input type="password" class="form-control" id="password" name="password"
-                                        placeholder="Mật khẩu">
+                                        placeholder="Mật khẩu" required>
                                 </div>
-                                <div class="forgot-password">
-                                    <a href="#" data-toggle="modal" data-target="#forgotPasswordModal">Quên mật khẩu
-                                        ???</a>
-                                </div>
-                                <button type="submit" class="btn btn-primary btn-login ">ĐĂNG NHẬP</button>
-                            </form>
-                            <br>
-                            <hr>
-                            <a class="lg-register" href="/"><i class="fa fa-arrow-left" aria-hidden="true"></i> Về lại
-                                trang chủ </a> <br />
-                            <a title="Click to view my Facebook Page" class="lg-register" target="_blank"
-                                href="https://www.facebook.com/quinquin262/"><i style="color: orange"
-                                    class="fa fa-comments" aria-hidden="true"></i> Truy cập vào FANPAGE của chúng
-                                tôi</a>
 
+                                <div class="mb-3 text-end">
+                                    <a href="#" class="text-decoration-none text-muted" data-toggle="modal"
+                                        data-target="#forgotPasswordModal">
+                                        Quên mật khẩu?
+                                    </a>
+                                </div>
+
+                                <button type="submit" class="btn btn-primary w-100 py-2 rounded-pill">ĐĂNG NHẬP</button>
+                            </form>
+
+                            <hr class="my-4">
+
+                            <div class="text-center">
+                                <p>Bạn chưa có tài khoản?
+                                    <a href="/register" class="text-decoration-none text-primary fw-semibold">Đăng ký
+                                        ngay</a>
+                                </p>
+                                <a href="/" class="text-secondary text-decoration-none d-block mb-2">
+                                    <i class="fa fa-arrow-left"></i> Về lại trang chủ
+                                </a>
+                                <a href="https://www.facebook.com/quinquin262/" target="_blank"
+                                    class="text-warning text-decoration-none">
+                                    <i class="fa fa-comments"></i> Truy cập Fanpage của chúng tôi
+                                </a>
+                            </div>
                 </div>
             </div>
         </div>
     </div>
+
 
     <!-- Modal -->
     <form class="modal fade" id="forgotPasswordModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"

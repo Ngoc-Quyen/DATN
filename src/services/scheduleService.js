@@ -14,6 +14,7 @@ import {
     violatesSameDayWorkAndOnCall,
     getOnCallCountForWeek,
 } from '../validation/calendarValidation.js';
+import { reject, resolve } from 'bluebird';
 
 // Các hằng số cấu hình
 const ON_CALL_SHIFTS_PER_WEEK_MIN = 1;
@@ -1023,6 +1024,27 @@ let getScheduleSwapById = async (id) => {
         }
     });
 };
+
+let getScheduleMax = async (doctorId, dateBooking) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let scheduleMaxBooking = await db.Schedule.findAll({
+                where: {
+                    doctorId: doctorId,
+                    date: dateBooking,
+                    sumBooking: 3,
+                },
+            });
+            if (!scheduleMaxBooking || scheduleMaxBooking.length === 0) {
+                scheduleMaxBooking = [];
+            }
+            resolve(scheduleMaxBooking.map((s) => s.dataValues));
+        } catch (error) {
+            console.log('Error: ', error);
+            reject(error);
+        }
+    });
+};
 module.exports = {
     generateMonthlySchedule: generateMonthlySchedule,
     generateScheduleForAllSpecializations: generateScheduleForAllSpecializations,
@@ -1041,4 +1063,5 @@ module.exports = {
     updateScheduleSwapById: updateScheduleSwapById,
     getScheduleSwapById: getScheduleSwapById,
     getScheduleByDoctorIdAndDate: getScheduleByDoctorIdAndDate,
+    getScheduleMax: getScheduleMax,
 };

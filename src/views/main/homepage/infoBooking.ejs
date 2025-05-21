@@ -102,9 +102,10 @@
                             <div class="right-booking col-3 d-flex flex-column ">
                                 <img src="<%= patient.getDataValue('doctorAvatar')%>">
 
-                                <div style=" font-weight: bold; font-size: 15px; color: #3e81e6;">
+                                <a style=" font-weight: bold; font-size: 15px; color: #3e81e6;"
+                                    href="/detail/doctor/<%= patient.getDataValue('doctorId') %>">
                                     <%= patient.getDataValue('doctorName') %>
-                                </div>
+                                </a>
 
                                 <div style="text-align: center; font-weight: bold;">
                                     <%= patient.timeBooking %>

@@ -162,14 +162,20 @@ let getForPatientsByDateTabs = async (idDoctor, date) => {
 let getForPatientForUser = async (idUser) => {
     return new Promise(async (resolve, reject) => {
         try {
+            const today = new Date();
+            // Format today as yyyy-MM-dd (remove time part)
+            const todayStr = today.toISOString().slice(0, 10);
+
             let newPatients = await db.Patient.findAll({
                 where: {
                     statusId: statusNewId,
                     userId: idUser,
+                    dateBooking: {
+                        [db.Sequelize.Op.gte]: todayStr,
+                    },
                 },
-                order: [['updatedAt', 'DESC']],
+                order: [['updatedAt', 'ASC']],
             });
-
             let pendingPatients = await db.Patient.findAll({
                 where: {
                     statusId: statusPendingId,

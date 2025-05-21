@@ -5,6 +5,7 @@ import mailer from './../config/mailer';
 import { mailChangePass } from '../../lang/en';
 import apiAuth from '../middlewares/apiAuth';
 import uploadImg from '../services/imgLoadFirebase';
+const { formatDateToDDMMYYYY, formatDateToYYYYMMDD } = require('../helper/dateHelper');
 
 let getLogin = (req, res) => {
     return res.render('auth/login.ejs', {
@@ -17,23 +18,46 @@ let getRegister = (req, res) => {
 };
 
 let postRegister = async (req, res) => {
+    const formatted = formatDateToDDMMYYYY(req.body.birthday);
     let customer = {
         name: req.body.name,
         phone: req.body.phone,
         email: req.body.email,
         password: req.body.password,
-        gender: req.body.gender,
+        gender: 'M',
         address: req.body.address,
+        birthday: formatted,
         avatar: 'https://firebasestorage.googleapis.com/v0/b/pbl5-a1f37.appspot.com/o/images%2FavatarUsers%2FavatarPatient%2Favatar-default.png?alt=media&token=f8cd9a9f-d234-4b99-b742-77cf25ca86dd',
         description: req.body.description,
     };
     try {
+        // Check if email already exists
+        const existingUser = await user.findUserByEmail(req.body.email);
+        if (existingUser) {
+            return res.render('auth/register.ejs', {
+                errEmail: 'Email đã tồn tại',
+                oldData: req.body,
+            });
+        }
+
+        // Check password and confirm password match
+        if (req.body.password !== req.body.passwordConfirm) {
+            return res.render('auth/register.ejs', {
+                errPasswordConfirm: 'Mật khẩu không khớp',
+                oldData: req.body,
+            });
+        }
+
         let mess = await user.createNewUser(customer);
-        console.log(mess.errMessage);
         if (mess.errCode === 0) {
-            return res.redirect('/login');
+            return res.render('auth/login.ejs', {
+                error: '',
+            });
         } else {
-            return res.redirect('/register');
+            res.render('auth/register', {
+                hasErrors: true,
+                oldData: req.body,
+            });
         }
     } catch (err) {
         console.log(err);

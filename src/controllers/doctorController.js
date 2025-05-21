@@ -126,6 +126,32 @@ let getScheduleDoctorByDate = async (req, res) => {
                 listTime = await userService.getAllCodeService('TIMEONCALL');
             }
         }
+        let listScheduleMax = await scheduleService.getScheduleMax(doctorId, dateReq);
+        // Loại bỏ các phần tử trong listTime có valueVn trùng với time trong listScheduleMax
+        if (listTime && Array.isArray(listTime.data) && Array.isArray(listScheduleMax)) {
+            const now = new Date();
+            const todayStr = now.toISOString().split('T')[0]; // "YYYY-MM-DD"
+
+            listTime.data = listTime.data
+                .filter((item) => {
+                    // Nếu schedule không phải hôm nay thì giữ lại
+                    if (schedule.date !== todayStr) return true;
+
+                    // Nếu là hôm nay → kiểm tra giờ kết thúc đã quá chưa
+                    const timeRange = item.valueVi.split(' - ');
+                    if (timeRange.length !== 2) return false;
+
+                    const [endHour, endMinute] = timeRange[1].trim().split(':').map(Number);
+                    const endDateTime = new Date(); // hôm nay
+                    endDateTime.setHours(endHour, endMinute, 0, 0);
+
+                    return endDateTime > now;
+                })
+                .filter((item) => {
+                    // Loại bỏ các item trùng thời gian trong listScheduleMax
+                    return !listScheduleMax.some((schedule) => schedule.time === item.valueVi);
+                });
+        }
 
         let data = object.schedule;
         let doctor = object.doctor;

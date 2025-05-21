@@ -265,7 +265,7 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Xác nhận từ chối của bệnh nhân</h5>
+                    <h5 class="modal-title" id="exampleModalLabel">Xác nhận từ chối lịch hẹn của bác sĩ</h5>
                     <button type="button" class="close cursor-pointer" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -286,11 +286,12 @@
                                 Bệnh nhân hủy lịch
                             </label>
                         </div>
-                        <div class="form-check disabled">
+                        <div class="form-check">
                             <input class="form-check-input" type="radio" name="reasonCancel" id="exampleRadios3"
                                 value="reason3">
                             <label class="form-check-label" for="exampleRadios3">
-                                Lý do khác <input type="text" id="otherReason">
+                                Lý do khác
+                                <input type="text" id="otherReason" disabled>
                             </label>
                         </div>
                     </form>
@@ -345,4 +346,15 @@
         $(document).ready(function () {
             $(".admin-list-patients").addClass("active");
         })
+
+        $(function () {
+            $('input[name="reasonCancel"]').on('change', function () {
+                if ($('#exampleRadios3').is(':checked')) {
+                    $('#otherReason').prop('disabled', false);
+                } else {
+                    $('#otherReason').prop('disabled', true).val('');
+                }
+            });
+        });
+
     </script>

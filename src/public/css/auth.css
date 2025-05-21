@@ -1,55 +1,99 @@
 body {
-  font-family: Roboto, sans-serif; }
-  body a {
-    text-decoration: none; }
+  font-family: Roboto, sans-serif;
+}
+
+body a {
+  text-decoration: none;
+}
 
 .invalid-feedback {
-  color: red; }
+  color: red;
+}
 
 .login {
   display: flex;
   align-items: center;
-  min-height: 100vh; }
-  .login .lg-body .lg-image-background {
-    background-image: url("../images/background/image.png");
-    background-position: center center;
-    background-repeat: no-repeat;
-    background-size: cover;
-    box-shadow: 0 0 5px 3px rgba(0, 0, 0, 0.05);
-    opacity: 0.9;
-    height: 600px;
-    border-radius: 3px; }
-    .login .lg-body .lg-image-background:hover {
-      opacity: 1; }
-  .login .lg-body .text-login {
-    display: block;
-    text-transform: uppercase;
-    margin-bottom: 10px;
-    font-size: 20px;
-    font-weight: 600;
-    display: flex;
-    justify-content: center; }
-  .login .lg-body .login-form {
-    margin-top: 20px; }
-  .login .lg-body .forgot-password {
-    margin-top: 5px;
-    margin-bottom: 10px; 
-    display: flex;
-    justify-content: center;}
-    .login .lg-body .forgot-password a {
-      text-decoration: none; 
-      display: flex;
-      justify-content: center;}
-  .login .lg-body .lg-register {
-    text-decoration: none;
-   }
+  min-height: 100vh;
+}
+
+.login .lg-body .lg-image-background {
+  background-image: url("../images/background/image.png");
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  box-shadow: 0 0 5px 3px rgba(0, 0, 0, 0.05);
+  opacity: 0.9;
+  height: 600px;
+  border-radius: 3px;
+}
+
+.login .lg-body .lg-image-background:hover {
+  opacity: 1;
+}
+
+.login .lg-body .text-login {
+  display: block;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+  font-size: 20px;
+  font-weight: 600;
+  display: flex;
+  justify-content: center;
+}
+
+.login .lg-body .login-form {
+  margin-top: 20px;
+}
+
+.login .lg-body .forgot-password {
+  margin-top: 5px;
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: center;
+}
+
+.login .lg-body .forgot-password a {
+  text-decoration: none;
+  display: flex;
+  justify-content: center;
+}
+
+.login .lg-body .lg-register {
+  text-decoration: none;
+}
 
 .btn-register {
-  margin-top: 15px; 
-  margin: auto; /* Căn giữa theo cả hai chiều */
-  display: block; /* Để button trở thành một khối (block element) */}
+  margin-top: 15px;
+  margin: auto;
+  /* Căn giữa theo cả hai chiều */
+  display: block;
+  /* Để button trở thành một khối (block element) */
+}
 
 .btn-login {
-  margin: auto; /* Căn giữa theo cả hai chiều */
-  display: block; /* Để button trở thành một khối (block element) */
+  margin: auto;
+  /* Căn giữa theo cả hai chiều */
+  display: block;
+  /* Để button trở thành một khối (block element) */
+}
+
+/* Tùy chỉnh màu nút primary nếu muốn khác màu mặc định của Bootstrap */
+.btn-custom-primary {
+  background-color: #00BFA6;
+  border-color: #00BFA6;
+  color: white;
+}
+
+.btn-custom-primary:hover {
+  background-color: #00a792;
+  border-color: #00a792;
+  color: white;
+}
+
+.link-custom-primary {
+  color: #00BFA6;
+}
+
+.link-custom-primary:hover {
+  color: #008d7a;
 }

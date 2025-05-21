@@ -69,6 +69,8 @@ let getDetailSpecializationPage = async (req, res) => {
         let doctorsWithSchedule = [];
         for (let doctor of doctors) {
             let schedule = await scheduleService.getScheduleByDoctorIdAndDate(doctor.User.id, dateReq);
+            let listScheduleMax = await scheduleService.getScheduleMax(doctor.User.id, dateReq);
+
             let listTime = [];
             if (schedule) {
                 if (schedule.type === 'regular') {
@@ -77,6 +79,31 @@ let getDetailSpecializationPage = async (req, res) => {
                     listTime = await userService.getAllCodeService('TIMEONCALL');
                 }
             }
+            if (listTime && Array.isArray(listTime.data) && Array.isArray(listScheduleMax)) {
+                const now = new Date();
+                const todayStr = now.toISOString().split('T')[0]; // "YYYY-MM-DD"
+
+                listTime.data = listTime.data
+                    .filter((item) => {
+                        // Nếu schedule không phải hôm nay thì giữ lại
+                        if (schedule.date !== todayStr) return true;
+
+                        // Nếu là hôm nay → kiểm tra giờ kết thúc đã quá chưa
+                        const timeRange = item.valueVi.split(' - ');
+                        if (timeRange.length !== 2) return false;
+
+                        const [endHour, endMinute] = timeRange[1].trim().split(':').map(Number);
+                        const endDateTime = new Date(); // hôm nay
+                        endDateTime.setHours(endHour, endMinute, 0, 0);
+
+                        return endDateTime > now;
+                    })
+                    .filter((item) => {
+                        // Loại bỏ các item trùng thời gian trong listScheduleMax
+                        return !listScheduleMax.some((schedule) => schedule.time === item.valueVi);
+                    });
+            }
+
             doctorsWithSchedule.push({
                 ...doctor,
                 schedule: schedule,
@@ -140,6 +167,33 @@ let getDetailDoctorPage = async (req, res) => {
                 listTime = await userService.getAllCodeService('TIMEONCALL');
             }
         }
+        let listScheduleMax = await scheduleService.getScheduleMax(doctorId, dateReq);
+        // Loại bỏ các phần tử trong listTime có valueVn trùng với time trong listScheduleMax
+        if (listTime && Array.isArray(listTime.data) && Array.isArray(listScheduleMax)) {
+            const now = new Date();
+            const todayStr = now.toISOString().split('T')[0]; // "YYYY-MM-DD"
+
+            listTime.data = listTime.data
+                .filter((item) => {
+                    // Nếu schedule không phải hôm nay thì giữ lại
+                    if (schedule.date !== todayStr) return true;
+
+                    // Nếu là hôm nay → kiểm tra giờ kết thúc đã quá chưa
+                    const timeRange = item.valueVi.split(' - ');
+                    if (timeRange.length !== 2) return false;
+
+                    const [endHour, endMinute] = timeRange[1].trim().split(':').map(Number);
+                    const endDateTime = new Date(); // hôm nay
+                    endDateTime.setHours(endHour, endMinute, 0, 0);
+
+                    return endDateTime > now;
+                })
+                .filter((item) => {
+                    // Loại bỏ các item trùng thời gian trong listScheduleMax
+                    return !listScheduleMax.some((schedule) => schedule.time === item.valueVi);
+                });
+        }
+
         return res.render('main/homepage/doctor.ejs', {
             doctor: doctor,
             sevenDaySchedule: sevenDaySchedule,

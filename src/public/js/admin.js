@@ -975,8 +975,8 @@ function loadNewPatientsForAdmin() {
                     <td> ${patient.email}     </td>
                     <td>${patient.dateBooking} (${patient.timeBooking})   </td>
                     <td> 
-                    <button type="button"  data-patient-id="${patient.id}" class="ml-3 btn btn-primary cursor-pointer btn-new-patient-ok"> Chấp nhận</button>
-                    <button  type="button" data-patient-id="${patient.id}" class="ml-3 btn btn-danger cursor-pointer btn-new-patient-cancel"> Hủy </button>
+                        <button type="button"  data-patient-id="${patient.id}" class="ml-3 btn btn-primary cursor-pointer btn-new-patient-ok"> Chấp nhận</button>
+                        <button  type="button" data-patient-id="${patient.id}" class="ml-3 btn btn-danger cursor-pointer btn-new-patient-cancel"> Hủy </button>
                     </td>
                 </tr>
                 `;
@@ -991,8 +991,8 @@ function loadNewPatientsForAdmin() {
                     <td> ${patient.email}     </td>
                     <td>${patient.dateBooking} (${patient.timeBooking})   </td>
                     <td> 
-                    <button  data-patient-id="${patient.id}"  class="ml-3 btn btn-success cursor-pointer btn-pending-patient">Xác nhận</button>
-                    
+                        <button  data-patient-id="${patient.id}"  class="ml-3 btn btn-success cursor-pointer btn-pending-patient">Xác nhận</button>
+                        <button  type="button" data-patient-id="${patient.id}" class="ml-3 btn btn-danger cursor-pointer btn-new-patient-cancel"> Hủy </button>
                     </td>
                 </tr>
                 `;
@@ -1007,7 +1007,7 @@ function loadNewPatientsForAdmin() {
                     <td> ${patient.email}     </td>
                     <td>${patient.dateBooking} (${patient.timeBooking})   </td>
                     <td> 
-                    <button  type="button" data-patient-id="${patient.id}"  class="ml-3 btn btn-info cursor-pointer btn-confirmed-patient"> Thông tin</button>
+                        <button  type="button" data-patient-id="${patient.id}"  class="ml-3 btn btn-info cursor-pointer btn-confirmed-patient"> Thông tin</button>
                     </td>
                 </tr>
                 `;
@@ -1022,7 +1022,7 @@ function loadNewPatientsForAdmin() {
                     <td> ${patient.email}     </td>
                     <td>${patient.dateBooking} (${patient.timeBooking})   </td>
                     <td> 
-                    <button data-patient-id="${patient.id}"  class="ml-3 btn btn-primary cursor-pointer btn-history-cancel-patient">Lịch sử</button>
+                        <button data-patient-id="${patient.id}"  class="ml-3 btn btn-primary cursor-pointer btn-history-cancel-patient">Lịch sử</button>
                     </td>
                 </tr>
                 `;
@@ -1076,8 +1076,8 @@ function loadPatientsByDate() {
                         <td> ${patient.email}     </td>
                         <td>${patient.dateBooking} (${patient.timeBooking})   </td>
                         <td> 
-                        <button type="button"  data-patient-id="${patient.id}" class="ml-3 btn btn-primary cursor-pointer btn-new-patient-ok"> Chấp nhận</button>
-                        <button  type="button" data-patient-id="${patient.id}" class="ml-3 btn btn-danger cursor-pointer btn-new-patient-cancel"> Hủy </button>
+                            <button type="button"  data-patient-id="${patient.id}" class="ml-3 btn btn-primary cursor-pointer btn-new-patient-ok"> Chấp nhận</button>
+                            <button  type="button" data-patient-id="${patient.id}" class="ml-3 btn btn-danger cursor-pointer btn-new-patient-cancel"> Hủy </button>
                         </td>
                     </tr>
                     `;
@@ -1092,8 +1092,8 @@ function loadPatientsByDate() {
                         <td> ${patient.email}     </td>
                         <td>${patient.dateBooking} (${patient.timeBooking})   </td>
                         <td> 
-                        <button  data-patient-id="${patient.id}"  class="ml-3 btn btn-success cursor-pointer btn-pending-patient">Xác nhận</button>
-                        
+                            <button  data-patient-id="${patient.id}"  class="ml-3 btn btn-success cursor-pointer btn-pending-patient">Xác nhận</button>
+                            <button  type="button" data-patient-id="${patient.id}" class="ml-3 btn btn-danger cursor-pointer btn-new-patient-cancel"> Hủy </button>
                         </td>
                     </tr>
                     `;
@@ -1108,7 +1108,7 @@ function loadPatientsByDate() {
                         <td> ${patient.email}     </td>
                         <td>${patient.dateBooking} (${patient.timeBooking})   </td>
                         <td> 
-                        <button  type="button" data-patient-id="${patient.id}"  class="ml-3 btn btn-info cursor-pointer btn-confirmed-patient"> Thông tin</button>
+                            <button  type="button" data-patient-id="${patient.id}"  class="ml-3 btn btn-info cursor-pointer btn-confirmed-patient"> Thông tin</button>
                         </td>
                     </tr>
                     `;
@@ -1123,7 +1123,7 @@ function loadPatientsByDate() {
                         <td> ${patient.email}     </td>
                         <td>${patient.dateBooking} (${patient.timeBooking})   </td>
                         <td> 
-                        <button   data-patient-id="${patient.id}"  class="ml-3 btn btn-primary cursor-pointer btn-history-cancel-patient">Lịch sử</button>
+                            <button   data-patient-id="${patient.id}"  class="ml-3 btn btn-primary cursor-pointer btn-history-cancel-patient">Lịch sử</button>
                         </td>
                     </tr>
                     `;
@@ -1207,14 +1207,16 @@ function handleBtnNewPatientCancel() {
     // Handle click on .btn-new-patient-cancel (in table row)
     $('#tableNewPatients').on('click', '.btn-new-patient-cancel', function (e) {
         $('#btnCancelBookingPatient').attr('data-patient-id', $(this).data('patient-id'));
-        $('#btnCancelBookingPatient').attr('data-type', 'new-patient-cancel');
         $('#modalCancelBooking').modal('show');
     });
 
+    $('#tableNeedConfirmPatients').on('click', '.btn-new-patient-cancel', function (e) {
+        $('#btnCancelBookingPatient').attr('data-patient-id', $(this).data('patient-id'));
+        $('#modalCancelBooking').modal('show');
+    });
     // Handle click on #btn-new-patient-cancel (in modal)
     $('#modalDetailNewPatient').on('click', '#btn-new-patient-cancel', function (e) {
         $('#btnCancelBookingPatient').attr('data-patient-id', $(this).data('patient-id'));
-        $('#btnCancelBookingPatient').attr('data-type', 'new-patient-cancel');
         $('#modalCancelBooking').modal('show');
         $('#modalDetailNewPatient').modal('hide');
     });
@@ -1267,7 +1269,6 @@ function handleBtnPendingPatient() {
 function handleBtnPendingCancel() {
     $('#tableNeedConfirmPatients').on('click', '.btn-pending-patient-cancel', function (e) {
         $('#btnCancelBookingPatient').attr('data-patient-id', $(this).data('patient-id'));
-        $('#btnCancelBookingPatient').attr('data-type', 'pending-patient-cancel');
         $('#modalCancelBooking').modal('show');
     });
 }
@@ -1280,8 +1281,8 @@ function addNewRowTablePending(patient) {
                     <td> ${patient.email}     </td>
                     <td> ${patient.dateBooking} (${patient.timeBooking})     </td>
                     <td> 
-                    <button  data-patient-id="${patient.id}"  class="ml-3 btn btn-success cursor-pointer btn-pending-patient">Xác nhận</button>
-                    
+                        <button  data-patient-id="${patient.id}"  class="ml-3 btn btn-success cursor-pointer btn-pending-patient">Xác nhận</button>
+                        <button  type="button" data-patient-id="${patient.id}" class="ml-3 btn btn-danger cursor-pointer btn-new-patient-cancel"> Hủy </button>
                     </td>
                 </tr>
                
@@ -1297,7 +1298,7 @@ function addNewRowTableConfirmed(patient) {
                     <td> ${patient.email}     </td>
                     <td> ${patient.dateBooking} (${patient.timeBooking})     </td>
                     <td> 
-                    <button  type="button" data-patient-id="${patient.id}"  class="ml-3 btn btn-info cursor-pointer btn-confirmed-patient"> Thông tin</button>
+                        <button  type="button" data-patient-id="${patient.id}"  class="ml-3 btn btn-info cursor-pointer btn-confirmed-patient"> Thông tin</button>
                     </td>
                 </tr>
                 `;
@@ -1312,7 +1313,7 @@ function addNewRowTableCanceled(patient) {
                     <td> ${patient.email}     </td>
                     <td> ${patient.dateBooking} (${patient.timeBooking}) </td>
                     <td> 
-                    <button   data-patient-id="${patient.id}"  class="ml-3 btn btn-primary cursor-pointer btn-history-cancel-patient">Lịch sử</button>
+                        <button   data-patient-id="${patient.id}"  class="ml-3 btn btn-primary cursor-pointer btn-history-cancel-patient">Lịch sử</button>
                     </td>
                 </tr>
                

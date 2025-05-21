@@ -13,82 +13,108 @@
     <link rel="stylesheet" href="/css/auth.css">
     <link rel="stylesheet" href="/components/font-awesome/css/font-awesome.min.css">
     <script src="/components/bootstrap/js/bootstrap.min.js"></script>
+    <script src="/js/auth.js"></script>
 </head>
 
 <body>
-    <div class="login">
-        <div class="container lg-body">
-            <div class="container d-flex flex-row">
-                <div class="col-6 lg-image-background">
-                </div>
-                <div class="col-6 login-form">
-                    <span class="text-login">Đăng ký </span>
-                    <% if(locals.hasErrors){ %>
-                        <p style="color: red">Vui lòng kiểm tra lại thông tin</p>
-                        <% } %>
-                            <form method="POST" action="/register">
-                                <div class="form-group">
-                                    <label for="name">Họ và tên:</label>
-                                    <input type="text" class="form-control" id="name" name="name"
-                                        value="<% if (locals.oldData) { %> <%= locals.oldData.name %> <% } %>"
-                                        placeholder="Họ tên...">
-                                </div>
-                                <div class="form-group">
-                                    <label for="email" class="required-field">Email : </label>
-                                    <input type="email" class="form-control" id="email" name="email"
-                                        placeholder="Email ..."
-                                        value="<% if (locals.oldData) { %> <%= locals.oldData.email %> <% } %>">
-                                    <% if (locals.errEmail) { %>
-                                        <small class="form-text invalid-feedback">
-                                            <%= locals.errEmail %>
-                                        </small>
-                                        <% } %>
-                                </div>
+    <div class="container">
+        <div class="row min-vh-100 align-items-center justify-content-center py-4">
+            <div class="col-lg-10 col-xl-9">
+                <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
+                    <div class="row g-0">
+                        <div class="col-md-6 d-none d-md-block register-img-bg">
+                            <!-- Background image is set via CSS -->
+                            <img src="../images/background/IMG_Register.png" alt="Login Image"
+                                class="img-fluid rounded-start-4 object-fit-cover">
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card-body p-4 p-lg-5">
+                                <h3 class="fw-bold mb-4">Đăng ký tài khoản mới</h3>
 
-                                <div class="form-group">
-                                    <label for="password" class="required-field">Mật khẩu : </label>
-                                    <input type="password" class="form-control" id="password" name="password"
-                                        placeholder="Mật khẩu...">
-                                    <% if (locals.errPassword) { %>
-                                        <small class="form-text invalid-feedback">
-                                            <%= locals.errPassword %>
-                                        </small>
-                                        <% } %>
-                                </div>
-                                <div class="form-group">
-                                    <label for="rg-password-again" class="required-field"> Nhập lại mật khẩu : </label>
-                                    <input type="password" class="form-control" id="rg-password-again"
-                                        name="passwordConfirm" placeholder="Nhập lại mật khẩu...">
-                                    <% if (locals.errPasswordConfirm) { %>
-                                        <small class="form-text invalid-feedback">
-                                            <%= locals.errPasswordConfirm %>
-                                        </small>
-                                        <% } %>
-                                </div>
-                                <div class="form-group">
-                                    <label for="phone" class="required-field"> Số điện thoại : </label>
-                                    <input type="text" class="form-control" id="phone" name="phone"
-                                        placeholder="Số điện thoại">
-                                </div>
-                                <div class="form-group">
-                                    <label for="birthday" class="required-field"> Ngày sinh : </label>
-                                    <input type="text" class="form-control" id="birthday" name="birthday"
-                                        placeholder="Ngày tháng năm sinh">
-                                </div>
+                                <% if(locals.hasErrors){ %>
+                                    <div class="alert alert-danger" role="alert">
+                                        Vui lòng kiểm tra lại thông tin
+                                    </div>
+                                    <% } %>
 
-                                <div>
-                                    <span class="required-field">(Thông tin có dấu </span>
-                                    <span> là bắt buộc)</span>
-                                </div>
-                                <button type="submit" class="btn btn-primary btn-register mt-2">ĐĂNG KÝ</button>
-                            </form>
-                            <br>
-                            <hr>
-                            <span>Bạn đã có tài khoản? <a class="lg-register" href="/login">Quay lại trang ĐĂNG
-                                    NHẬP</a></span>
-                            <br>
-                            <a class="lg-register" href="/"><i class="fa fa-arrow-left" aria-hidden="true"></i> Về lại
-                                trang chủ </a> <br />
+                                        <form method="POST" action="/register">
+                                            <div class="mb-3">
+                                                <label for="name" class="form-label">Họ và tên: <span
+                                                        class="text-danger">*</span></label>
+                                                <input type="text" class="form-control rounded-3" id="name" name="name"
+                                                    value="<%= locals.oldData?.name || '' %>" required />
+                                            </div>
+
+                                            <div class="mb-3">
+                                                <label for="email" class="form-label">Email: <span
+                                                        class="text-danger">*</span></label>
+                                                <input type="email" class="form-control rounded-3" id="email"
+                                                    name="email" value="<%= locals.oldData?.email || '' %>" required />
+                                                <% if (locals.errEmail) { %>
+                                                    <small class="form-text text-danger">
+                                                        <%= locals.errEmail %>
+                                                    </small>
+                                                    <% } %>
+                                            </div>
+
+                                            <div class="mb-3">
+                                                <label for="password" class="form-label">Mật khẩu: <span
+                                                        class="text-danger">*</span></label>
+                                                <input type="password" class="form-control rounded-3" id="password"
+                                                    name="password" required />
+                                                <% if (locals.errPassword) { %>
+                                                    <small class="form-text text-danger">
+                                                        <%= locals.errPassword %>
+                                                    </small>
+                                                    <% } %>
+                                            </div>
+
+                                            <div class="mb-3">
+                                                <label for="rg-password-again" class="form-label">Nhập lại mật
+                                                    khẩu: <span class="text-danger">*</span></label>
+                                                <input type="password" class="form-control rounded-3"
+                                                    id="rg-password-again" name="passwordConfirm" required />
+                                                <% if (locals.errPasswordConfirm) { %>
+                                                    <small class="form-text text-danger">
+                                                        <%= locals.errPasswordConfirm %>
+                                                    </small>
+                                                    <% } %>
+                                            </div>
+
+                                            <div class="mb-3">
+                                                <label for="phone" class="form-label">Số điện thoại:</label>
+                                                <input type="text" class="form-control rounded-3" id="phone"
+                                                    name="phone" />
+                                            </div>
+
+                                            <div class="mb-3">
+                                                <label for="birthday" class="form-label">Ngày sinh:</label>
+                                                <input type="date" class="form-control rounded-3" id="birthday"
+                                                    name="birthday" />
+                                            </div>
+
+                                            <p class="text-muted small">(<span class="text-danger">*</span>) là trường
+                                                bắt buộc</p>
+                                            <button type="submit"
+                                                class="btn btn-primary w-100 fw-bold rounded-pill py-2 mt-2">ĐĂNG
+                                                KÝ</button>
+                                        </form>
+
+                                        <hr class="my-4">
+
+                                        <div class="text-center">
+                                            <p class="mb-2">Đã có tài khoản?
+                                                <a href="/login"
+                                                    class="link-primary fw-semibold text-decoration-none">Đăng
+                                                    nhập</a>
+                                            </p>
+                                            <a href="/" class="text-secondary text-decoration-none small">
+                                                <i class="fa fa-arrow-left me-1"></i> Về lại trang chủ
+                                            </a>
+                                        </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
