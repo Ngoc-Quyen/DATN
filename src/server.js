@@ -1,13 +1,13 @@
 require('dotenv').config();
 import express from 'express';
-import configViewEngine from './config/viewEngine';
-import initRoutes from './routes/web';
+import configViewEngine from './config/viewEngine.js';
+import initRoutes from './routes/web.js';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import flash from 'connect-flash';
 import methodOverride from 'method-override';
 import passPort from 'passport';
-import session from './config/session';
+import session from './config/session.js';
 
 let app = express();
 // admin.initializeApp(

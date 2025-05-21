@@ -923,6 +923,10 @@ let handleCreateScheduleAll = async (req, res) => {
 };
 
 let getReschedule = async (req, res) => {
+    let page = parseInt(req.query.page) || 1;
+    let limit = 8;
+    let offset = (page - 1) * limit;
+
     let currentDate = moment().format('DD/MM/YYYY');
     let date = '';
     let canActive = false;
@@ -934,11 +938,13 @@ let getReschedule = async (req, res) => {
         date = currentDate;
         canActive = true;
     }
-    let listTimeOff = await scheduleService.getAllScheduleTimeOffs();
+    let { timeOffs, totalCount } = await scheduleService.getAllScheduleTimeOffsPaging(limit, offset);
     return res.render('main/users/admins/manageScheduleTimeOff.ejs', {
         user: req.user,
         date: date,
-        listTimeOff: listTimeOff,
+        listTimeOff: timeOffs,
+        currentPage: page,
+        totalPages: totalCount,
     });
 };
 

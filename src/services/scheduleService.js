@@ -567,6 +567,72 @@ let getAllScheduleTimeOffs = async () => {
     });
 };
 
+let getAllScheduleTimeOffsPaging = async (limit, offset) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let { count, rows: timeOffs } = await db.TimeOffs.findAndCountAll({
+                attributes: ['id', 'doctorId', 'startDate', 'endDate', 'reason', 'statusId'],
+                order: [
+                    [db.sequelize.literal('statusId = 3'), 'DESC'],
+                    ['updatedAt', 'ASC'],
+                ],
+                include: [
+                    {
+                        model: db.User,
+                        as: 'Doctor', // phải đúng với alias
+                        attributes: ['id', 'name'],
+                        include: [
+                            {
+                                model: db.Doctor_User,
+                                attributes: ['specializationId'],
+                                include: [
+                                    {
+                                        model: db.Specialization,
+                                        attributes: ['id', 'name'],
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                    {
+                        model: db.Status,
+                        attributes: ['id', 'name'],
+                    },
+                ],
+                limit,
+                offset,
+            });
+
+            let totalCount = Math.ceil(count / limit);
+
+            // Xử lý dữ liệu để định dạng lại nếu cần
+            timeOffs = timeOffs.map((timeOff) => {
+                const doctorUser = timeOff.Doctor?.Doctor_User || {};
+                return {
+                    id: timeOff.id,
+                    doctorId: timeOff.doctorId,
+                    startDate: timeOff.startDate,
+                    endDate: timeOff.endDate,
+                    reason: timeOff.reason,
+                    statusId: timeOff.statusId,
+                    statusName: timeOff.Status?.name || 'Unknown',
+                    doctorName: timeOff.Doctor?.name || 'Unknown',
+                    specializationId: doctorUser.Specialization?.id || null,
+                    specializationName: doctorUser.Specialization?.name || 'Unknown',
+                };
+            });
+
+            if (!timeOffs || timeOffs.length === 0) {
+                timeOffs = [];
+            }
+
+            resolve({ timeOffs, totalCount });
+        } catch (error) {
+            console.error('Error fetching time offs:', error);
+            reject(error);
+        }
+    });
+};
 let getScheduleTimeOffById = async (id) => {
     return new Promise(async (resolve, reject) => {
         try {
@@ -1051,6 +1117,7 @@ module.exports = {
     getAllScheduleByMonthYear: getAllScheduleByMonthYear,
     getAllScheduleByDoctorId: getAllScheduleByDoctorId,
     getAllScheduleTimeOffs: getAllScheduleTimeOffs,
+    getAllScheduleTimeOffsPaging: getAllScheduleTimeOffsPaging,
     getScheduleTimeOffById: getScheduleTimeOffById,
     getScheduleByDateAndDoctorId: getScheduleByDateAndDoctorId,
     getOnCallScheduleByDoctorAndDate: getOnCallScheduleByDoctorAndDate,

@@ -82,12 +82,6 @@ let getInfoDoctorsPaging = async (limit, offset) => {
                         required: false,
                         attributes: ['specializationId'],
                     },
-                    // {
-                    //     model: db.Patient,
-                    //     required: false,
-                    //     where: { statusId: 1 },
-                    //     attributes: [], // nếu không cần cột nào từ Patient, có thể để [] luôn
-                    // },
                 ],
                 order: [['id', 'ASC']],
                 limit,
