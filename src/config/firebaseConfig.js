@@ -2,12 +2,25 @@ import * as dotenv from 'dotenv';
 dotenv.config();
 import admin from 'firebase-admin';
 // const serviceAccount = require('../../serviceAccountKey.json');
-import path from 'path';
-import { fileURLToPath } from 'url';
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-import serviceAccount from '../../serviceAccountKey.json' with  { type: 'json' };
 
+// import path from 'path';
+// import { fileURLToPath } from 'url';
+// const __filename = fileURLToPath(import.meta.url);
+// const __dirname = path.dirname(__filename);
+// import serviceAccount from '../../serviceAccountKey.json' with  { type: 'json' };
+
+let serviceAccount;
+if (process.env.SERVICE_ACCOUNT_KEY_JSON) {
+    try {
+        serviceAccount = JSON.parse(process.env.SERVICE_ACCOUNT_KEY_JSON);
+    } catch (e) {
+        console.error('Lỗi phân tích cú pháp SERVICE_ACCOUNT_KEY_JSON:', e);
+        process.exit(1); // Thoát nếu credentials không hợp lệ
+    }
+} else {
+    console.error('Biến môi trường SERVICE_ACCOUNT_KEY_JSON không được đặt.');
+    process.exit(1); // Thoát nếu không có credentials
+}
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
     storageBucket: process.env.STORAGE_BUCKET, // Thay bằng Firebase Storage bucket của bạn
