@@ -1,4 +1,4 @@
-const db = require('../models');
+import db from '../models/index.js';
 import removeMd from 'remove-markdown';
 import syncElastic from './syncsElaticService.js';
 import helper from '../helper/client.js';

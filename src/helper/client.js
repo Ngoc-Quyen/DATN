@@ -1,4 +1,4 @@
-const db = require('../models');
+import db from '../models/index.js';
 import moment from 'moment';
 const _ = require('lodash');
 let getSpecializationById = (id) => {

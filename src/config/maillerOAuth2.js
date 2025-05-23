@@ -3,7 +3,8 @@
 import pkg from 'nodemailer';
 const { nodeMailer } = pkg;
 import { google } from 'googleapis';
-require('dotenv').config();
+import dotenv from 'dotenv';
+dotenv.config();
 
 const OAuth2 = google.auth.OAuth2;
 

@@ -1,5 +1,5 @@
 import bcrypt from 'bcryptjs';
-const db = require('../models');
+import db from '../models/index.js';
 import helper from '../helper/client.js';
 import _ from 'lodash';
 

@@ -1,5 +1,5 @@
 // import { reject, resolve } from 'bluebird';
-const db = require('../models');
+import db from '../models/index.js';
 
 let getSpecializationById = (id) => {
     return new Promise(async (resolve, reject) => {

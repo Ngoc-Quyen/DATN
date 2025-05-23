@@ -65,18 +65,18 @@ let postRegister = async (req, res) => {
     }
 };
 
-let verifyAccount = async (req, res) => {
-    let errorArr = [];
-    let successArr = [];
-    try {
-        let verifySuccess = await auth.verifyAccount(req.params.token);
-        successArr.push(verifySuccess);
-        req.flash('success', successArr);
-        return res.redirect('/login');
-    } catch (error) {
-        console.log(error);
-    }
-};
+// let verifyAccount = async (req, res) => {
+//     let errorArr = [];
+//     let successArr = [];
+//     try {
+//         let verifySuccess = await auth.verifyAccount(req.params.token);
+//         successArr.push(verifySuccess);
+//         req.flash('success', successArr);
+//         return res.redirect('/login');
+//     } catch (error) {
+//         console.log(error);
+//     }
+// };
 
 let getLogout = (req, res) => {
     req.session.destroy(function (err) {
@@ -199,7 +199,7 @@ export default {
     getLogin: getLogin,
     getRegister: getRegister,
     postRegister: postRegister,
-    verifyAccount: verifyAccount,
+    // verifyAccount: verifyAccount,
     getLogout: getLogout,
     checkLoggedIn: checkLoggedIn,
     checkLoggedOut: checkLoggedOut,

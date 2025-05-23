@@ -1,9 +1,10 @@
-const db = require('../models');
+import db from '../models/index.js';
 import removeMd from 'remove-markdown';
 const Sequelize = require('sequelize');
 const Op = Sequelize.Op;
 
-require('dotenv').config();
+import dotenv from 'dotenv';
+dotenv.config();
 
 let getSpecializations = () => {
     return new Promise(async (resolve, reject) => {

@@ -1,4 +1,5 @@
-// require('dotenv').config();
+import dotenv from 'dotenv';
+dotenv.config();
 // let elasticsearch = require('elasticsearch');
 // let elasticConnect = elasticsearch.Client({
 //     host: process.env.ELASTIC_HOST,
@@ -14,7 +15,6 @@
 //         console.log('Connect to Elasticsearch OK.');
 //     }
 // });
-
 
 // // DELETE /doctorcare_haryphamdev
 // //

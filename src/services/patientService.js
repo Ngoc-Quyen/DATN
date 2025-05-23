@@ -1,4 +1,4 @@
-const db = require('../models');
+import db from '../models/index.js';
 // import mailer from '../config/mailer.js';
 import {
     transMailBookingNew,

@@ -1,4 +1,5 @@
-require('dotenv').config();
+import dotenv from 'dotenv';
+dotenv.config();
 import homeService from '../services/homeService.js';
 import specializationService from '../services/specializationService.js';
 import doctorService from '../services/doctorService.js';

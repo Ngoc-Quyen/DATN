@@ -1,38 +1,46 @@
-import { tranRegisterEmail, tranForgotPassword } from '../../lang/en.js';
-import { sendEmail } from '../config/mailer.js';
-import userService from '../services/userService.js';
-require('dotenv').config();
+// import { tranRegisterEmail, tranForgotPassword } from '../../lang/en.js';
+// import mailer from '../config/mailer.js';
 
-let register = ({ user }, linkVerify) => {
-    return new Promise(async (resolve, reject) => {
-        let isEmailSend = await sendEmail(
-            user.local.email,
-            tranRegisterEmail.subject,
-            tranRegisterEmail.template(linkVerify)
-        );
-        if (isEmailSend) resolve(tranRegisterEmail.sendSuccess(user.local.email));
-        else reject(tranRegisterEmail.sendFail);
-    });
-};
-let verifyAccount = (token) => {
-    return new Promise(async (resolve, reject) => {
-        await userService
-            .verifyAccount(token)
-            .then(() => {
-                resolve(tranRegisterEmail.account_active);
-            })
-            .catch((err) => {
-                reject(err);
-            });
-    });
-};
-let resetPassword = (email, linkVerify) => {
-    return new Promise(async (resolve, reject) => {
-        let isEmailSend = await sendEmail(email, tranForgotPassword.subject, tranForgotPassword.template(linkVerify));
-        if (isEmailSend) resolve(true);
-        else reject(false);
-    });
-};
+import userService from '../services/userService.js';
+import dotenv from 'dotenv';
+dotenv.config();
+
+// let register = ({ user }, linkVerify) => {
+//     return new Promise(async (resolve, reject) => {
+//         let isEmailSend = await mailer.sendEmailNormal(
+//             user.local.email,
+//             tranRegisterEmail.subject,
+//             tranRegisterEmail.template(linkVerify)
+//         );
+//         if (isEmailSend) resolve(tranRegisterEmail.sendSuccess(user.local.email));
+//         else reject(tranRegisterEmail.sendFail);
+//     });
+// };
+
+// let verifyAccount = (token) => {
+//     return new Promise(async (resolve, reject) => {
+//         await userService
+//             .verifyAccount(token)
+//             .then(() => {
+//                 resolve(tranRegisterEmail.account_active);
+//             })
+//             .catch((err) => {
+//                 reject(err);
+//             });
+//     });
+// };
+
+// let resetPassword = (email, linkVerify) => {
+//     return new Promise(async (resolve, reject) => {
+//         let isEmailSend = await mailer.sendEmailNormal(
+//             email,
+//             tranForgotPassword.subject,
+//             tranForgotPassword.template(linkVerify)
+//         );
+//         if (isEmailSend) resolve(true);
+//         else reject(false);
+//     });
+// };
 
 let setNewPassword = (email, password) => {
     return new Promise(async (resolve, reject) => {
@@ -52,8 +60,8 @@ let setNewPassword = (email, password) => {
 };
 
 export default {
-    register: register,
-    verifyAccount: verifyAccount,
-    resetPassword: resetPassword,
+    // register: register,
+    // verifyAccount: verifyAccount,
+    // resetPassword: resetPassword,
     setNewPassword: setNewPassword,
 };

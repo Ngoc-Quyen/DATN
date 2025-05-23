@@ -271,4 +271,4 @@ let initRoutes = (app) => {
 
     return app.use('/', router);
 };
-module.exports = initRoutes;
+export default initRoutes;

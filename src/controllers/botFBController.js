@@ -1,6 +1,7 @@
 import chatFBService from '../services/chatFBService.js';
 
-require('dotenv').config();
+import dotenv from 'dotenv';
+dotenv.config();
 
 let getWebhookFB = (req, res) => {
     let VERIFY_TOKEN = process.env.PAGE_ACCESS_TOKEN;

@@ -1,4 +1,5 @@
-require('dotenv').config();
+import dotenv from 'dotenv';
+dotenv.config();
 let Sequelize = require('sequelize');
 let session = require('express-session');
 

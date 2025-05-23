@@ -1,4 +1,5 @@
-require('dotenv').config();
+import dotenv from 'dotenv';
+dotenv.config();
 import userService from '../services/userService.js';
 import patientService from '../services/patientService.js';
 

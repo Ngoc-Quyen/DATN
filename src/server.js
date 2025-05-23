@@ -1,4 +1,5 @@
-require('dotenv').config();
+import dotenv from 'dotenv';
+dotenv.config();
 import express from 'express';
 import configViewEngine from './config/viewEngine.js';
 import initRoutes from './routes/web.js';
