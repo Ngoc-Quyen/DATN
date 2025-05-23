@@ -14,7 +14,7 @@ import {
     violatesSameDayWorkAndOnCall,
     getOnCallCountForWeek,
 } from '../validation/calendarValidation.js';
-import { reject, resolve } from 'bluebird';
+
 
 // Các hằng số cấu hình
 const ON_CALL_SHIFTS_PER_WEEK_MIN = 1;

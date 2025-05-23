@@ -1,4 +1,4 @@
-import { validationResult } from 'express-validator';
+// import { validationResult } from 'express-validator';
 import auth from '../services/authService.js';
 import user from '../services/userService.js';
 import mailer from '../config/mailer.js';
@@ -80,7 +80,6 @@ let verifyAccount = async (req, res) => {
 
 let getLogout = (req, res) => {
     req.session.destroy(function (err) {
-        console.log(err);
         return res.redirect('/login');
     });
 };

@@ -628,7 +628,6 @@ let getEditPatient = async (req, res) => {
 let postEditPatient = async (req, res) => {
     try {
         let file = req.file;
-        console.log('file in controller admin: ', file);
         let imgUrl = '';
         if (file) {
             imgUrl = await uploadImg.uploadImg(file);

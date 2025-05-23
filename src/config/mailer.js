@@ -1,11 +1,14 @@
-import nodeMailer from 'nodemailer';
+// mailer.js
+const nodemailer = require('nodemailer');
+const dotenv = require('dotenv');
 
-require('dotenv').config();
+dotenv.config(); // Load environment variables
 
-let transporter = nodeMailer.createTransport({
+// Create transporter
+const transporter = nodemailer.createTransport({
     host: process.env.MAIL_HOST,
     port: process.env.MAIL_PORT,
-    secure: false, // use SSL-TLS
+    secure: false,
     auth: {
         user: process.env.MAIL_USERNAME,
         pass: process.env.MAIL_PASSWORD,
@@ -15,32 +18,31 @@ let transporter = nodeMailer.createTransport({
     },
 });
 
-let sendEmailNormal = (to, subject, htmlContent) => {
-    let options = {
+// Email functions
+const sendEmailNormal = (to, subject, htmlContent) => {
+    const options = {
         from: process.env.MAIL_USERNAME,
-        to: to,
-        subject: subject,
+        to,
+        subject,
         html: htmlContent,
     };
     return transporter.sendMail(options);
 };
 
-let sendEmailWithAttachment = (to, subject, htmlContent, filename, path) => {
-    let options = {
+const sendEmailWithAttachment = (to, subject, htmlContent, filename, path) => {
+    const options = {
         from: process.env.MAIL_USERNAME,
-        to: to,
-        subject: subject,
+        to,
+        subject,
         html: htmlContent,
-        attachments: [
-            {
-                filename: filename,
-                path: path,
-            },
-        ],
+        attachments: [{ filename, path }],
     };
     return transporter.sendMail(options);
 };
+
+// Export as CommonJS module
 module.exports = {
-    sendEmailNormal: sendEmailNormal,
-    sendEmailWithAttachment: sendEmailWithAttachment,
+    sendEmailNormal,
+    sendEmailWithAttachment,
+    transporter,
 };

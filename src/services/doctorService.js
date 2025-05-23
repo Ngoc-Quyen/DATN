@@ -6,10 +6,7 @@ import moment from 'moment';
 import patientService from './patientService.js';
 import mailer from '../config/mailer.js';
 import { transMailRemedy } from '../../lang/en.js';
-import { resolve } from 'path';
-import { reject } from 'bluebird';
 import helper from '../helper/client.js';
-import { da } from 'date-fns/locale';
 
 var Minizip = require('minizip-asm.js');
 var fs = require('fs');

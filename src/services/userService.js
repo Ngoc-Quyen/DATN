@@ -1,25 +1,12 @@
 import bcrypt from 'bcryptjs';
 const db = require('../models');
 import helper from '../helper/client.js';
-import _, { orderBy } from 'lodash';
+import _ from 'lodash';
 
 const Sequelize = require('sequelize');
 const Op = Sequelize.Op;
 
 import moment from 'moment';
-const {
-    getDaysInMonth,
-    startOfMonth,
-    endOfMonth,
-    eachDayOfInterval,
-    format,
-    getDay,
-    addDays,
-    getWeek,
-    parseISO,
-} = require('date-fns');
-const { utcToZonedTime } = require('date-fns-tz');
-
 let salt = 7;
 
 let createDoctor = (doctor) => {
@@ -840,4 +827,5 @@ module.exports = {
     updateInfor: updateInfor,
     handleCreateScheduleAll: handleCreateScheduleAll,
     _generateScheduleForSpecialization: _generateScheduleForSpecialization,
+    getInforPatients: getInforPatients,
 };

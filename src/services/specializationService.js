@@ -1,7 +1,5 @@
-import { reject, resolve } from 'bluebird';
+// import { reject, resolve } from 'bluebird';
 const db = require('../models');
-const Sequelize = require('sequelize');
-const Op = Sequelize.Op;
 
 let getSpecializationById = (id) => {
     return new Promise(async (resolve, reject) => {

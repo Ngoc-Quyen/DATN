@@ -1,5 +1,5 @@
 const db = require('../models');
-import mailer from '../config/mailer.js';
+// import mailer from '../config/mailer.js';
 import {
     transMailBookingNew,
     transMailBookingSuccess,
@@ -7,9 +7,7 @@ import {
     mailEnd,
     transMailRemedy,
 } from '../../lang/en.js';
-import helper from '../helper/client.js';
-import { reject, resolve } from 'bluebird';
-import { where } from 'sequelize';
+const { mailer } = require('../config/mailer');
 
 const statusPendingId = 3;
 const statusFailedId = 2;

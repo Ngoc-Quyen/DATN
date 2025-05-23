@@ -585,7 +585,6 @@ function updateCustomer() {
         let data = {
             id: doctorId,
         };
-
         let url = `${window.location.origin}/users/customer/edit/${doctorId}`;
         $.ajax({
             method: 'POST',

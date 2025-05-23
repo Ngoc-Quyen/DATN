@@ -1,6 +1,5 @@
 const { initializeApp } = require('firebase/app');
 const { getStorage, ref, getDownloadURL, uploadBytesResumable } = require('firebase/storage');
-const { Readable } = require('stream');
 const config = require('../config/firebaseConfig').firebaseConfig;
 
 // Initialize Firebase

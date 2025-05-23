@@ -1,13 +1,10 @@
 require('dotenv').config();
-import homeService from '../services/homeService.js';
 import userService from '../services/userService.js';
-import postService from '../services/postService.js';
 import patientService from '../services/patientService.js';
-import doctorService from '../services/doctorService.js';
 
 const { formatDateToDDMMYYYY, formatDateToYYYYMMDD } = require('../helper/dateHelper');
 
-const statusNewId = 4;
+// const statusNewId = 4;
 const statusPendingId = 3;
 const statusFailedId = 2;
 const statusSuccessId = 1;

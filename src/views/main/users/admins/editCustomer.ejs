@@ -8,8 +8,7 @@
     <!-- Content Row -->
     <div class="row">
         <div class="col-lg-7">
-            <form id="formUpdateCustomer" method="POST" action="/users/customer/edit/<%= doctor.id %>"
-                enctype="multipart/form-data">
+            <form id="formUpdateCustomer" method="POST" enctype="multipart/form-data">
                 <input type="text" class="form-control" id="idDoctor" name="idDoctor" placeholder="ID"
                     value="<%= doctor.id %>" style="display: none;">
                 <div class="form-group">

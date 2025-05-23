@@ -1,4 +1,5 @@
-import { template } from 'lodash';
+import pkg from 'lodash';
+const { template } = pkg;
 
 export const transValidation = {
     email_incorrect: 'Email không hợp lệ',

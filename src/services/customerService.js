@@ -1,9 +1,4 @@
 const db = require('../models');
-import removeMd from 'remove-markdown';
-import syncElastic from './syncsElaticService.js';
-import helper from '../helper/client.js';
-import { reject, resolve } from 'bluebird';
-import { where } from 'sequelize';
 const { Op } = require('sequelize');
 let getAllcustomers = () => {
     return new Promise(async (resolve, reject) => {
