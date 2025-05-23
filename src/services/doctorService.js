@@ -1,14 +1,14 @@
-import db from './../models';
+const db = require('../models');
 
 const Sequelize = require('sequelize');
 const Op = Sequelize.Op;
 import moment from 'moment';
-import patientService from './patientService';
-import mailer from '../config/mailer';
-import { transMailRemedy } from '../../lang/en';
+import patientService from './patientService.js';
+import mailer from '../config/mailer.js';
+import { transMailRemedy } from '../../lang/en.js';
 import { resolve } from 'path';
 import { reject } from 'bluebird';
-import helper from '../helper/client';
+import helper from '../helper/client.js';
 import { da } from 'date-fns/locale';
 
 var Minizip = require('minizip-asm.js');

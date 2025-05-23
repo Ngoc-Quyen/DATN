@@ -1,13 +1,13 @@
 import express from 'express';
-import home from './../controllers/homeController';
-import auth from './../controllers/authController';
-import admin from './../controllers/adminController';
-import doctor from './../controllers/doctorController';
-import customer from '../controllers/customerController';
-import bot from './../controllers/botFBController';
+import home from '../controllers/homeController.js';
+import auth from '../controllers/authController.js';
+import admin from '../controllers/adminController.js';
+import doctor from '../controllers/doctorController.js';
+import customer from '../controllers/customerController.js';
+import bot from '../controllers/botFBController.js';
 import passport from 'passport';
 import passportLocal from 'passport-local';
-import userService from './../services/userService';
+import userService from '../services/userService.js';
 
 const multer = require('multer');
 // Setting up multer as a middleware to grab photo uploads

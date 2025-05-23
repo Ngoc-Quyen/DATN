@@ -1,13 +1,12 @@
 require('dotenv').config();
-import homeService from './../services/homeService';
-import specializationService from './../services/specializationService';
-import doctorService from './../services/doctorService';
-import userService from './../services/userService';
-import postService from '../services/postService';
-import elasticService from './../services/syncsElaticService';
-import patientService from './../services/patientService';
-import scheduleService from './../services/scheduleService';
-import helper from '../helper/client';
+import homeService from '../services/homeService.js';
+import specializationService from '../services/specializationService.js';
+import doctorService from '../services/doctorService.js';
+import userService from '../services/userService.js';
+import postService from '../services/postService.js';
+import elasticService from '../services/syncsElaticService.js';
+import patientService from '../services/patientService.js';
+import scheduleService from '../services/scheduleService.js';
 
 import moment from 'moment';
 // striptags to remove HTML

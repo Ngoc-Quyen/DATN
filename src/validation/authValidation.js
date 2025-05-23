@@ -1,6 +1,6 @@
 import { check } from 'express-validator';
-import { tranRegister } from '../../lang/en';
-import userService from './../services/userService';
+import { tranRegister } from '../../lang/en.js';
+import userService from '../services/userService.js';
 
 let validateRegisterUser = [
     check('email')

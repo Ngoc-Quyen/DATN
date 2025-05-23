@@ -1,9 +1,9 @@
 require('dotenv').config();
-import homeService from '../services/homeService';
-import userService from '../services/userService';
-import postService from '../services/postService';
-import patientService from '../services/patientService';
-import doctorService from './../services/doctorService';
+import homeService from '../services/homeService.js';
+import userService from '../services/userService.js';
+import postService from '../services/postService.js';
+import patientService from '../services/patientService.js';
+import doctorService from '../services/doctorService.js';
 
 const { formatDateToDDMMYYYY, formatDateToYYYYMMDD } = require('../helper/dateHelper');
 

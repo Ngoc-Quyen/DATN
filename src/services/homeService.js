@@ -1,28 +1,25 @@
-import db from "./../models";
-import removeMd from "remove-markdown";
-import helper from "../helper/client";
+const db = require('../models');
+import removeMd from 'remove-markdown';
 const Sequelize = require('sequelize');
 const Op = Sequelize.Op;
 
 require('dotenv').config();
 
 let getSpecializations = () => {
-    return new Promise((async (resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
         try {
             let specializations = await db.Specialization.findAll();
             resolve(specializations);
         } catch (e) {
             reject(e);
         }
-    }));
+    });
 };
 
-
 let getDoctors = () => {
-    return new Promise((async (resolve, reject) => {
-        resolve(true)
-
-    }));
+    return new Promise(async (resolve, reject) => {
+        resolve(true);
+    });
 };
 
 let getPosts = (LIMIT_POST) => {
@@ -30,20 +27,22 @@ let getPosts = (LIMIT_POST) => {
         try {
             //chỉ get bài đăng y khoa
             let posts = await db.Post.findAll({
-                where:{
+                where: {
                     forDoctorId: -1,
-                    forSpecializationId: -1
+                    forSpecializationId: -1,
                 },
-                order: [ [ 'createdAt', 'DESC' ] ],
+                order: [['createdAt', 'DESC']],
                 limit: LIMIT_POST,
-                attributes: [ 'id', 'title', 'contentHTML', 'contentMarkdown' ]
+                attributes: ['id', 'title', 'contentHTML', 'contentMarkdown'],
             });
 
-            await Promise.all(posts.map(async (post) => {
-                let content = removeMd(post.contentMarkdown);
-                post.setDataValue('content', content);
-                return post;
-            }));
+            await Promise.all(
+                posts.map(async (post) => {
+                    let content = removeMd(post.contentMarkdown);
+                    post.setDataValue('content', content);
+                    return post;
+                })
+            );
 
             resolve(posts);
         } catch (e) {
@@ -55,30 +54,29 @@ let getPosts = (LIMIT_POST) => {
 let postSearchHomePage = (keyword) => {
     return new Promise(async (resolve, reject) => {
         try {
-            let doctors = await  db.User.findAll({
-                where:{
+            let doctors = await db.User.findAll({
+                where: {
                     roleId: 2,
                     name: {
-                        [Op.like]: `%${keyword}%`
-                    }
+                        [Op.like]: `%${keyword}%`,
+                    },
                 },
-                attributes:['id','name']
+                attributes: ['id', 'name'],
             });
 
             let specializations = await db.Specialization.findAll({
-                where:{
+                where: {
                     name: {
-                        [Op.like]: `%${keyword}%`
-                    }
+                        [Op.like]: `%${keyword}%`,
+                    },
                 },
-                attributes:['id','name']
-                });
+                attributes: ['id', 'name'],
+            });
 
-
-        resolve({
-            doctors: doctors,
-            specializations: specializations
-        })
+            resolve({
+                doctors: doctors,
+                specializations: specializations,
+            });
         } catch (e) {
             console.log(e);
             reject(e);
@@ -86,37 +84,35 @@ let postSearchHomePage = (keyword) => {
     });
 };
 
-
-let getDataPageAllDoctors = ()=>{
+let getDataPageAllDoctors = () => {
     return new Promise(async (resolve, reject) => {
-        try{
+        try {
             let doctors = await db.User.findAll({
-                where:{
-                    roleId: 2
+                where: {
+                    roleId: 2,
                 },
-                attributes:['id','name','avatar']
+                attributes: ['id', 'name', 'avatar'],
             });
 
             resolve(doctors);
-        }catch (e) {
+        } catch (e) {
             reject(e);
         }
     });
 };
 
-let getDataPageAllSpecializations = ()=>{
+let getDataPageAllSpecializations = () => {
     return new Promise(async (resolve, reject) => {
-        try{
+        try {
             let specializations = await db.Specialization.findAll({
-                attributes: ['id', 'name', "image"]
+                attributes: ['id', 'name', 'image'],
             });
-        resolve(specializations);
-        }catch (e) {
+            resolve(specializations);
+        } catch (e) {
             reject(e);
         }
     });
 };
-
 
 module.exports = {
     getSpecializations: getSpecializations,
@@ -124,5 +120,5 @@ module.exports = {
     getPosts: getPosts,
     postSearchHomePage: postSearchHomePage,
     getDataPageAllDoctors: getDataPageAllDoctors,
-    getDataPageAllSpecializations: getDataPageAllSpecializations
+    getDataPageAllSpecializations: getDataPageAllSpecializations,
 };

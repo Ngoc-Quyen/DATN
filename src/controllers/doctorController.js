@@ -1,8 +1,8 @@
-import doctorService from './../services/doctorService';
-import userService from './../services/userService';
-import homeService from './../services/homeService';
-import postService from '../services/postService';
-import scheduleService from '../services/scheduleService';
+import doctorService from '../services/doctorService.js';
+import userService from '../services/userService.js';
+import homeService from '../services/homeService.js';
+import postService from '../services/postService.js';
+import scheduleService from '../services/scheduleService.js';
 const path = require('path');
 const fs = require('fs');
 

@@ -1,10 +1,10 @@
 import { validationResult } from 'express-validator';
-import auth from '../services/authService';
-import user from '../services/userService';
-import mailer from './../config/mailer';
-import { mailChangePass } from '../../lang/en';
-import apiAuth from '../middlewares/apiAuth';
-import uploadImg from '../services/imgLoadFirebase';
+import auth from '../services/authService.js';
+import user from '../services/userService.js';
+import mailer from '../config/mailer.js';
+import { mailChangePass } from '../../lang/en.js';
+import apiAuth from '../middlewares/apiAuth.js';
+import uploadImg from '../services/imgLoadFirebase.js';
 const { formatDateToDDMMYYYY, formatDateToYYYYMMDD } = require('../helper/dateHelper');
 
 let getLogin = (req, res) => {

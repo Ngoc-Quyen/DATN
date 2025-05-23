@@ -1,4 +1,4 @@
-import db from './../models';
+const db = require('../models');
 import moment from 'moment';
 
 const Sequelize = require('sequelize');

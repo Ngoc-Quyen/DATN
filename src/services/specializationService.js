@@ -1,5 +1,5 @@
 import { reject, resolve } from 'bluebird';
-import db from './../models';
+const db = require('../models');
 const Sequelize = require('sequelize');
 const Op = Sequelize.Op;
 

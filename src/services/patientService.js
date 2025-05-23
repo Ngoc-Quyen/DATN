@@ -1,13 +1,13 @@
-import db from './../models';
-import mailer from './../config/mailer';
+const db = require('../models');
+import mailer from '../config/mailer.js';
 import {
     transMailBookingNew,
     transMailBookingSuccess,
     transMailBookingFailed,
     mailEnd,
     transMailRemedy,
-} from '../../lang/en';
-import helper from '../helper/client';
+} from '../../lang/en.js';
+import helper from '../helper/client.js';
 import { reject, resolve } from 'bluebird';
 import { where } from 'sequelize';
 

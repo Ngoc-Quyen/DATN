@@ -1,5 +1,4 @@
-import chatFBService from "./../services/chatFBService";
-import request from "request";
+import chatFBService from '../services/chatFBService.js';
 
 require('dotenv').config();
 
@@ -18,16 +17,15 @@ let getWebhookFB = (req, res) => {
     }
 };
 
-let postWebhookFB =  (req, res) => {
+let postWebhookFB = (req, res) => {
     let body = req.body;
     if (body.object === 'page') {
-        body.entry.forEach(function(entry) {
-
+        body.entry.forEach(function (entry) {
             if (entry.standby) {
                 //if user's message is "back" or "exit", return the conversation to the bot
                 let webhook_standby = entry.standby[0];
-                if(webhook_standby && webhook_standby.message){
-                    if (webhook_standby.message.text === "back" || webhook_standby.message.text === "exit") {
+                if (webhook_standby && webhook_standby.message) {
+                    if (webhook_standby.message.text === 'back' || webhook_standby.message.text === 'exit') {
                         // call function to return the conversation to the primary app
                         // chatbotService.passThreadControl(webhook_standby.sender.id, "primary");
                         chatFBService.takeControlConversation(webhook_standby.sender.id);
@@ -43,7 +41,6 @@ let postWebhookFB =  (req, res) => {
             } else if (webhook_event.postback) {
                 chatFBService.handlePostback(sender_psid, webhook_event.postback);
             }
-
         });
 
         // Returns a '200 OK' response to all requests
@@ -52,41 +49,40 @@ let postWebhookFB =  (req, res) => {
         // Returns a '404 Not Found' if event is not from a page subscription
         res.sendStatus(404);
     }
-
 };
 
 let getSetupBotFBPage = (req, res) => {
-    return res.render("setupBotFB.ejs")
+    return res.render('setupBotFB.ejs');
 };
 
 let handleSetupBotFBPage = async (req, res) => {
     try {
         await chatFBService.handleSetupBotFBPage();
         return res.status(200).json({
-            message: "ok"
-        })
+            message: 'ok',
+        });
     } catch (e) {
-        return res.status(500).json(e)
+        return res.status(500).json(e);
     }
 };
 
-let getBookingOnlineMessengerPage = (req,res) =>{
-    return res.render("bookingOnlineMessenger.ejs")
+let getBookingOnlineMessengerPage = (req, res) => {
+    return res.render('bookingOnlineMessenger.ejs');
 };
 
-let setInfoBookingMessenger = async (req, res) =>{
-    try{
+let setInfoBookingMessenger = async (req, res) => {
+    try {
         let info = {
-            "psid": req.body.psid,
-            "customerName": req.body.customerName,
-            "phone": req.body.phone,
-            "reason": req.body.reason
+            psid: req.body.psid,
+            customerName: req.body.customerName,
+            phone: req.body.phone,
+            reason: req.body.reason,
         };
         await chatFBService.handleResBookingOnlineMessenger(info);
         return res.status(200).json({
-            "message": "done"
+            message: 'done',
         });
-    }catch (e) {
+    } catch (e) {
         console.log(e);
         return res.status(500).json(e);
     }
@@ -98,5 +94,5 @@ module.exports = {
     getSetupBotFBPage: getSetupBotFBPage,
     handleSetupBotFBPage: handleSetupBotFBPage,
     getBookingOnlineMessengerPage: getBookingOnlineMessengerPage,
-    setInfoBookingMessenger: setInfoBookingMessenger
+    setInfoBookingMessenger: setInfoBookingMessenger,
 };
