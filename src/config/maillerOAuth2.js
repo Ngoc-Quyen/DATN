@@ -73,7 +73,7 @@ let sendEmailWithAttachment = async (to, subject, htmlContent, filename, path) =
     return transporter.sendMail(options);
 };
 
-module.exports = {
+export default {
     sendEmailNormal: sendEmailNormal,
     sendEmailWithAttachment: sendEmailWithAttachment,
 };

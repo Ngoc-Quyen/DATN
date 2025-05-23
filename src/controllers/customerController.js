@@ -213,7 +213,7 @@ let postEditCustomer = async (req, res) => {
         return res.status(500).json({ error: 'Internal server error' });
     }
 };
-module.exports = {
+export default {
     getManageCustomersPage: getManageCustomersPage,
     getInforCustomerById: getInforCustomerById,
     postChangeStatusPatientForUser: postChangeStatusPatientForUser,

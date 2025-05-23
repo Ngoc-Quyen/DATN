@@ -38,6 +38,6 @@ let configSession = (app) => {
 
 sessionStore.sync();
 
-module.exports = {
+export default {
     configSession: configSession,
 };

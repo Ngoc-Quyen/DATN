@@ -251,7 +251,7 @@ let getPostByWriteId = (writerId) => {
     });
 };
 
-module.exports = {
+export default {
     postCreatePost: postCreatePost,
     getAllPosts: getAllPosts,
     getDetailPostPage: getDetailPostPage,

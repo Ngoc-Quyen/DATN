@@ -802,7 +802,7 @@ let handleCreateScheduleAll = async () => {
     });
 };
 
-module.exports = {
+export default {
     createDoctor: createDoctor,
     getInfoDoctors: getInfoDoctors,
     getInfoDoctorsPaging: getInfoDoctorsPaging,

@@ -195,7 +195,7 @@ let postSendOTP = async (req, res) => {
         res.status(500).send('Failed to resend OTP');
     }
 };
-module.exports = {
+export default {
     getLogin: getLogin,
     getRegister: getRegister,
     postRegister: postRegister,

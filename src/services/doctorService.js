@@ -5,6 +5,7 @@ const Op = Sequelize.Op;
 import moment from 'moment';
 import patientService from './patientService.js';
 import mailer from '../config/mailer.js';
+// const { mailer } = require('../config/mailer');
 import { transMailRemedy } from '../../lang/en.js';
 import helper from '../helper/client.js';
 
@@ -839,7 +840,7 @@ let getDoctorsBySpecializationId = async (specializationId) => {
     });
 };
 
-module.exports = {
+export default {
     getDoctorById: getDoctorById,
     getDoctorForFeedbackPage: getDoctorForFeedbackPage,
     getDoctorWithSchedule: getDoctorWithSchedule,

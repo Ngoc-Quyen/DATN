@@ -7,7 +7,8 @@ import {
     mailEnd,
     transMailRemedy,
 } from '../../lang/en.js';
-const { mailer } = require('../config/mailer');
+// const { mailer } = require('../config/mailer');
+import mailer from '../config/mailer.js';
 
 const statusPendingId = 3;
 const statusFailedId = 2;
@@ -554,7 +555,7 @@ let getExtanInfoByPatientId = async (patientId) => {
     });
 };
 
-module.exports = {
+export default {
     getInfoBooking: getInfoBooking,
     getForPatientsTabs: getForPatientsTabs,
     getForPatientForUser: getForPatientForUser,

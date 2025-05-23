@@ -455,7 +455,7 @@ let getScheduleSwap = async (req, res) => {
         listScheduleSwap: listScheduleSwap,
     });
 };
-module.exports = {
+export default {
     getSchedule: getSchedule,
     getCreateSchedule: getCreateSchedule,
     postCreateSchedule: postCreateSchedule,

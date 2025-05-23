@@ -45,6 +45,6 @@ passport.deserializeUser((id, done) => {
         });
 });
 
-module.exports = {
+export default {
     initPassportLocal: initPassportLocal,
 };

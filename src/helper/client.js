@@ -34,7 +34,7 @@ let capitalizeWords = (str) => {
     return _.startCase(_.toLower(str));
 };
 
-module.exports = {
+export default {
     getSpecializationById: getSpecializationById,
     getcustomerById: getcustomerById,
     convertDateClient: convertDateClient,

@@ -544,7 +544,7 @@ let searchHandler = async (req, res) => {
     }
 };
 
-module.exports = {
+export default {
     getPageCancel: getPageCancel,
     getPageCanceled: getPageCanceled,
     getHomePage: getHomePage,

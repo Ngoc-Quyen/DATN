@@ -41,7 +41,7 @@ const sendEmailWithAttachment = (to, subject, htmlContent, filename, path) => {
 };
 
 // Export as CommonJS module
-module.exports = {
+export default {
     sendEmailNormal,
     sendEmailWithAttachment,
     transporter,

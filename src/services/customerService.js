@@ -50,7 +50,7 @@ let getCustomerByPhone = async (phone) => {
         }
     });
 };
-module.exports = {
+export default {
     getAllcustomers: getAllcustomers,
     getCustomerByPhone: getCustomerByPhone,
     getAllCustomersPaging: getAllCustomersPaging,

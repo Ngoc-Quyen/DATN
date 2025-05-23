@@ -55,7 +55,7 @@ let validateSetNewPassword = [
     }),
 ];
 
-module.exports = {
+export default {
     validateRegisterUser: validateRegisterUser,
     validateSetNewPassword: validateSetNewPassword,
 };

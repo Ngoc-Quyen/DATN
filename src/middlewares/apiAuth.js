@@ -1,11 +1,11 @@
-import jwt from "jsonwebtoken";
+import jwt from 'jsonwebtoken';
 
 let checkToken = (req, res, next) => {
     let token = req.headers['x-access-token'] || req.headers['authorization']; // Express headers are auto converted to lowercase
-    if (typeof(token) === 'undefined') {
+    if (typeof token === 'undefined') {
         return res.json({
             success: false,
-            message: 'Auth token is required'
+            message: 'Auth token is required',
         });
     }
     if (token.startsWith('Bearer ')) {
@@ -18,7 +18,7 @@ let checkToken = (req, res, next) => {
             if (err) {
                 return res.json({
                     success: false,
-                    message: 'Token is invalid (expire or something), try to get new one'
+                    message: 'Token is invalid (expire or something), try to get new one',
                 });
             } else {
                 req.decoded = decoded;
@@ -28,7 +28,7 @@ let checkToken = (req, res, next) => {
     } else {
         return res.json({
             success: false,
-            message: 'Auth token is not supplied'
+            message: 'Auth token is not supplied',
         });
     }
 };
@@ -37,7 +37,7 @@ let generateOtp = () => {
     return Math.floor(100000 + Math.random() * 900000).toString();
 };
 
-module.exports = {
+export default {
     checkToken: checkToken,
-    generateOtp: generateOtp
+    generateOtp: generateOtp,
 };

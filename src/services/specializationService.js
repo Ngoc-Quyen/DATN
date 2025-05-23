@@ -119,7 +119,7 @@ let createSpecialization = async (data) => {
     });
 };
 
-module.exports = {
+export default {
     getSpecializationById: getSpecializationById,
     getAllSpecializations: getAllSpecializations,
     deleteSpecializationById: deleteSpecializationById,

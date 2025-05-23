@@ -1107,7 +1107,7 @@ let postUpdateSwapSchedule = async (req, res) => {
         });
     }
 };
-module.exports = {
+export default {
     getManageDoctor: getManageDoctor,
     getManageDoctorPaging: getManageDoctorPaging,
     getCreateDoctor: getCreateDoctor,

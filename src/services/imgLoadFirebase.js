@@ -37,6 +37,6 @@ const giveCurrentDateTime = () => {
     ).padStart(2, '0')}`;
     return `${date} ${time}`;
 };
-module.exports = {
+export default {
     uploadImg: uploadImg,
 };

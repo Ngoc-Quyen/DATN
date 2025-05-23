@@ -88,7 +88,7 @@ let setInfoBookingMessenger = async (req, res) => {
     }
 };
 
-module.exports = {
+export default {
     getWebhookFB: getWebhookFB,
     postWebhookFB: postWebhookFB,
     getSetupBotFBPage: getSetupBotFBPage,

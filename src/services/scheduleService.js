@@ -15,7 +15,6 @@ import {
     getOnCallCountForWeek,
 } from '../validation/calendarValidation.js';
 
-
 // Các hằng số cấu hình
 const ON_CALL_SHIFTS_PER_WEEK_MIN = 1;
 const ON_CALL_SHIFTS_PER_WEEK_MAX = 2;
@@ -1111,7 +1110,7 @@ let getScheduleMax = async (doctorId, dateBooking) => {
         }
     });
 };
-module.exports = {
+export default {
     generateMonthlySchedule: generateMonthlySchedule,
     generateScheduleForAllSpecializations: generateScheduleForAllSpecializations,
     getAllScheduleByMonthYear: getAllScheduleByMonthYear,
