@@ -1,10 +1,17 @@
 import dotenv from 'dotenv';
 dotenv.config();
-let Sequelize = require('sequelize');
-let session = require('express-session');
 
-// initalize sequelize with session store
-let SequelizeStore = require('connect-session-sequelize')(session.Store);
+// let Sequelize = require('sequelize');
+// let session = require('express-session');
+// // initalize sequelize with session store
+// let SequelizeStore = require('connect-session-sequelize')(session.Store);
+
+import Sequelize from 'sequelize';
+import session from 'express-session';
+// Import the factory function from 'connect-session-sequelize'
+import connectSessionSequelize from 'connect-session-sequelize';
+// Initialize SequelizeStore by calling the factory function with session.Store
+const SequelizeStore = connectSessionSequelize(session.Store);
 
 let sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USERNAME, process.env.DB_PASSWORD, {
     host: process.env.DB_HOST,

@@ -1,5 +1,5 @@
-const { initializeApp } = require('firebase/app');
-const { getStorage, ref, getDownloadURL, uploadBytesResumable } = require('firebase/storage');
+import { initializeApp } from 'firebase/app';
+import { getStorage, ref, getDownloadURL, uploadBytesResumable } from 'firebase/storage';
 import config from '../config/firebaseConfig.js';
 // const config = require('../config/firebaseConfig').firebaseConfig;
 

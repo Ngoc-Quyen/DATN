@@ -3,13 +3,14 @@ import userService from '../services/userService.js';
 import homeService from '../services/homeService.js';
 import postService from '../services/postService.js';
 import scheduleService from '../services/scheduleService.js';
-const path = require('path');
-const fs = require('fs');
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import { format } from 'date-fns';
 
 import _ from 'lodash';
 import moment from 'moment';
 import multer from 'multer';
-import { format } from 'date-fns';
 
 const MAX_BOOKING = 3;
 
@@ -336,7 +337,10 @@ let getEditPost = async (req, res) => {
         console.log(e);
     }
 };
-const filePath = path.join(__dirname, '../helper/data/timeoffReason.json');
+// const filePath = path.join(__dirname, '../helper/data/timeoffReason.json');
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const filePath = path.join(__dirname, '..', 'helper', 'data', 'timeoffReason.json');
 let getNewTimeOff = async (req, res) => {
     try {
         let reasonList = [];

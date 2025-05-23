@@ -1,5 +1,7 @@
 import db from '../models/index.js';
-const { Op } = require('sequelize');
+// const { Op } = require('sequelize');
+import Sequelize from 'sequelize';
+const Op = Sequelize.Op;
 let getAllcustomers = () => {
     return new Promise(async (resolve, reject) => {
         try {

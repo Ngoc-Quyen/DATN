@@ -1,7 +1,12 @@
 import * as dotenv from 'dotenv';
 dotenv.config();
-const admin = require('firebase-admin');
-const serviceAccount = require('../../serviceAccountKey.json');
+import admin from 'firebase-admin';
+// const serviceAccount = require('../../serviceAccountKey.json');
+import path from 'path';
+import { fileURLToPath } from 'url';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+import serviceAccount from '../../serviceAccountKey.json' with  { type: 'json' };
 
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),

@@ -14,4 +14,4 @@ function formatDateToYYYYMMDD(dateStr) {
     const [day, month, year] = dateStr.split('/');
     return `${year}-${month}-${day}`;
 }
-export default { formatDateToDDMMYYYY, formatDateToYYYYMMDD };
+export default { formatDateToDDMMYYYY: formatDateToDDMMYYYY, formatDateToYYYYMMDD: formatDateToYYYYMMDD };

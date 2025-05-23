@@ -1,6 +1,7 @@
 import db from '../models/index.js';
 import moment from 'moment';
-const _ = require('lodash');
+// const _ = require('lodash');
+import _ from 'lodash';
 let getSpecializationById = (id) => {
     return new Promise(async (resolve, reject) => {
         try {

@@ -1,6 +1,7 @@
 import db from '../models/index.js';
 import removeMd from 'remove-markdown';
-const Sequelize = require('sequelize');
+import Sequelize from 'sequelize';
+// const Sequelize = require('sequelize');
 const Op = Sequelize.Op;
 
 import dotenv from 'dotenv';

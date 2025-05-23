@@ -1,11 +1,11 @@
 // import { validationResult } from 'express-validator';
-import auth from '../services/authService.js';
 import user from '../services/userService.js';
 import mailer from '../config/mailer.js';
 import { mailChangePass } from '../../lang/en.js';
 import apiAuth from '../middlewares/apiAuth.js';
 import uploadImg from '../services/imgLoadFirebase.js';
-const { formatDateToDDMMYYYY, formatDateToYYYYMMDD } = require('../helper/dateHelper');
+// const { formatDateToDDMMYYYY } = require('../helper/dateHelper');
+import dateHelper from '../helper/dateHelper.js';
 
 let getLogin = (req, res) => {
     return res.render('auth/login.ejs', {
@@ -18,7 +18,7 @@ let getRegister = (req, res) => {
 };
 
 let postRegister = async (req, res) => {
-    const formatted = formatDateToDDMMYYYY(req.body.birthday);
+    const formatted = dateHelper.formatDateToDDMMYYYY(req.body.birthday);
     let customer = {
         name: req.body.name,
         phone: req.body.phone,

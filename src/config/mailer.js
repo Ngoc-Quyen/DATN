@@ -1,8 +1,8 @@
 // mailer.js
-const nodemailer = require('nodemailer');
-const dotenv = require('dotenv');
-
-dotenv.config(); // Load environment variables
+// const nodemailer = require('nodemailer');
+import nodemailer from 'nodemailer';
+import * as dotenv from 'dotenv';
+dotenv.config();
 
 // Create transporter
 const transporter = nodemailer.createTransport({

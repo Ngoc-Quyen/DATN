@@ -1,7 +1,8 @@
 import db from '../models/index.js';
 import moment from 'moment';
 
-const Sequelize = require('sequelize');
+// const Sequelize = require('sequelize');
+import Sequelize from 'sequelize';
 const Op = Sequelize.Op;
 
 import doctorService from './doctorService.js';

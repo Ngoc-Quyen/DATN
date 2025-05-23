@@ -1,6 +1,8 @@
 ('use strict');
-const { Model } = require('sequelize');
-module.exports = (sequelize, DataTypes) => {
+// const { Model } = require('sequelize');
+import pkg from 'sequelize';
+const { Model } = pkg;
+export default (sequelize, DataTypes) => {
     class Allcode extends Model {
         /**
          * Helper method for defining associations.

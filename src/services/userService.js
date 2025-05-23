@@ -3,7 +3,8 @@ import db from '../models/index.js';
 import helper from '../helper/client.js';
 import _ from 'lodash';
 
-const Sequelize = require('sequelize');
+// const Sequelize = require('sequelize');
+import Sequelize from 'sequelize';
 const Op = Sequelize.Op;
 
 import moment from 'moment';

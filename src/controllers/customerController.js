@@ -3,7 +3,8 @@ dotenv.config();
 import userService from '../services/userService.js';
 import patientService from '../services/patientService.js';
 
-const { formatDateToDDMMYYYY, formatDateToYYYYMMDD } = require('../helper/dateHelper');
+// const { formatDateToDDMMYYYY, formatDateToYYYYMMDD } = require('../helper/dateHelper');
+import dateHelper from '../helper/dateHelper.js';
 
 // const statusNewId = 4;
 const statusPendingId = 3;
@@ -106,11 +107,11 @@ let getPageInfoUser = async (req, res) => {
         const user = req.user;
         const formattedUser = {
             ...user.dataValues,
-            birthday: formatDateToYYYYMMDD(user.birthday),
+            birthday: dateHelper.formatDateToYYYYMMDD(user.birthday),
         };
         return res.render('main/homepage/InfoUser.ejs', {
             user: formattedUser,
-            formatDate: formatDateToDDMMYYYY, // Truyền hàm formatDate vào view
+            formatDate: dateHelper.formatDateToDDMMYYYY, // Truyền hàm formatDate vào view
         });
     } catch (e) {
         console.log(e);
@@ -200,7 +201,7 @@ let getEditCustomer = async (req, res) => {
 let postEditCustomer = async (req, res) => {
     try {
         const { id, name, email, phone, address, gender, birthday } = req.body;
-        const formatted = formatDateToDDMMYYYY(birthday);
+        const formatted = dateHelper.formatDateToDDMMYYYY(birthday);
         const result = await userService.updateInfor({ id, name, email, phone, address, gender, formatted });
 
         if (result.errCode === 0) {

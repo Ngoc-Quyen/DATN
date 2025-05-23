@@ -9,7 +9,8 @@ import passport from 'passport';
 import passportLocal from 'passport-local';
 import userService from '../services/userService.js';
 
-const multer = require('multer');
+// const multer = require('multer');
+import multer from 'multer';
 // Setting up multer as a middleware to grab photo uploads
 // const upload = multer({ dest: 'uploads/' });
 const upload = multer({ storage: multer.memoryStorage() });

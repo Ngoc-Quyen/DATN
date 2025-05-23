@@ -1,3 +1,23 @@
+// {
+//   "presets":["@babel/preset-env"]
+// }
+
 {
-  "presets":["@babel/preset-env"]
+    "presets": [
+        [
+            "@babel/preset-env",
+            {
+                "targets": {
+                    "node": "current" // Hoặc "20.12.2" để cụ thể hơn
+                },
+                "modules": false // Rất quan trọng! Để Node.js xử lý ESM
+            }
+        ]
+    ],
+    "plugins": [
+        // Plugin này để Babel hiểu cú pháp assert { type: 'json' }
+        "@babel/plugin-syntax-import-attributes"
+        // Các plugin khác nếu bạn sử dụng cú pháp mà Node.js chưa hỗ trợ
+        // Ví dụ: "@babel/plugin-proposal-class-properties" (nếu dùng class fields)
+    ]
 }
