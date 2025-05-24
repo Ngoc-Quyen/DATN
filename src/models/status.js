@@ -8,7 +8,9 @@ export default (sequelize, DataTypes) => {
             updatedAt: DataTypes.DATE,
             deletedAt: DataTypes.DATE,
         },
-        {}
+        {
+            tableName: 'statuses', // tên bảng trong DB
+        }
     );
     Status.associate = function (models) {
         models.Status.hasOne(models.Patient);

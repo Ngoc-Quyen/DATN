@@ -25,7 +25,7 @@ export default (sequelize, DataTypes) => {
             deletedAt: DataTypes.DATE,
         },
         {
-            tableName: 'AllSchedule', // Đặt tên bảng chính xác
+            tableName: 'allschedule', // Đặt tên bảng chính xác
             freezeTableName: true, // Ngăn Sequelize tự động chuyển đổi tên bảng
         }
     );

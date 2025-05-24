@@ -14,7 +14,9 @@ export default (sequelize, DataTypes) => {
             updatedAt: DataTypes.DATE,
             deletedAt: DataTypes.DATE,
         },
-        {}
+        {
+            tableName: 'comments',
+        }
     );
     Comment.associate = function (models) {
         models.Comment.belongsTo(models.User, { foreignKey: 'doctorId' });

@@ -12,7 +12,9 @@ export default (sequelize, DataTypes) => {
             updatedAt: DataTypes.DATE,
             deletedAt: DataTypes.DATE,
         },
-        {}
+        {
+            tableName: 'schedules', // tên bảng trong DB
+        }
     );
     Schedule.associate = function (models) {
         models.Schedule.belongsTo(models.User, { foreignKey: 'doctorId' });

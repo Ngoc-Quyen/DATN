@@ -21,7 +21,9 @@ export default (sequelize, DataTypes) => {
             updatedAt: DataTypes.DATE,
             deletedAt: DataTypes.DATE,
         },
-        {}
+        {
+            tableName: 'patients',
+        }
     );
     Patient.associate = function (models) {
         models.Patient.belongsTo(models.User, { foreignKey: 'doctorId' });

@@ -13,7 +13,9 @@ export default (sequelize, DataTypes) => {
             createdAt: DataTypes.DATE,
             updatedAt: DataTypes.DATE,
         },
-        {}
+        {
+            tableName: 'timeoffs', // tên bảng trong DB
+        }
     );
     TimeOffs.associate = function (models) {
         models.TimeOffs.belongsTo(models.User, { foreignKey: 'doctorId', as: 'Doctor' });

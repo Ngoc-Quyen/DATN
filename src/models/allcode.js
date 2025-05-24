@@ -23,6 +23,7 @@ export default (sequelize, DataTypes) => {
         {
             sequelize,
             modelName: 'Allcodes',
+            tableName: 'allcodes',
         }
     );
     return Allcode;

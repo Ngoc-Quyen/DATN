@@ -9,7 +9,9 @@ export default (sequelize, DataTypes) => {
             updatedAt: DataTypes.DATE,
             deletedAt: DataTypes.DATE,
         },
-        {}
+        {
+            tableName: 'doctor_users',
+        }
     );
     Doctor_User.associate = function (models) {
         models.Doctor_User.belongsTo(models.User, { foreignKey: 'doctorId' });

@@ -11,7 +11,9 @@ export default (sequelize, DataTypes) => {
             updatedAt: DataTypes.DATE,
             deletedAt: DataTypes.DATE,
         },
-        {}
+        {
+            tableName: 'appointments',
+        }
     );
     Appointment.associate = function (models) {};
     return Appointment;

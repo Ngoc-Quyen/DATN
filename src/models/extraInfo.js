@@ -13,7 +13,9 @@ export default (sequelize, DataTypes) => {
             updatedAt: DataTypes.DATE,
             deletedAt: DataTypes.DATE,
         },
-        {}
+        {
+            tableName: 'extrainfos',
+        }
     );
     ExtraInfo.associate = function (models) {
         models.ExtraInfo.belongsTo(models.Patient, { foreignKey: 'patientId' });

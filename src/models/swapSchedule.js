@@ -14,7 +14,9 @@ export default (sequelize, DataTypes) => {
             createdAt: DataTypes.DATE,
             updatedAt: DataTypes.DATE,
         },
-        {}
+        {
+            tableName: 'swapschedules', // tên bảng trong DB
+        }
     );
     SwapSchedules.associate = function (models) {
         models.SwapSchedules.belongsTo(models.User, { foreignKey: 'doctorId', as: 'Doctor' });

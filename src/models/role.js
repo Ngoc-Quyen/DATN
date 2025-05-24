@@ -8,7 +8,9 @@ export default (sequelize, DataTypes) => {
             updatedAt: DataTypes.DATE,
             deletedAt: DataTypes.DATE,
         },
-        {}
+        {
+            tableName: 'roles',
+        }
     );
     Role.associate = function (models) {
         models.Role.hasOne(models.User);

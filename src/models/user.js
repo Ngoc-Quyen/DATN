@@ -18,7 +18,9 @@ export default (sequelize, DataTypes) => {
             updatedAt: DataTypes.DATE,
             deletedAt: DataTypes.DATE,
         },
-        {}
+        {
+            tableName: 'users', // tên bảng trong DB
+        }
     );
     User.associate = function (models) {
         models.User.belongsTo(models.Role, { foreignKey: 'roleId' });

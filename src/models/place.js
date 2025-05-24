@@ -8,7 +8,9 @@ export default (sequelize, DataTypes) => {
             updatedAt: DataTypes.DATE,
             deletedAt: DataTypes.DATE,
         },
-        {}
+        {
+            tableName: 'places',
+        }
     );
     Place.associate = function (models) {};
     return Place;

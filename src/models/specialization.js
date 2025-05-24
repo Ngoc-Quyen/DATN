@@ -1,7 +1,7 @@
 'use strict';
 export default (sequelize, DataTypes) => {
     const Specialization = sequelize.define(
-        'Specialization',
+        'Specialization', // tên model số ít
         {
             name: DataTypes.STRING,
             description: DataTypes.TEXT,
@@ -10,10 +10,14 @@ export default (sequelize, DataTypes) => {
             updatedAt: DataTypes.DATE,
             deletedAt: DataTypes.DATE,
         },
-        {}
+        {
+            tableName: 'specializations', // tên bảng trong DB
+        }
     );
+
     Specialization.associate = function (models) {
-        models.Specialization.hasOne(models.Post);
+        Specialization.hasOne(models.Post);
     };
+
     return Specialization;
 };
