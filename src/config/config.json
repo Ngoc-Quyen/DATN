@@ -1,9 +1,9 @@
 {
     "development": {
-        "username": "uf0pokexo7ysteb6",
-        "password": "R1SLDneJHVPqgcSxFFpZ",
-        "database": "btdr1gnnqmlo6xgzaoo2",
-        "host": "btdr1gnnqmlo6xgzaoo2-mysql.services.clever-cloud.com",
+        "username": "ngocquin",
+        "password": "l3minhdeptr@i",
+        "database": "doctorcare",
+        "host": "doctorcare.mysql.database.azure.com",
         "dialect": "mysql",
         "operatorsAliases": 0,
         "dialectOptions": {
