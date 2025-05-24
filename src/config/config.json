@@ -1,9 +1,9 @@
 {
     "development": {
-        "username": "root",
-        "password": "123456",
-        "database": "doctorcare",
-        "host": "localhost",
+        "username": "uxmvqcwvmuufxwls",
+        "password": "XoxMdWBfocEy0RRP8tfb",
+        "database": "bsyqmhj0o2f60n2agkqy",
+        "host": "bsyqmhj0o2f60n2agkqy-mysql.services.clever-cloud.com",
         "dialect": "mysql",
         "operatorsAliases": 0,
         "dialectOptions": {
