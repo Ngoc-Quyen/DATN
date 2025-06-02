@@ -10,6 +10,12 @@ const Op = Sequelize.Op;
 import moment from 'moment';
 let salt = 7;
 
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc.js';
+import timezone from 'dayjs/plugin/timezone.js';
+dayjs.extend(utc);
+dayjs.extend(timezone);
+
 let createDoctor = (doctor) => {
     doctor.roleId = 2;
     doctor.password = bcrypt.hashSync(doctor.password, salt);
@@ -275,9 +281,9 @@ let convertToString = async (dateString) => {
 let getInfoDoctorChart = async (doctorId) => {
     return new Promise(async (resolve, reject) => {
         try {
-            const now = new Date(); // Lấy thời gian hiện tại
-            const year = now.getFullYear(); // Năm hiện tại
-            const month = now.getMonth(); // Tháng hiện tại (0-11)
+            const nowInVietnam = dayjs().tz('Asia/Ho_Chi_Minh');
+            const year = nowInVietnam.year(); // Năm hiện tại
+            const month = nowInVietnam.month(); // Tháng hiện tại (0 - 11)
 
             const startDate = new Date(year, month, 1, 0, 0, 0); // Ngày đầu tháng lúc 00:00:00
             const endDate = new Date(year, month + 1, 0, 23, 59, 59); // Ngày cuối tháng lúc 23:59:59

@@ -15,6 +15,11 @@ import striptags from 'striptags';
 
 import multer from 'multer';
 
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc.js';
+import timezone from 'dayjs/plugin/timezone.js';
+dayjs.extend(utc);
+dayjs.extend(timezone);
 let LIMIT_POST = 5;
 
 const statusPendingId = 3;
@@ -54,11 +59,13 @@ let getDetailSpecializationPage = async (req, res) => {
     try {
         let object = await specializationService.getSpecializationById(req.params.id);
         // using date to get schedule of doctors
-        let currentDate = moment().format('DD/MM/YYYY');
+        let currentDate = moment().tz('Asia/Ho_Chi_Minh').format('DD/MM/YYYY'); // giữ dạng moment object
         let doctors = await doctorService.getDoctorsForSpecialization(req.params.id, currentDate);
+
         let sevenDaySchedule = [];
+
         for (let i = 0; i < 7; i++) {
-            let date = moment(new Date()).add(i, 'days').locale('vi').format('dddd - DD/MM/YYYY');
+            let date = moment().tz('Asia/Ho_Chi_Minh').add(i, 'days').locale('vi').format('dddd - DD/MM/YYYY');
             sevenDaySchedule.push(date);
         }
 
@@ -80,8 +87,8 @@ let getDetailSpecializationPage = async (req, res) => {
                 }
             }
             if (listTime && Array.isArray(listTime.data) && Array.isArray(listScheduleMax)) {
-                const now = new Date();
-                const todayStr = now.toISOString().split('T')[0]; // "YYYY-MM-DD"
+                const nowInVietnam = dayjs().tz('Asia/Ho_Chi_Minh');
+                const todayStr = nowInVietnam.format('YYYY-MM-DD');
 
                 listTime.data = listTime.data
                     .filter((item) => {
@@ -93,10 +100,15 @@ let getDetailSpecializationPage = async (req, res) => {
                         if (timeRange.length !== 2) return false;
 
                         const [endHour, endMinute] = timeRange[1].trim().split(':').map(Number);
-                        const endDateTime = new Date(); // hôm nay
-                        endDateTime.setHours(endHour, endMinute, 0, 0);
 
-                        return endDateTime > now;
+                        // Tạo thời gian kết thúc trong timezone Asia/Ho_Chi_Minh, lấy ngày hôm nay
+                        const endDateTime = dayjs()
+                            .tz('Asia/Ho_Chi_Minh')
+                            .hour(endHour)
+                            .minute(endMinute)
+                            .second(0)
+                            .millisecond(0);
+                        return endDateTime > nowInVietnam;
                     })
                     .filter((item) => {
                         // Loại bỏ các item trùng thời gian trong listScheduleMax
@@ -129,10 +141,12 @@ let getDetailSpecializationPage = async (req, res) => {
 let getDetailDoctorPage = async (req, res) => {
     try {
         let doctorId = req.params.id;
-        let currentDate = moment().format('DD/MM/YYYY');
+
+        let currentDate = moment().tz('Asia/Ho_Chi_Minh').format('DD/MM/YYYY'); // giữ dạng moment object
         let sevenDaySchedule = [];
+
         for (let i = 0; i < 7; i++) {
-            let date = moment(new Date()).add(i, 'days').locale('vi').format('dddd - DD/MM/YYYY');
+            let date = moment().tz('Asia/Ho_Chi_Minh').add(i, 'days').locale('vi').format('dddd - DD/MM/YYYY');
             sevenDaySchedule.push(date);
         }
 
@@ -170,8 +184,8 @@ let getDetailDoctorPage = async (req, res) => {
         let listScheduleMax = await scheduleService.getScheduleMax(doctorId, dateReq);
         // Loại bỏ các phần tử trong listTime có valueVn trùng với time trong listScheduleMax
         if (listTime && Array.isArray(listTime.data) && Array.isArray(listScheduleMax)) {
-            const now = new Date();
-            const todayStr = now.toISOString().split('T')[0]; // "YYYY-MM-DD"
+            const nowInVietnam = dayjs().tz('Asia/Ho_Chi_Minh');
+            const todayStr = nowInVietnam.format('YYYY-MM-DD');
 
             listTime.data = listTime.data
                 .filter((item) => {
@@ -183,10 +197,15 @@ let getDetailDoctorPage = async (req, res) => {
                     if (timeRange.length !== 2) return false;
 
                     const [endHour, endMinute] = timeRange[1].trim().split(':').map(Number);
-                    const endDateTime = new Date(); // hôm nay
-                    endDateTime.setHours(endHour, endMinute, 0, 0);
 
-                    return endDateTime > now;
+                    // Tạo thời gian kết thúc trong timezone Asia/Ho_Chi_Minh, lấy ngày hôm nay
+                    const endDateTime = dayjs()
+                        .tz('Asia/Ho_Chi_Minh')
+                        .hour(endHour)
+                        .minute(endMinute)
+                        .second(0)
+                        .millisecond(0);
+                    return endDateTime > nowInVietnam;
                 })
                 .filter((item) => {
                     // Loại bỏ các item trùng thời gian trong listScheduleMax

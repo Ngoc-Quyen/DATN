@@ -12,6 +12,11 @@ import _ from 'lodash';
 import moment from 'moment';
 import multer from 'multer';
 
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc.js';
+import timezone from 'dayjs/plugin/timezone.js';
+dayjs.extend(utc);
+dayjs.extend(timezone);
 const MAX_BOOKING = 3;
 
 function stringToDate(_date, _format, _delimiter) {
@@ -130,9 +135,8 @@ let getScheduleDoctorByDate = async (req, res) => {
         let listScheduleMax = await scheduleService.getScheduleMax(doctorId, dateReq);
         // Loại bỏ các phần tử trong listTime có valueVn trùng với time trong listScheduleMax
         if (listTime && Array.isArray(listTime.data) && Array.isArray(listScheduleMax)) {
-            const now = new Date();
-            const todayStr = now.toISOString().split('T')[0]; // "YYYY-MM-DD"
-
+            const nowInVietnam = dayjs().tz('Asia/Ho_Chi_Minh');
+            const todayStr = nowInVietnam.format('YYYY-MM-DD');
             listTime.data = listTime.data
                 .filter((item) => {
                     // Nếu schedule không phải hôm nay thì giữ lại
@@ -143,10 +147,15 @@ let getScheduleDoctorByDate = async (req, res) => {
                     if (timeRange.length !== 2) return false;
 
                     const [endHour, endMinute] = timeRange[1].trim().split(':').map(Number);
-                    const endDateTime = new Date(); // hôm nay
-                    endDateTime.setHours(endHour, endMinute, 0, 0);
 
-                    return endDateTime > now;
+                    // Tạo thời gian kết thúc trong timezone Asia/Ho_Chi_Minh, lấy ngày hôm nay
+                    const endDateTime = dayjs()
+                        .tz('Asia/Ho_Chi_Minh')
+                        .hour(endHour)
+                        .minute(endMinute)
+                        .second(0)
+                        .millisecond(0);
+                    return endDateTime > nowInVietnam;
                 })
                 .filter((item) => {
                     // Loại bỏ các item trùng thời gian trong listScheduleMax
