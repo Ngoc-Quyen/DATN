@@ -126,6 +126,7 @@ let getResetPasswordPage = async (req, res) => {
             otp: otp,
         };
         await mailer.sendEmailNormal(emailUser, mailChangePass.subject, mailChangePass.template(dataSend));
+
         return res.render('auth/reset-password.ejs', {
             user: account,
             showOtpInput: true, // Hiển thị ô nhập mã OTP

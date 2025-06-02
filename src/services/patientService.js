@@ -9,6 +9,8 @@ import {
 } from '../../lang/en.js';
 // const { mailer } = require('../config/mailer');
 import mailer from '../config/mailer.js';
+import sms from '../config/SMS.js';
+import dateHelper from '../helper/dateHelper.js';
 
 const statusPendingId = 3;
 const statusFailedId = 2;
@@ -299,8 +301,11 @@ let changeStatusPatient = (data, logs, historyBreath, moreInfo) => {
                     transMailBookingSuccess.subject,
                     transMailBookingSuccess.template(dataSend)
                 );
+                const internationalPhone = dateHelper.toInternational(patient.phone);
+                // await sms.sendSMS(internationalPhone, 'Tình trạng: THÀNH CÔNG');
+                await sms.sendSMSByVonage(internationalPhone, 'Tình trạng: THÀNH CÔNG');
             }
-            if (data.statusId === statusFailedId && patient.email) {
+            if (data.statusId === statusFailedId && patient.email && patient.phone) {
                 let dataSend = {
                     time: patient.timeBooking,
                     date: patient.dateBooking,
@@ -312,6 +317,9 @@ let changeStatusPatient = (data, logs, historyBreath, moreInfo) => {
                     transMailBookingFailed.subject,
                     transMailBookingFailed.template(dataSend)
                 );
+                const internationalPhone = dateHelper.toInternational(patient.phone);
+                // await sms.sendSMS(internationalPhone, 'Tình trạng: THẤT BẠI');
+                await sms.sendSMSByVonage(internationalPhone, 'Tình trạng: THẤT BẠI');
             }
             if (data.statusId === statusSuccessId) {
                 let dataSend = {
@@ -322,6 +330,12 @@ let changeStatusPatient = (data, logs, historyBreath, moreInfo) => {
                     result: historyBreath,
                 };
                 await mailer.sendEmailNormal(patient.email, mailEnd.subject, mailEnd.template(dataSend));
+                const internationalPhone = dateHelper.toInternational(patient.phone);
+                // await sms.sendSMS(internationalPhone, 'Tình trạng: Xác nhận đã khám xong. Kết quả được gửi qua mail');
+                await sms.sendSMSByVonage(
+                    internationalPhone,
+                    'Tình trạng: Xác nhận đã khám xong. Kết quả được gửi qua mail'
+                );
             }
 
             resolve(patient);
@@ -393,6 +407,16 @@ let createNewPatient = (data) => {
                     transMailBookingNew.subject,
                     transMailBookingNew.template(dataSend)
                 );
+                const internationalPhone = dateHelper.toInternational(patient.phone);
+                // await sms.sendSMS(
+                //     internationalPhone,
+                //     'Tình trạng: Đang chờ xử lý - Một cuộc hẹn mới đang chờ xác nhận'
+                // );
+                await sms.sendSMSByVonage(
+                    internationalPhone,
+                    'Tình trạng: Đang chờ xử lý - Một cuộc hẹn mới đang chờ xác nhận'
+                );
+
                 if (!isEmailSend) {
                     console.log('An error occurs when sending an email to: ' + patient.email);
                     console.log(isEmailSend);
@@ -431,6 +455,15 @@ let createNewPatient = (data) => {
                     patient.email,
                     transMailBookingNew.subject,
                     transMailBookingNew.template(dataSend)
+                );
+                const internationalPhone = dateHelper.toInternational(patient.phone);
+                // await sms.sendSMS(
+                //     internationalPhone,
+                //     'Tình trạng: Đang chờ xử lý - Một cuộc hẹn mới đang chờ xác nhận'
+                // );
+                await sms.sendSMSByVonage(
+                    internationalPhone,
+                    'Tình trạng: Đang chờ xử lý - Một cuộc hẹn mới đang chờ xác nhận'
                 );
                 if (!isEmailSend) {
                     console.log('An error occurs when sending an email to: ' + patient.email);

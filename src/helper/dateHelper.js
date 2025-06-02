@@ -14,4 +14,25 @@ function formatDateToYYYYMMDD(dateStr) {
     const [day, month, year] = dateStr.split('/');
     return `${year}-${month}-${day}`;
 }
-export default { formatDateToDDMMYYYY: formatDateToDDMMYYYY, formatDateToYYYYMMDD: formatDateToYYYYMMDD };
+function toInternational(phone) {
+    if (!phone) return '';
+
+    // Nếu số bắt đầu bằng '0', thay thành '+84'
+    if (phone.startsWith('0')) {
+        return '+84' + phone.slice(1);
+    }
+
+    // Nếu đã là số quốc tế (ví dụ bắt đầu bằng +), giữ nguyên
+    if (phone.startsWith('+')) {
+        return phone;
+    }
+
+    // Trường hợp khác, giữ nguyên hoặc tùy xử lý thêm
+    return phone;
+}
+
+export default {
+    formatDateToDDMMYYYY: formatDateToDDMMYYYY,
+    formatDateToYYYYMMDD: formatDateToYYYYMMDD,
+    toInternational: toInternational,
+};
