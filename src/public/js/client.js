@@ -20,7 +20,6 @@ function getScheduleDoctorByDate() {
                     url: `${window.location.origin}/doctor/get-schedule-doctor-by-date`,
                     data: { date: date, doctorId: doctorId },
                     success: function (data) {
-                        console.log('data: ', data);
                         if (data.date) {
                             requestedData.push({
                                 date: data.date,

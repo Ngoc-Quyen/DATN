@@ -1228,6 +1228,7 @@ function callAjaxRenderModalInfo(patientId, option) {
         data: { patientId: patientId },
         success: function (data) {
             $('#btn-confirm-patient-done').attr('data-patient-id', data.patient.id);
+            $('#userId').val(data.patient.userId);
             $('#patientName').val(data.patient.name);
             $('#patientYear').val(data.patient.year);
             $('#patientPhone').val(data.patient.phone);
@@ -1243,11 +1244,12 @@ function callAjaxRenderModalInfo(patientId, option) {
             if (option) {
                 $('#btn-confirm-patient-done').css('display', 'none');
                 $('#btn-cancel-patient').text('OK');
+                $('#toggleScheduleLink').css('display', 'none');
             } else {
                 $('#btn-confirm-patient-done').css('display', 'block');
                 $('#btn-cancel-patient').text('Hủy');
+                $('#toggleScheduleLink').css('display', 'block');
             }
-            console.log('option: ', option);
             $('#modalDetailPatient').modal('show');
         },
         error: function (err) {
@@ -1735,7 +1737,6 @@ function searchCustomerByPhone() {
             url: `${window.location.origin}/users/manage/customer`,
             data: { phone },
             success: function (data) {
-                console.log('data.customers in js : ', data.customers);
                 updateCustomerTable(data.customers); // Assuming 'customers' is the key in the response
             },
             error: function (error) {
@@ -2081,7 +2082,6 @@ function SwapScheduleAccept() {
         let dateASwap = $(this).data('date-a-swap');
         let dateBSwap = $(this).data('date-b-swap');
         let type = $(this).data('type');
-        console.log('Hàm này được gọi');
         let dataRequest = {
             scheduleSwapId: scheduleSwapId,
             doctorId: doctorId,
@@ -2161,6 +2161,215 @@ function SwapScheduleAccept() {
                 alertify.error('Đã xảy ra lỗi, vui lòng thử lại sau!');
             },
         });
+    });
+}
+
+function showScheduleSection() {
+    $(document).on('click', '#toggleScheduleLink', function (e) {
+        e.preventDefault();
+        $('#scheduleSection').slideToggle(() => {
+            $('#dateDoctor').trigger('change'); // gọi sự kiện đổi ngày
+        });
+        const now = new Date();
+        // Dịch sang giờ Việt Nam (UTC+7)
+        now.setHours(now.getHours() + 7);
+        const vnToday = now.toISOString().split('T')[0];
+
+        $('#dateDoctor').val(vnToday);
+        // (Tuỳ chọn) Không cho chọn ngày quá khứ
+        $('#dateDoctor').attr('min', vnToday);
+    });
+}
+let requestedData = [];
+function handleBtnTimeSchedule() {
+    $('#dateDoctor').on('change', function (e) {
+        const rawDate = $(this).val();
+        if (!rawDate) return;
+        // Convert sang dd/mm/yyyy
+        const parts = rawDate.split('-');
+        const formattedDate = `${parts[2]}/${parts[1]}/${parts[0]}`;
+
+        const doctorId = $('#dateDoctor').data('doctor-id');
+        const divScheduleId = `#div-schedule-${doctorId}`;
+
+        const result = requestedData.find((item) => item.date === formattedDate && item.doctorId === doctorId);
+        if (result) {
+            loadScheduleByDate(result.data, divScheduleId);
+        } else {
+            $.ajax({
+                method: 'POST',
+                url: `${window.location.origin}/doctor/get-schedule-doctor-by-date`,
+                data: { date: formattedDate, doctorId: doctorId },
+                success: function (data) {
+                    if (data.date) {
+                        requestedData.push({
+                            date: data.date,
+                            doctorId: doctorId,
+                            data: data,
+                        });
+                    }
+                    loadScheduleByDate(data, divScheduleId);
+                },
+                error: function (error) {
+                    console.log(error);
+                },
+            });
+        }
+    });
+}
+function loadScheduleByDate(data, divScheduleId) {
+    //empty content inside div parent
+    $(divScheduleId).html('');
+    let html = '';
+    if (data.schedule) {
+        data.listTime.forEach((time) => {
+            if (time.isDisable === false || time.isDisable === undefined) {
+                html += `
+                <div id="btn-modal-${time.key}-${data.doctor.id}" data-doctor-id="${data.schedule.doctorId}" data-date="${data.schedule.date}"
+                    data-time="${time.valueVi}" data-doctor-name="${data.doctor.name}" data-avatar-doctor="${data.doctor.avatar}"
+                    class="text-decoration-none" onclick="openModalBooking(this.id)">
+                    <div class="doctor-time">
+                        ${time.valueVi}
+                    </div>
+                </div>
+            `;
+            }
+        });
+        if (html === '') {
+            html = `
+            <div>
+                Bác sĩ "${data.doctor.name}" không có lịch làm việc vào ngày <b>${data.date}</b>. Vui lòng chọn ngày hẹn khác.
+            </div>
+        `;
+        }
+    } else {
+        html = `
+        <div>
+            Bác sĩ "${data.doctor.name}" không có lịch làm việc vào ngày <b>${data.date}</b>. Vui lòng chọn ngày khác.
+        </div>
+    `;
+    }
+
+    $(divScheduleId).append(html);
+}
+
+function openModalBooking(buttonId) {
+    const $btn = $(`#${buttonId}`);
+
+    // Dữ liệu từ data-attr của button (bác sĩ)
+    const doctorId = $btn.data('doctor-id');
+    const doctorName = $btn.data('doctor-name');
+    const avatarDoctor = $btn.data('avatar-doctor');
+    const time = $btn.data('time');
+    const date = $btn.data('date');
+
+    // Hiển thị thông tin bác sĩ trong modal booking
+    $('#doctor-id').data('doctor-id', doctorId);
+    $('#doctor-name').text(doctorName);
+    $('#modal-avatar-doctor').attr('src', avatarDoctor);
+    $('#time-patient-booking').text(`${time}`);
+    $('#date-patient-booking').text(`${date}`);
+
+    // 🟢 Lấy dữ liệu từ modalDetailPatient
+    $('#userId').val($('#userId').val());
+    $('#name').val($('#patientName').val());
+    $('#year').val($('#patientYear').val());
+    $('#phone').val($('#patientPhone').val());
+    $('#email').val($('#patientEmail').val());
+    $('#address').val($('#patientAddress').val());
+    $('#description').val('Hẹn lịch khám lại');
+
+    // Cuối cùng hiển thị modal booking
+    $('#modalBooking').modal('show');
+}
+
+function validateInputPageDoctor() {
+    if (!$('#name').val()) {
+        $('#name').addClass('is-invalid');
+        return false;
+    } else {
+        $('#name').removeClass('is-invalid');
+    }
+
+    if (!$('#phone').val()) {
+        $('#phone').addClass('is-invalid');
+        return false;
+    }
+    if ($('#phone').val()) {
+        let isValid = $('#phone').val().match(PHONE_REG);
+        if (isValid) {
+            $('#phone').removeClass('is-invalid');
+        } else {
+            $('#phone').addClass('is-invalid');
+            return false;
+        }
+    }
+
+    if (!$('#email').val()) {
+        $('#email').addClass('is-invalid');
+        return false;
+    }
+
+    if ($('#email').val()) {
+        let isValid = $('#email').val().match(EMAIL_REG);
+        if (isValid) {
+            $('#email').removeClass('is-invalid');
+        } else {
+            $('#email').addClass('is-invalid');
+            return false;
+        }
+    }
+    // Check year of birth if exists
+    if ($('#year').length) {
+        const yearVal = $('#year').val();
+        const year = parseInt(yearVal, 10);
+        const currentYear = new Date().getFullYear();
+        if (!yearVal || isNaN(year) || year < 1900 || year > currentYear) {
+            $('#year').addClass('is-invalid');
+            return false;
+        } else {
+            $('#year').removeClass('is-invalid');
+        }
+    }
+    return true;
+}
+function handleBookingPageDoctorWithoutFiles(data) {
+    $.ajax({
+        method: 'POST',
+        url: `${window.location.origin}/booking-doctor-without-files/create`,
+        data: data,
+        success: function (data) {
+            if (typeof data.patient === 'string') {
+                alert('Rất tiếc, cuộc hẹn này đã đủ bệnh nhân đặt trước, vui lòng chọn thời gian khác.');
+                window.location.reload(true);
+            } else {
+                alertify.success('Đặt lịch hẹn thành công');
+                $('#modalBooking').modal('hide');
+                $('#scheduleSection').slideUp(); // Ẩn phần chọn lịch
+            }
+        },
+        error: function (error) {
+            alertify.error('Đã xảy ra lỗi, vui lòng thử lại sau!');
+            console.log(error);
+        },
+    });
+}
+function handleBookingPageDoctor() {
+    $('#btn-confirm-booking').on('click', function (event) {
+        const data = {
+            name: $('#name').val(),
+            gender: $('input[name="gender"]:checked').val(),
+            phone: $('#phone').val(),
+            email: $('#email').val(),
+            year: $('#year').val(),
+            address: $('#address').val(),
+            description: $('#description').val(),
+            doctorId: $('#doctor-id').data('doctor-id'),
+            userId: $('#userId').val(),
+            timeBooking: $('#time-patient-booking').text(),
+            dateBooking: $('#date-patient-booking').text(),
+        };
+        handleBookingPageDoctorWithoutFiles(data);
     });
 }
 
@@ -2304,4 +2513,8 @@ $(document).ready(function (e) {
     createScheduleAll();
     RefuseTimeOff();
     SwapScheduleAccept();
+    showScheduleSection();
+    handleBtnTimeSchedule();
+    handleBtnTimeSchedule();
+    handleBookingPageDoctor();
 });

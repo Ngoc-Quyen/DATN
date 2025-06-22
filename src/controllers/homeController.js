@@ -322,7 +322,9 @@ let postBookingDoctorPageWithoutFiles = async (req, res) => {
 
         let item = req.body;
         item.statusId = statusNewId; // Giả sử statusNewId được định nghĩa trước đó
-        item.userId = req.session.userId; // Lấy userId từ session
+        if (req.session.user.roleId === 3) {
+            item.userId = req.session.user.id;
+        } // Lấy userId từ session
         item.historyBreath = req.body.breath;
         item.moreInfo = req.body.extraOldForms;
         // if (item.places === 'none') item.placeId = 0;
