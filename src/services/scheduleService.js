@@ -4,6 +4,7 @@ import moment from 'moment';
 // const Sequelize = require('sequelize');
 import Sequelize from 'sequelize';
 const Op = Sequelize.Op;
+const literal = Sequelize.literal;
 
 import doctorService from './doctorService.js';
 
@@ -1098,7 +1099,7 @@ let getScheduleMax = async (doctorId, dateBooking) => {
                 where: {
                     doctorId: doctorId,
                     date: dateBooking,
-                    sumBooking: 3,
+                    [Op.and]: [literal('CAST(sumBooking AS UNSIGNED) >= 3')],
                 },
             });
             if (!scheduleMaxBooking || scheduleMaxBooking.length === 0) {
