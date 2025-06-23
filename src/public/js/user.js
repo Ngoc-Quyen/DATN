@@ -185,6 +185,22 @@ function showDetailBookend(patientId) {
                 $('#patientHistoryBreath').val(data.ExtraInfo.historyBreath);
                 $('#patientMoreInfo').val(data.ExtraInfo.moreInfo);
             }
+
+            const reExamList = data.reExamination;
+            if (Array.isArray(reExamList) && reExamList.length > 0) {
+                const firstReExam = reExamList[0]; // lấy lịch tái khám đầu tiên
+                const { dateBooking, timeBooking } = firstReExam;
+
+                $('#reExaminationDate').val(dateBooking);
+                $('#reExaminationTime').val(timeBooking);
+
+                // Hiển thị phần tái khám
+                $('#reExaminationContainer').show();
+            } else {
+                // Không có lịch tái khám → ẩn
+                $('#reExaminationContainer').hide();
+            }
+
             $('#modalResultlPatient').modal('show');
         },
         error: function (err) {
@@ -221,6 +237,20 @@ function callAjaxRenderModalInfo(patientId, option) {
             if (data.ExtraInfo) {
                 $('#patientHistoryBreath').val(data.ExtraInfo.historyBreath);
                 $('#patientMoreInfo').val(data.ExtraInfo.moreInfo);
+            }
+            const reExamList = data.reExamination;
+            if (Array.isArray(reExamList) && reExamList.length > 0) {
+                const firstReExam = reExamList[0]; // lấy lịch tái khám đầu tiên
+                const { dateBooking, timeBooking } = firstReExam;
+
+                $('#reExaminationDate').val(dateBooking);
+                $('#reExaminationTime').val(timeBooking);
+
+                // Hiển thị phần tái khám
+                $('#reExaminationContainer').show();
+            } else {
+                // Không có lịch tái khám → ẩn
+                $('#reExaminationContainer').hide();
             }
             $('#modalResultlPatient').modal('show');
         },

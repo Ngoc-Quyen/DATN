@@ -17,6 +17,7 @@ export default (sequelize, DataTypes) => {
             description: DataTypes.TEXT,
             isSentForms: DataTypes.BOOLEAN,
             isTakeCare: DataTypes.BOOLEAN,
+            patientOldId: DataTypes.INTEGER,
             createdAt: DataTypes.DATE,
             updatedAt: DataTypes.DATE,
             deletedAt: DataTypes.DATE,

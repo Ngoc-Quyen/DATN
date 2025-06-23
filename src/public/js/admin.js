@@ -982,6 +982,21 @@ function loadNewPatientsForAdmin() {
             });
             // đổ dữ liệu chỗ đã chấp nhận
             data.object.pendingPatients.forEach((patient) => {
+                // 1. Tạo ngày hôm nay theo giờ Việt Nam
+                const now = new Date();
+                const utc = now.getTime() + now.getTimezoneOffset() * 60000; // chuyển về UTC
+                const todayVN = new Date(utc + 7 * 3600000); // cộng thêm 7 tiếng để được giờ Việt Nam
+                todayVN.setHours(0, 0, 0, 0); // bỏ giờ phút giây để so sánh theo ngày
+
+                // 2. Chuyển bookingDate sang Date object
+                const bookingDate = new Date(patient.dateBooking); // <--- sửa chỗ này
+                bookingDate.setHours(0, 0, 0, 0);
+
+                // 3. So sánh
+                const isFuture = bookingDate > todayVN;
+                const disabledAttr = isFuture ? 'disabled' : '';
+                const cursorClass = isFuture ? '' : 'cursor-pointer';
+
                 htmlPending += `
                 <tr>
                     <td> ${patient.name}   </td>
@@ -989,8 +1004,8 @@ function loadNewPatientsForAdmin() {
                     <td> ${patient.phone}     </td>
                     <td> ${patient.email}     </td>
                     <td>${patient.dateBooking} (${patient.timeBooking})   </td>
-                    <td> 
-                        <button  data-patient-id="${patient.id}"  class="ml-3 btn btn-success cursor-pointer btn-pending-patient">Xác nhận</button>
+                    <td>     
+                        <button data-patient-id="${patient.id}" class="ml-3 btn btn-success ${cursorClass} btn-pending-patient" ${disabledAttr}>Xác nhận</button>
                         <button  type="button" data-patient-id="${patient.id}" class="ml-3 btn btn-danger cursor-pointer btn-new-patient-cancel"> Hủy </button>
                     </td>
                 </tr>
@@ -1083,6 +1098,20 @@ function loadPatientsByDate() {
                 });
                 // đổ dữ liệu chỗ đã chấp nhận
                 data.object.pendingPatients.forEach((patient) => {
+                    // 1. Tạo ngày hôm nay theo giờ Việt Nam
+                    const now = new Date();
+                    const utc = now.getTime() + now.getTimezoneOffset() * 60000; // chuyển về UTC
+                    const todayVN = new Date(utc + 7 * 3600000); // cộng thêm 7 tiếng để được giờ Việt Nam
+                    todayVN.setHours(0, 0, 0, 0); // bỏ giờ phút giây để so sánh theo ngày
+
+                    // 2. Chuyển bookingDate sang Date object
+                    const bookingDate = new Date(patient.dateBooking); // <--- sửa chỗ này
+                    bookingDate.setHours(0, 0, 0, 0);
+
+                    // 3. So sánh
+                    const isFuture = bookingDate > todayVN;
+                    const disabledAttr = isFuture ? 'disabled' : '';
+                    const cursorClass = isFuture ? '' : 'cursor-pointer';
                     htmlPending += `
                     <tr>
                         <td> ${patient.name}   </td>
@@ -1091,7 +1120,7 @@ function loadPatientsByDate() {
                         <td> ${patient.email}     </td>
                         <td>${patient.dateBooking} (${patient.timeBooking})   </td>
                         <td> 
-                            <button  data-patient-id="${patient.id}"  class="ml-3 btn btn-success cursor-pointer btn-pending-patient">Xác nhận</button>
+                            <button data-patient-id="${patient.id}" class="ml-3 btn btn-success ${cursorClass} btn-pending-patient" ${disabledAttr}>Xác nhận</button>
                             <button  type="button" data-patient-id="${patient.id}" class="ml-3 btn btn-danger cursor-pointer btn-new-patient-cancel"> Hủy </button>
                         </td>
                     </tr>
@@ -1229,6 +1258,7 @@ function callAjaxRenderModalInfo(patientId, option) {
         success: function (data) {
             $('#btn-confirm-patient-done').attr('data-patient-id', data.patient.id);
             $('#userId').val(data.patient.userId);
+            $('#patientId').val(data.patient.id);
             $('#patientName').val(data.patient.name);
             $('#patientYear').val(data.patient.year);
             $('#patientPhone').val(data.patient.phone);
@@ -1245,10 +1275,26 @@ function callAjaxRenderModalInfo(patientId, option) {
                 $('#btn-confirm-patient-done').css('display', 'none');
                 $('#btn-cancel-patient').text('OK');
                 $('#toggleScheduleLink').css('display', 'none');
+                const reExamList = data.reExamination;
+
+                if (Array.isArray(reExamList) && reExamList.length > 0) {
+                    const firstReExam = reExamList[0]; // lấy lịch tái khám đầu tiên
+                    const { dateBooking, timeBooking } = firstReExam;
+
+                    $('#reExaminationDate').val(dateBooking);
+                    $('#reExaminationTime').val(timeBooking);
+
+                    // Hiển thị phần tái khám
+                    $('#reExaminationContainer').show();
+                } else {
+                    // Không có lịch tái khám → ẩn
+                    $('#reExaminationContainer').hide();
+                }
             } else {
                 $('#btn-confirm-patient-done').css('display', 'block');
                 $('#btn-cancel-patient').text('Hủy');
                 $('#toggleScheduleLink').css('display', 'block');
+                $('#reExaminationContainer').hide();
             }
             $('#modalDetailPatient').modal('show');
         },
@@ -1275,6 +1321,21 @@ function handleBtnPendingCancel() {
 }
 
 function addNewRowTablePending(patient) {
+    // 1. Tạo ngày hôm nay theo giờ Việt Nam
+    const now = new Date();
+    const utc = now.getTime() + now.getTimezoneOffset() * 60000; // chuyển về UTC
+    const todayVN = new Date(utc + 7 * 3600000); // cộng thêm 7 tiếng để được giờ Việt Nam
+    todayVN.setHours(0, 0, 0, 0); // bỏ giờ phút giây để so sánh theo ngày
+
+    // 2. Chuyển bookingDate sang Date object
+    const bookingDate = new Date(patient.dateBooking); // <--- sửa chỗ này
+    bookingDate.setHours(0, 0, 0, 0);
+
+    // 3. So sánh
+    const isFuture = bookingDate > todayVN;
+    const disabledAttr = isFuture ? 'disabled' : '';
+    const cursorClass = isFuture ? '' : 'cursor-pointer';
+    console.log('ham nay dc goi');
     let htmlPending = `
                  <tr>
                     <td> ${patient.id} - ${patient.name}   </td>
@@ -1282,7 +1343,7 @@ function addNewRowTablePending(patient) {
                     <td> ${patient.email}     </td>
                     <td> ${patient.dateBooking} (${patient.timeBooking})     </td>
                     <td> 
-                        <button  data-patient-id="${patient.id}"  class="ml-3 btn btn-success cursor-pointer btn-pending-patient">Xác nhận</button>
+                        <button data-patient-id="${patient.id}" class="ml-3 btn btn-success ${cursorClass} btn-pending-patient" ${disabledAttr}>Xác nhận</button>
                         <button  type="button" data-patient-id="${patient.id}" class="ml-3 btn btn-danger cursor-pointer btn-new-patient-cancel"> Hủy </button>
                     </td>
                 </tr>
@@ -2272,6 +2333,7 @@ function openModalBooking(buttonId) {
 
     // 🟢 Lấy dữ liệu từ modalDetailPatient
     $('#userId').val($('#userId').val());
+    $('#patientOldId').val($('#patientId').val());
     $('#name').val($('#patientName').val());
     $('#year').val($('#patientYear').val());
     $('#phone').val($('#patientPhone').val());
@@ -2368,6 +2430,7 @@ function handleBookingPageDoctor() {
             userId: $('#userId').val(),
             timeBooking: $('#time-patient-booking').text(),
             dateBooking: $('#date-patient-booking').text(),
+            patientOldId: $('#patientOldId').val(),
         };
         handleBookingPageDoctorWithoutFiles(data);
     });

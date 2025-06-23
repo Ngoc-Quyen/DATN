@@ -415,7 +415,6 @@ let getScheduleTimeOff = async (req, res) => {
         if (!listSchedule || listSchedule.length === 0) {
             listSchedule = [];
         }
-        // console.log('timeOffs: ', timeOffs);
         if (month && year) {
             timeOffs = timeOffs.filter((timeOff) => {
                 const startDate = moment(timeOff.startDate);
