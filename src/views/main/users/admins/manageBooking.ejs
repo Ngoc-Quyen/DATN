@@ -199,6 +199,7 @@
                 <div class="modal-body">
                     <div class="row">
                         <input id="userId" class="d-none"></input>
+                        <input type="text" class="d-none" id="patientId" name="patientId">
                         <div class="form-group col-4">
                             <label class="col-form-label text-label" for="patientName">Tên:</label>
                             <input type="text" class="form-control" id="patientName" name="patientName" readonly>
@@ -247,7 +248,7 @@
                             <textarea class="form-control" name="patientMoreInfo" id="patientMoreInfo"></textarea>
                         </div>
 
-                        <div class="col-12">
+                        <div class="form-group col-12">
                             <a href="#" id="toggleScheduleLink" class="text-decoration-none">Hẹn lịch khám lại(Nếu
                                 có):</a>
                         </div>
@@ -262,6 +263,21 @@
                                 <div id="div-schedule-<%= user.id %>"
                                     class="doctor-schedule d-flex flex-row flex-wrap text-decoration-none"
                                     style="overflow: auto;"></div>
+                            </div>
+                        </div>
+                        <div id="reExaminationContainer" style="display: none;" class="form-row px-3">
+                            <div class="col-12">
+                                <label for="patientAddress">Thông tin tái khám:</label>
+                            </div>
+                            <div class="form-group col-3">
+                                <label class="col-form-label text-label" for="reExaminationDate">Ngày:</label>
+                                <input type="text" class="form-control" id="reExaminationDate" name="reExaminationDate"
+                                    readonly>
+                            </div>
+                            <div class="form-group col-3">
+                                <label class="col-form-label text-label" for="reExaminationTime">Giờ:</label>
+                                <input type="text" class="form-control" id="reExaminationTime" name="reExaminationTime"
+                                    readonly>
                             </div>
                         </div>
                     </div>
@@ -390,6 +406,7 @@
                             <div class="col-7">
                                 <form id="form-patient-info">
                                     <input id="userId" class="d-none"></input>
+                                    <input id="patientOldId" class="d-none"></input>
                                     <div class="form-group">
                                         <label for="patient-name" class="col-form-label text-label">Thông tin bệnh
                                             nhân</label>

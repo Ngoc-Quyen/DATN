@@ -273,7 +273,7 @@ let getAllPosts = async (req, res) => {
             posts: posts,
             currentPage: page,
             totalPages: totalPages,
-            striptags: require('striptags'), // Bạn có thể sử dụng thư viện striptags để loại bỏ thẻ HTML
+            striptags: striptags, // Bạn có thể sử dụng thư viện striptags để loại bỏ thẻ HTML
         });
     } catch (e) {
         console.error(e);
@@ -414,10 +414,12 @@ let getDetailPatientBooking = async (req, res) => {
         let patient = await patientService.getDetailPatient(req.body.patientId);
         let message = await patientService.getExtanInfoByPatientId(req.body.patientId);
         let doctor = await doctorService.getInfoDoctorById(patient.doctorId);
+        let reExamination = await patientService.getReExaminationByPatientId(req.body.patientId);
         let object = {
             patient: patient,
             ExtraInfo: message.extrainfos,
             doctor: doctor.doctor,
+            reExamination: reExamination,
         };
         return res.status(200).json(object);
     } catch (e) {

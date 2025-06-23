@@ -1229,6 +1229,7 @@ function callAjaxRenderModalInfo(patientId, option) {
         success: function (data) {
             $('#btn-confirm-patient-done').attr('data-patient-id', data.patient.id);
             $('#userId').val(data.patient.userId);
+            $('#patientId').val(data.patient.id);
             $('#patientName').val(data.patient.name);
             $('#patientYear').val(data.patient.year);
             $('#patientPhone').val(data.patient.phone);
@@ -1245,10 +1246,26 @@ function callAjaxRenderModalInfo(patientId, option) {
                 $('#btn-confirm-patient-done').css('display', 'none');
                 $('#btn-cancel-patient').text('OK');
                 $('#toggleScheduleLink').css('display', 'none');
+                const reExamList = data.reExamination;
+
+                if (Array.isArray(reExamList) && reExamList.length > 0) {
+                    const firstReExam = reExamList[0]; // lấy lịch tái khám đầu tiên
+                    const { dateBooking, timeBooking } = firstReExam;
+
+                    $('#reExaminationDate').val(dateBooking);
+                    $('#reExaminationTime').val(timeBooking);
+
+                    // Hiển thị phần tái khám
+                    $('#reExaminationContainer').show();
+                } else {
+                    // Không có lịch tái khám → ẩn
+                    $('#reExaminationContainer').hide();
+                }
             } else {
                 $('#btn-confirm-patient-done').css('display', 'block');
                 $('#btn-cancel-patient').text('Hủy');
                 $('#toggleScheduleLink').css('display', 'block');
+                $('#reExaminationContainer').hide();
             }
             $('#modalDetailPatient').modal('show');
         },
@@ -2272,6 +2289,7 @@ function openModalBooking(buttonId) {
 
     // 🟢 Lấy dữ liệu từ modalDetailPatient
     $('#userId').val($('#userId').val());
+    $('#patientOldId').val($('#patientId').val());
     $('#name').val($('#patientName').val());
     $('#year').val($('#patientYear').val());
     $('#phone').val($('#patientPhone').val());
@@ -2368,6 +2386,7 @@ function handleBookingPageDoctor() {
             userId: $('#userId').val(),
             timeBooking: $('#time-patient-booking').text(),
             dateBooking: $('#date-patient-booking').text(),
+            patientOldId: $('#patientOldId').val(),
         };
         handleBookingPageDoctorWithoutFiles(data);
     });
