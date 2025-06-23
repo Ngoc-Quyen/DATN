@@ -381,7 +381,6 @@ let generateScheduleForAllSpecializations = async (month, year, specializationId
                     });
                 }
             }
-            // console.log('\n--- Overall schedule generation process completed. ---');
             resolve(results);
         } catch (error) {
             console.error('Error generating schedule for all specializations:', error);

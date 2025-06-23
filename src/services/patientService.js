@@ -555,6 +555,24 @@ let getExtanInfoByPatientId = async (patientId) => {
     });
 };
 
+let getReExaminationByPatientId = async (patientId) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let patients = await db.Patient.findAll({
+                where: {
+                    patientOldId: patientId,
+                },
+                order: [['dateBooking', 'DESC']],
+            });
+            let plainPatients = patients.map((p) => p.dataValues);
+
+            resolve(plainPatients);
+        } catch (e) {
+            reject(e);
+        }
+    });
+};
+
 export default {
     getInfoBooking: getInfoBooking,
     getForPatientsTabs: getForPatientsTabs,
@@ -568,4 +586,5 @@ export default {
     updateExtrainfos: updateExtrainfos,
     getExtanInfoByPatientId: getExtanInfoByPatientId,
     getForPatientsByDateTabs: getForPatientsByDateTabs,
+    getReExaminationByPatientId: getReExaminationByPatientId,
 };
