@@ -982,6 +982,21 @@ function loadNewPatientsForAdmin() {
             });
             // đổ dữ liệu chỗ đã chấp nhận
             data.object.pendingPatients.forEach((patient) => {
+                // 1. Tạo ngày hôm nay theo giờ Việt Nam
+                const now = new Date();
+                const utc = now.getTime() + now.getTimezoneOffset() * 60000; // chuyển về UTC
+                const todayVN = new Date(utc + 7 * 3600000); // cộng thêm 7 tiếng để được giờ Việt Nam
+                todayVN.setHours(0, 0, 0, 0); // bỏ giờ phút giây để so sánh theo ngày
+
+                // 2. Chuyển bookingDate sang Date object
+                const bookingDate = new Date(patient.dateBooking); // <--- sửa chỗ này
+                bookingDate.setHours(0, 0, 0, 0);
+
+                // 3. So sánh
+                const isFuture = bookingDate > todayVN;
+                const disabledAttr = isFuture ? 'disabled' : '';
+                const cursorClass = isFuture ? '' : 'cursor-pointer';
+
                 htmlPending += `
                 <tr>
                     <td> ${patient.name}   </td>
@@ -989,8 +1004,8 @@ function loadNewPatientsForAdmin() {
                     <td> ${patient.phone}     </td>
                     <td> ${patient.email}     </td>
                     <td>${patient.dateBooking} (${patient.timeBooking})   </td>
-                    <td> 
-                        <button  data-patient-id="${patient.id}"  class="ml-3 btn btn-success cursor-pointer btn-pending-patient">Xác nhận</button>
+                    <td>     
+                        <button data-patient-id="${patient.id}" class="ml-3 btn btn-success ${cursorClass} btn-pending-patient" ${disabledAttr}>Xác nhận</button>
                         <button  type="button" data-patient-id="${patient.id}" class="ml-3 btn btn-danger cursor-pointer btn-new-patient-cancel"> Hủy </button>
                     </td>
                 </tr>
@@ -1083,6 +1098,20 @@ function loadPatientsByDate() {
                 });
                 // đổ dữ liệu chỗ đã chấp nhận
                 data.object.pendingPatients.forEach((patient) => {
+                    // 1. Tạo ngày hôm nay theo giờ Việt Nam
+                    const now = new Date();
+                    const utc = now.getTime() + now.getTimezoneOffset() * 60000; // chuyển về UTC
+                    const todayVN = new Date(utc + 7 * 3600000); // cộng thêm 7 tiếng để được giờ Việt Nam
+                    todayVN.setHours(0, 0, 0, 0); // bỏ giờ phút giây để so sánh theo ngày
+
+                    // 2. Chuyển bookingDate sang Date object
+                    const bookingDate = new Date(patient.dateBooking); // <--- sửa chỗ này
+                    bookingDate.setHours(0, 0, 0, 0);
+
+                    // 3. So sánh
+                    const isFuture = bookingDate > todayVN;
+                    const disabledAttr = isFuture ? 'disabled' : '';
+                    const cursorClass = isFuture ? '' : 'cursor-pointer';
                     htmlPending += `
                     <tr>
                         <td> ${patient.name}   </td>
@@ -1091,7 +1120,7 @@ function loadPatientsByDate() {
                         <td> ${patient.email}     </td>
                         <td>${patient.dateBooking} (${patient.timeBooking})   </td>
                         <td> 
-                            <button  data-patient-id="${patient.id}"  class="ml-3 btn btn-success cursor-pointer btn-pending-patient">Xác nhận</button>
+                            <button data-patient-id="${patient.id}" class="ml-3 btn btn-success ${cursorClass} btn-pending-patient" ${disabledAttr}>Xác nhận</button>
                             <button  type="button" data-patient-id="${patient.id}" class="ml-3 btn btn-danger cursor-pointer btn-new-patient-cancel"> Hủy </button>
                         </td>
                     </tr>
@@ -1292,6 +1321,21 @@ function handleBtnPendingCancel() {
 }
 
 function addNewRowTablePending(patient) {
+    // 1. Tạo ngày hôm nay theo giờ Việt Nam
+    const now = new Date();
+    const utc = now.getTime() + now.getTimezoneOffset() * 60000; // chuyển về UTC
+    const todayVN = new Date(utc + 7 * 3600000); // cộng thêm 7 tiếng để được giờ Việt Nam
+    todayVN.setHours(0, 0, 0, 0); // bỏ giờ phút giây để so sánh theo ngày
+
+    // 2. Chuyển bookingDate sang Date object
+    const bookingDate = new Date(patient.dateBooking); // <--- sửa chỗ này
+    bookingDate.setHours(0, 0, 0, 0);
+
+    // 3. So sánh
+    const isFuture = bookingDate > todayVN;
+    const disabledAttr = isFuture ? 'disabled' : '';
+    const cursorClass = isFuture ? '' : 'cursor-pointer';
+    console.log('ham nay dc goi');
     let htmlPending = `
                  <tr>
                     <td> ${patient.id} - ${patient.name}   </td>
@@ -1299,7 +1343,7 @@ function addNewRowTablePending(patient) {
                     <td> ${patient.email}     </td>
                     <td> ${patient.dateBooking} (${patient.timeBooking})     </td>
                     <td> 
-                        <button  data-patient-id="${patient.id}"  class="ml-3 btn btn-success cursor-pointer btn-pending-patient">Xác nhận</button>
+                        <button data-patient-id="${patient.id}" class="ml-3 btn btn-success ${cursorClass} btn-pending-patient" ${disabledAttr}>Xác nhận</button>
                         <button  type="button" data-patient-id="${patient.id}" class="ml-3 btn btn-danger cursor-pointer btn-new-patient-cancel"> Hủy </button>
                     </td>
                 </tr>
